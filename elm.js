@@ -10143,7 +10143,7 @@ Elm.Main.make = function (_elm) {
       return function () {
          return function () {
             return function () {
-               return routeToPath("/index.html");
+               return routeToPath("/demo/index.html");
             }();
          }();
       }();
@@ -10183,7 +10183,7 @@ Elm.Main.make = function (_elm) {
    });
    var route = A2($Router.match,
    _L.fromArray([A2($Router._op[":->"],
-                "/index.html",
+                "/demo/index.html",
                 displayOverview)
                 ,A2($Router._op[":->"],
                 "/track",
@@ -10353,7 +10353,7 @@ Elm.Model.make = function (_elm) {
    };
    var Overview = {ctor: "Overview"};
    var defaultState = {_: {}
-                      ,currentPath: "/index.html"
+                      ,currentPath: "/demo/index.html"
                       ,mode: Overview
                       ,oscConnected: false
                       ,playing: $Set.empty};
@@ -23567,7 +23567,7 @@ Elm.View.make = function (_elm) {
    });
    var navbrand = A2($Html.a,
    _L.fromArray([$Html$Attributes.$class("navbar-brand")
-                ,$Html$Attributes.href("/index.html")]),
+                ,$Html$Attributes.href("/demo/index.html")]),
    _L.fromArray([$Html.text("Susurrant")]));
    var navheader = A2($Html.div,
    _L.fromArray([$Html$Attributes.$class("navbar-header")]),
@@ -23616,7 +23616,7 @@ Elm.View.make = function (_elm) {
    var navLinks = _L.fromArray([A3(HeaderLink,
                                "Overview",
                                "Topics and Top Tracks",
-                               "/index.html")
+                               "/demo/index.html")
                                ,A3(HeaderLink,
                                "Social Graph",
                                "Tracks in social context",
