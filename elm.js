@@ -22419,7 +22419,7 @@ Elm.TopicData.make = function (_elm) {
          $Result.Ok(data$));
       }();
    };
-   var prefix = "/data/";
+   var prefix = "data/";
    var addVocab = F2(function (a,
    data) {
       return _U.replace([["vocab"
