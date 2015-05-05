@@ -1,0 +1,238 @@
+Elm.Viz = Elm.Viz || {};
+Elm.Viz.Stars = Elm.Viz.Stars || {};
+Elm.Viz.Stars.make = function (_elm) {
+   "use strict";
+   _elm.Viz = _elm.Viz || {};
+   _elm.Viz.Stars = _elm.Viz.Stars || {};
+   if (_elm.Viz.Stars.values)
+   return _elm.Viz.Stars.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "Viz.Stars",
+   $Basics = Elm.Basics.make(_elm),
+   $Dict = Elm.Dict.make(_elm),
+   $Html = Elm.Html.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Model = Elm.Model.make(_elm),
+   $String = Elm.String.make(_elm),
+   $Svg = Elm.Svg.make(_elm),
+   $Svg$Attributes = Elm.Svg.Attributes.make(_elm),
+   $Viz$Common = Elm.Viz.Common.make(_elm),
+   $Viz$Scale = Elm.Viz.Scale.make(_elm);
+   var toData = $List.indexedMap(F2(function (i,
+   xs) {
+      return {_: {}
+             ,id: $Basics.toString(i)
+             ,prob: 1.0
+             ,tokenType: $Model.Gfcc
+             ,values: xs};
+   }));
+   var exampleData = toData(_L.fromArray([_L.fromArray([3
+                                                       ,1
+                                                       ,2
+                                                       ,3
+                                                       ,4
+                                                       ,2])
+                                         ,_L.fromArray([2,3,5,0,1,2])]));
+   var defaultOpacity = _U.replace([["domain"
+                                    ,_L.fromArray([1.0e-2,1.0])]
+                                   ,["range"
+                                    ,_L.fromArray([0.0,0.8])]],
+   $Viz$Scale.logScale);
+   var getTokenDomains = function (data) {
+      return $Viz$Common.extent($List.concat($Dict.values(data.vocab)));
+   };
+   var getDomain = function ($) {
+      return $Viz$Common.extent($List.concatMap(function (_) {
+         return _.values;
+      })($));
+   };
+   var floatToStr = function (x) {
+      return _U.cmp($Basics.abs(x),
+      1.0e-10) < 0 ? "0" : $Basics.toString(x);
+   };
+   var twoPi = $Basics.pi * 2.0;
+   var addAngles = function (xs) {
+      return function () {
+         var l = $List.length(xs);
+         var angle = twoPi / $Basics.toFloat(l);
+         return A3($List.map2,
+         F2(function (a,b) {
+            return {ctor: "_Tuple2"
+                   ,_0: a
+                   ,_1: $Basics.toFloat(b) * angle};
+         }),
+         xs,
+         _L.range(0,l - 1));
+      }();
+   };
+   var halfPi = $Basics.pi * 0.5;
+   var lineRadial0 = function (xs) {
+      return function () {
+         var point = function (_v0) {
+            return function () {
+               switch (_v0.ctor)
+               {case "_Tuple2":
+                  return function () {
+                       var a$ = _v0._1 - halfPi;
+                       return {ctor: "_Tuple2"
+                              ,_0: _v0._0 * $Basics.cos(a$)
+                              ,_1: _v0._0 * $Basics.sin(a$)};
+                    }();}
+               _U.badCase($moduleName,
+               "between lines 26 and 27");
+            }();
+         };
+         return A2($List.map,point,xs);
+      }();
+   };
+   var lineRadial = function (xs) {
+      return function () {
+         var points = lineRadial0(xs);
+         var pointsL = $String.join("L")(A2($List.map,
+         function (_v4) {
+            return function () {
+               switch (_v4.ctor)
+               {case "_Tuple2":
+                  return A2($Basics._op["++"],
+                    floatToStr(_v4._0),
+                    A2($Basics._op["++"],
+                    ",",
+                    floatToStr(_v4._1)));}
+               _U.badCase($moduleName,
+               "on line 36, column 40 to 75");
+            }();
+         },
+         points));
+         return A2($Basics._op["++"],
+         "M",
+         A2($Basics._op["++"],
+         pointsL,
+         "Z"));
+      }();
+   };
+   var star = F2(function (_v8,
+   _v9) {
+      return function () {
+         return function () {
+            return function () {
+               var pathStr = lineRadial(addAngles($List.map($Viz$Scale.convert(_v8.rS))(_v9.values)));
+               return A2($Svg.path,
+               _L.fromArray([$Svg$Attributes.d(pathStr)
+                            ,$Svg$Attributes.fill("none")
+                            ,$Svg$Attributes.stroke(_v8.color)
+                            ,$Svg$Attributes.strokeOpacity($Basics.toString(A2($Viz$Scale.convert,
+                            _v8.opacity,
+                            _v9.prob)))]),
+               _L.fromArray([]));
+            }();
+         }();
+      }();
+   });
+   var stars = F2(function (scales,
+   lst) {
+      return A2($List.map,
+      star(scales),
+      lst);
+   });
+   var starDisplay = F7(function (color,
+   attrs,
+   domain,
+   margin,
+   w,
+   h,
+   data) {
+      return function () {
+         var ds = A3($Viz$Common.dims,
+         margin,
+         w,
+         h);
+         var dataDomain = A2($Maybe.withDefault,
+         getDomain(data),
+         domain);
+         var rS = _U.replace([["domain"
+                              ,dataDomain]
+                             ,["range"
+                              ,_L.fromArray([0.0,w / 2.0])]],
+         $Viz$Scale.linear);
+         var stars$ = stars({_: {}
+                            ,color: color
+                            ,opacity: defaultOpacity
+                            ,rS: rS});
+         return A4($Viz$Common.svgWithMargin,
+         attrs,
+         ds,
+         margin,
+         A3($Viz$Common.center,
+         w,
+         h,
+         stars$(data)));
+      }();
+   });
+   var smallStar = F3(function (color,
+   attrs,
+   domain) {
+      return A6(starDisplay,
+      color,
+      attrs,
+      domain,
+      {_: {}
+      ,bottom: 4
+      ,left: 4
+      ,right: 4
+      ,top: 4},
+      64,
+      64);
+   });
+   var main = A4(smallStar,
+   "#000",
+   _L.fromArray([]),
+   $Maybe.Nothing,
+   exampleData);
+   var mediumStar = F3(function (color,
+   attrs,
+   domain) {
+      return A6(starDisplay,
+      color,
+      attrs,
+      $Maybe.Nothing,
+      {_: {}
+      ,bottom: 4
+      ,left: 4
+      ,right: 4
+      ,top: 4},
+      256,
+      256);
+   });
+   var Scales = F3(function (a,
+   b,
+   c) {
+      return {_: {}
+             ,color: b
+             ,opacity: c
+             ,rS: a};
+   });
+   _elm.Viz.Stars.values = {_op: _op
+                           ,Scales: Scales
+                           ,halfPi: halfPi
+                           ,twoPi: twoPi
+                           ,lineRadial0: lineRadial0
+                           ,floatToStr: floatToStr
+                           ,lineRadial: lineRadial
+                           ,addAngles: addAngles
+                           ,star: star
+                           ,stars: stars
+                           ,getDomain: getDomain
+                           ,getTokenDomains: getTokenDomains
+                           ,defaultOpacity: defaultOpacity
+                           ,starDisplay: starDisplay
+                           ,smallStar: smallStar
+                           ,mediumStar: mediumStar
+                           ,toData: toData
+                           ,exampleData: exampleData
+                           ,main: main};
+   return _elm.Viz.Stars.values;
+};

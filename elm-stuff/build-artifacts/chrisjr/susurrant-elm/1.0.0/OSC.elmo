@@ -1,0 +1,78 @@
+Elm.OSC = Elm.OSC || {};
+Elm.OSC.make = function (_elm) {
+   "use strict";
+   _elm.OSC = _elm.OSC || {};
+   if (_elm.OSC.values)
+   return _elm.OSC.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "OSC",
+   $List = Elm.List.make(_elm);
+   var toOsc = function (m) {
+      return function () {
+         switch (m.ctor)
+         {case "PlayTokens":
+            return {ctor: "_Tuple2"
+                   ,_0: "/tokens/play"
+                   ,_1: A2($List.map,
+                   function (_v4) {
+                      return function () {
+                         switch (_v4.ctor)
+                         {case "_Tuple2":
+                            return {ctor: "_Tuple2"
+                                   ,_0: _L.fromArray([_v4._0])
+                                   ,_1: _L.fromArray([_v4._1])};}
+                         _U.badCase($moduleName,
+                         "on line 28, column 47 to 55");
+                      }();
+                   },
+                   m._0)};
+            case "PlayTrack":
+            return {ctor: "_Tuple2"
+                   ,_0: "/track/play"
+                   ,_1: _L.fromArray([{ctor: "_Tuple2"
+                                      ,_0: _L.fromArray([m._0.track])
+                                      ,_1: _L.fromArray([m._0.startPos])}])};
+            case "SeekTrack":
+            return {ctor: "_Tuple2"
+                   ,_0: "/track/seek"
+                   ,_1: _L.fromArray([{ctor: "_Tuple2"
+                                      ,_0: _L.fromArray([])
+                                      ,_1: _L.fromArray([m._0.pos])}])};
+            case "StopTokens":
+            return {ctor: "_Tuple2"
+                   ,_0: "/tokens/stop"
+                   ,_1: _L.fromArray([])};
+            case "StopTrack":
+            return {ctor: "_Tuple2"
+                   ,_0: "/track/stop"
+                   ,_1: _L.fromArray([])};}
+         _U.badCase($moduleName,
+         "between lines 20 and 59");
+      }();
+   };
+   var StopTokens = {ctor: "StopTokens"};
+   var PlayTokens = function (a) {
+      return {ctor: "PlayTokens"
+             ,_0: a};
+   };
+   var StopTrack = {ctor: "StopTrack"};
+   var SeekTrack = function (a) {
+      return {ctor: "SeekTrack"
+             ,_0: a};
+   };
+   var PlayTrack = function (a) {
+      return {ctor: "PlayTrack"
+             ,_0: a};
+   };
+   _elm.OSC.values = {_op: _op
+                     ,PlayTrack: PlayTrack
+                     ,SeekTrack: SeekTrack
+                     ,StopTrack: StopTrack
+                     ,PlayTokens: PlayTokens
+                     ,StopTokens: StopTokens
+                     ,toOsc: toOsc};
+   return _elm.OSC.values;
+};

@@ -1,0 +1,59 @@
+Elm.Viz = Elm.Viz || {};
+Elm.Viz.Ordinal = Elm.Viz.Ordinal || {};
+Elm.Viz.Ordinal.make = function (_elm) {
+   "use strict";
+   _elm.Viz = _elm.Viz || {};
+   _elm.Viz.Ordinal = _elm.Viz.Ordinal || {};
+   if (_elm.Viz.Ordinal.values)
+   return _elm.Viz.Ordinal.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "Viz.Ordinal",
+   $Basics = Elm.Basics.make(_elm),
+   $Dict = Elm.Dict.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm);
+   var category10colors = _L.fromArray(["#1f77b4"
+                                       ,"#ff7f0e"
+                                       ,"#2ca02c"
+                                       ,"#d62728"
+                                       ,"#9467bd"
+                                       ,"#8c564b"
+                                       ,"#e377c2"
+                                       ,"#7f7f7f"
+                                       ,"#bcbd22"
+                                       ,"#17becf"]);
+   var color$ = F2(function (cDict,
+   c) {
+      return $Maybe.withDefault("#000")(A2($Dict.get,
+      c,
+      cDict));
+   });
+   var colorDict = F2(function (xs,
+   cs) {
+      return $Dict.fromList(A3($List.map2,
+      F2(function (v0,v1) {
+         return {ctor: "_Tuple2"
+                ,_0: v0
+                ,_1: v1};
+      }),
+      xs,
+      cs));
+   });
+   var category10 = function (domain) {
+      return A2(colorDict,
+      domain,
+      category10colors);
+   };
+   var cat10 = color$(category10(_L.range(0,
+   9)));
+   _elm.Viz.Ordinal.values = {_op: _op
+                             ,colorDict: colorDict
+                             ,color$: color$
+                             ,category10colors: category10colors
+                             ,category10: category10
+                             ,cat10: cat10};
+   return _elm.Viz.Ordinal.values;
+};

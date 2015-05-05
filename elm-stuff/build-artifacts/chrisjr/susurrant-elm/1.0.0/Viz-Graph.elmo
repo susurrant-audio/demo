@@ -1,0 +1,28 @@
+Elm.Viz = Elm.Viz || {};
+Elm.Viz.Graph = Elm.Viz.Graph || {};
+Elm.Viz.Graph.make = function (_elm) {
+   "use strict";
+   _elm.Viz = _elm.Viz || {};
+   _elm.Viz.Graph = _elm.Viz.Graph || {};
+   if (_elm.Viz.Graph.values)
+   return _elm.Viz.Graph.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "Viz.Graph",
+   $Html = Elm.Html.make(_elm),
+   $Html$Attributes = Elm.Html.Attributes.make(_elm);
+   var graphView = A2($Html.div,
+   _L.fromArray([$Html$Attributes.id("graph")
+                ,$Html$Attributes.style(_L.fromArray([{ctor: "_Tuple2"
+                                                      ,_0: "width"
+                                                      ,_1: "960px"}
+                                                     ,{ctor: "_Tuple2"
+                                                      ,_0: "height"
+                                                      ,_1: "500px"}]))]),
+   _L.fromArray([]));
+   _elm.Viz.Graph.values = {_op: _op
+                           ,graphView: graphView};
+   return _elm.Viz.Graph.values;
+};

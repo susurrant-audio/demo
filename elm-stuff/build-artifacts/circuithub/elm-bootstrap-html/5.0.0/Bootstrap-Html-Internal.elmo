@@ -1,0 +1,86 @@
+Elm.Bootstrap = Elm.Bootstrap || {};
+Elm.Bootstrap.Html = Elm.Bootstrap.Html || {};
+Elm.Bootstrap.Html.Internal = Elm.Bootstrap.Html.Internal || {};
+Elm.Bootstrap.Html.Internal.make = function (_elm) {
+   "use strict";
+   _elm.Bootstrap = _elm.Bootstrap || {};
+   _elm.Bootstrap.Html = _elm.Bootstrap.Html || {};
+   _elm.Bootstrap.Html.Internal = _elm.Bootstrap.Html.Internal || {};
+   if (_elm.Bootstrap.Html.Internal.values)
+   return _elm.Bootstrap.Html.Internal.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "Bootstrap.Html.Internal",
+   $Basics = Elm.Basics.make(_elm),
+   $Html = Elm.Html.make(_elm),
+   $Html$Attributes = Elm.Html.Attributes.make(_elm),
+   $Html$Events = Elm.Html.Events.make(_elm),
+   $Html$Shorthand = Elm.Html.Shorthand.make(_elm),
+   $Json$Decode = Elm.Json.Decode.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $String = Elm.String.make(_elm);
+   var btnc = F4(function (c,
+   typ,
+   _v0,
+   click) {
+      return function () {
+         return function () {
+            var filter = $List.filterMap($Basics.identity);
+            return A2($Html.button,
+            A2($List._op["::"],
+            $Html$Attributes.type$(typ),
+            A2($List._op["::"],
+            $Html$Shorthand.class$(A2($Basics._op["++"],
+            "btn ",
+            c)),
+            filter(_L.fromArray([A2($Maybe.map,
+                                function ($) {
+                                   return A2($Html$Events.on,
+                                   "click",
+                                   $Json$Decode.value)($Basics.always($));
+                                },
+                                click)
+                                ,A2($Maybe.map,
+                                $Html$Attributes.title,
+                                _v0.tooltip)])))),
+            function () {
+               var _v2 = {ctor: "_Tuple2"
+                         ,_0: _v0.icon
+                         ,_1: _v0.label};
+               switch (_v2.ctor)
+               {case "_Tuple2":
+                  switch (_v2._0.ctor)
+                    {case "Just":
+                       switch (_v2._1.ctor)
+                         {case "Just":
+                            return _L.fromArray([_v2._0._0
+                                                ,$Html.text(A2($String.cons,
+                                                _U.chr(" "),
+                                                _v2._1._0))]);}
+                         return _L.fromArray([_v2._0._0]);}
+                    switch (_v2._1.ctor)
+                    {case "Just":
+                       return _L.fromArray([$Html.text(_v2._1._0)]);}
+                    break;}
+               return _L.fromArray([]);
+            }());
+         }();
+      }();
+   });
+   var BtnParam = F3(function (a,
+   b,
+   c) {
+      return {_: {}
+             ,icon: a
+             ,label: b
+             ,tooltip: c};
+   });
+   _elm.Bootstrap.Html.Internal.values = {_op: _op
+                                         ,BtnParam: BtnParam
+                                         ,btnc: btnc};
+   return _elm.Bootstrap.Html.Internal.values;
+};

@@ -1,0 +1,94 @@
+Elm.Updates = Elm.Updates || {};
+Elm.Updates.make = function (_elm) {
+   "use strict";
+   _elm.Updates = _elm.Updates || {};
+   if (_elm.Updates.values)
+   return _elm.Updates.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "Updates",
+   $History = Elm.History.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $OSC = Elm.OSC.make(_elm),
+   $Set = Elm.Set.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $Task = Elm.Task.make(_elm);
+   var doSoundUpdate = F2(function (up,
+   set) {
+      return function () {
+         switch (up.ctor)
+         {case "Noop": return set;
+            case "Play":
+            return A2($Set.insert,
+              up._0,
+              set);
+            case "Stop":
+            return A2($Set.remove,
+              up._0,
+              set);}
+         _U.badCase($moduleName,
+         "between lines 21 and 24");
+      }();
+   });
+   var Noop = {ctor: "Noop"};
+   var soundUpdates = $Signal.mailbox(Noop);
+   var nowPlaying = A3($Signal.foldp,
+   doSoundUpdate,
+   $Set.empty,
+   soundUpdates.signal);
+   var oscMessages = function () {
+      var f = function (x) {
+         return function () {
+            switch (x.ctor)
+            {case "Noop":
+               return $Maybe.Nothing;
+               case "Play":
+               return $Maybe.Just($OSC.toOsc(x._1));
+               case "Stop":
+               return $Maybe.Just($OSC.toOsc(x._1));}
+            _U.badCase($moduleName,
+            "between lines 31 and 35");
+         }();
+      };
+      return A2($Signal.map,
+      f,
+      soundUpdates.signal);
+   }();
+   var Stop = F2(function (a,b) {
+      return {ctor: "Stop"
+             ,_0: a
+             ,_1: b};
+   });
+   var Play = F2(function (a,b) {
+      return {ctor: "Play"
+             ,_0: a
+             ,_1: b};
+   });
+   var soundUpdate = F3(function (soundID,
+   playing,
+   msg) {
+      return playing ? A2(Play,
+      soundID,
+      msg) : A2(Stop,soundID,msg);
+   });
+   var actions = $Signal.mailbox($Task.succeed({ctor: "_Tuple0"}));
+   var toPath = function (x) {
+      return A2($Signal.send,
+      actions.address,
+      $History.setPath(x));
+   };
+   _elm.Updates.values = {_op: _op
+                         ,actions: actions
+                         ,toPath: toPath
+                         ,Play: Play
+                         ,Stop: Stop
+                         ,Noop: Noop
+                         ,soundUpdates: soundUpdates
+                         ,doSoundUpdate: doSoundUpdate
+                         ,nowPlaying: nowPlaying
+                         ,oscMessages: oscMessages
+                         ,soundUpdate: soundUpdate};
+   return _elm.Updates.values;
+};

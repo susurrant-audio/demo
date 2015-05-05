@@ -1,0 +1,276 @@
+Elm.Main = Elm.Main || {};
+Elm.Main.make = function (_elm) {
+   "use strict";
+   _elm.Main = _elm.Main || {};
+   if (_elm.Main.values)
+   return _elm.Main.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "Main",
+   $Basics = Elm.Basics.make(_elm),
+   $Common = Elm.Common.make(_elm),
+   $GraphData = Elm.GraphData.make(_elm),
+   $History = Elm.History.make(_elm),
+   $Html = Elm.Html.make(_elm),
+   $Http = Elm.Http.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Model = Elm.Model.make(_elm),
+   $OSC = Elm.OSC.make(_elm),
+   $Router = Elm.Router.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $String = Elm.String.make(_elm),
+   $Task = Elm.Task.make(_elm),
+   $TopicData = Elm.TopicData.make(_elm),
+   $Updates = Elm.Updates.make(_elm),
+   $View = Elm.View.make(_elm);
+   var neighborhood = Elm.Native.Port.make(_elm).inboundSignal("neighborhood",
+   "List Model.Node",
+   function (v) {
+      return typeof v === "object" && v instanceof Array ? Elm.Native.List.make(_elm).fromArray(v.map(function (v) {
+         return typeof v === "string" || typeof v === "object" && v instanceof String ? v : _U.badPort("a string",
+         v);
+      })) : _U.badPort("an array",v);
+   });
+   var graphClosed = Elm.Native.Port.make(_elm).outboundSignal("graphClosed",
+   function (v) {
+      return v;
+   },
+   A2($Signal.map,
+   function (x) {
+      return !_U.eq(x,"/graph");
+   },
+   $History.path));
+   var graphData = Elm.Native.Port.make(_elm).outboundSignal("graphData",
+   function (v) {
+      return v.ctor === "Nothing" ? null : {nodes: Elm.Native.List.make(_elm).toArray(v._0.nodes).map(function (v) {
+                                              return v;
+                                           })
+                                           ,links: Elm.Native.List.make(_elm).toArray(v._0.links).map(function (v) {
+                                              return [v._0,v._1];
+                                           })};
+   },
+   $GraphData.graphRetrieve.signal);
+   var oscOut = Elm.Native.Port.make(_elm).outboundSignal("oscOut",
+   function (v) {
+      return v.ctor === "Nothing" ? null : [v._0._0
+                                           ,Elm.Native.List.make(_elm).toArray(v._0._1).map(function (v) {
+                                              return [Elm.Native.List.make(_elm).toArray(v._0).map(function (v) {
+                                                        return v;
+                                                     })
+                                                     ,Elm.Native.List.make(_elm).toArray(v._1).map(function (v) {
+                                                        return v;
+                                                     })];
+                                           })];
+   },
+   $Updates.oscMessages);
+   var oscConnection = Elm.Native.Port.make(_elm).inboundSignal("oscConnection",
+   "Bool",
+   function (v) {
+      return typeof v === "boolean" ? v : _U.badPort("a boolean (true or false)",
+      v);
+   });
+   var runActions = Elm.Native.Task.make(_elm).performSignal("runActions",
+   $Updates.actions.signal);
+   var onlyTasks = function (rr) {
+      return function () {
+         switch (rr.ctor)
+         {case "ActionPage":
+            return $Maybe.Just(rr._0);
+            case "Redirect":
+            return $Maybe.Just(rr._0);}
+         return $Maybe.Nothing;
+      }();
+   };
+   var onlyHtml = function (rr) {
+      return function () {
+         switch (rr.ctor)
+         {case "ActionPage":
+            return $Maybe.Just(rr._1);
+            case "Page":
+            return $Maybe.Just(rr._0);}
+         return $Maybe.Nothing;
+      }();
+   };
+   var state = function () {
+      var f = F3(function (x,y,z) {
+         return _U.replace([["oscConnected"
+                            ,x]
+                           ,["currentPath",y]
+                           ,["playing",z]],
+         $Model.defaultState);
+      });
+      return A4($Signal.map3,
+      f,
+      oscConnection,
+      $History.path,
+      $Updates.nowPlaying);
+   }();
+   var loadGraph = A2($Task.andThen,
+   A2($Http.get,
+   $GraphData.graphDec,
+   "/data/graph.json"),
+   $GraphData.sendGraphData);
+   var fetchTopicData = Elm.Native.Task.make(_elm).perform(A2($Task.andThen,
+   $TopicData.loadData,
+   $TopicData.receivedData));
+   var trackData = $Signal.mailbox($Maybe.Nothing);
+   var loadTrack = function (trackID) {
+      return function () {
+         var trackUrl = A2($Basics._op["++"],
+         "/data/tracks/",
+         A2($Basics._op["++"],
+         trackID,
+         ".json"));
+         return A2($Task.andThen,
+         A2($Http.get,
+         $TopicData.trackDataDec(trackID),
+         trackUrl),
+         function ($) {
+            return $Signal.send(trackData.address)($Maybe.Just($));
+         });
+      }();
+   };
+   var model = A3($Signal.map2,
+   $Model.Model,
+   $TopicData.topicData.signal,
+   trackData.signal);
+   var ActionPage = F2(function (a,
+   b) {
+      return {ctor: "ActionPage"
+             ,_0: a
+             ,_1: b};
+   });
+   var trackRoute = F3(function (path,
+   model,
+   state) {
+      return function () {
+         var track = model.track;
+         var data = A2($Common.orElse,
+         model.data,
+         $TopicData.emptyData);
+         var trackID = A2($String.dropLeft,
+         1,
+         path);
+         return ActionPage(loadTrack(trackID))($View.wrap(state)(A4($View.viewDoc,
+         trackID,
+         data,
+         track,
+         state)));
+      }();
+   });
+   var graphRoute = F3(function (_v8,
+   _v9,
+   state) {
+      return function () {
+         return function () {
+            return ActionPage(loadGraph)($View.wrap(state)($View.viewGraph));
+         }();
+      }();
+   });
+   var Redirect = function (a) {
+      return {ctor: "Redirect"
+             ,_0: a};
+   };
+   var routeToPath = function (x) {
+      return Redirect($Updates.toPath(x));
+   };
+   var startPage = F3(function (_v12,
+   _v13,
+   _v14) {
+      return function () {
+         return function () {
+            return function () {
+               return routeToPath("/index.html");
+            }();
+         }();
+      }();
+   });
+   var Page = function (a) {
+      return {ctor: "Page",_0: a};
+   };
+   var topicOverviewRoute = F3(function (path,
+   model,
+   state) {
+      return Page($Html.text("null"));
+   });
+   var topicRoute = F3(function (path,
+   model,
+   state) {
+      return function () {
+         var data = A2($Common.orElse,
+         model.data,
+         $TopicData.emptyData);
+         var topic = A2($Common.orElse,
+         $String.toInt(A2($String.dropLeft,
+         1,
+         path)),
+         -1);
+         return Page($View.wrap(state)(A3($View.viewTopic,
+         data,
+         state,
+         topic)));
+      }();
+   });
+   var displayOverview = F3(function (path,
+   model,
+   state) {
+      return Page($View.wrap(state)(A2($View.viewOverview,
+      model,
+      state)));
+   });
+   var route = A2($Router.match,
+   _L.fromArray([A2($Router._op[":->"],
+                "/index.html",
+                displayOverview)
+                ,A2($Router._op[":->"],
+                "/track",
+                trackRoute)
+                ,A2($Router._op[":->"],
+                "/topics",
+                topicOverviewRoute)
+                ,A2($Router._op[":->"],
+                "/topic",
+                topicRoute)
+                ,A2($Router._op[":->"],
+                "/graph",
+                graphRoute)]),
+   startPage);
+   var routed = A4($Signal.map3,
+   route,
+   $History.path,
+   model,
+   state);
+   var routingTasks = Elm.Native.Task.make(_elm).performSignal("routingTasks",
+   A3($Signal.filterMap,
+   onlyTasks,
+   $Task.succeed({ctor: "_Tuple0"}),
+   routed));
+   var main = A3($Signal.filterMap,
+   onlyHtml,
+   $Html.text(""),
+   routed);
+   _elm.Main.values = {_op: _op
+                      ,Page: Page
+                      ,Redirect: Redirect
+                      ,ActionPage: ActionPage
+                      ,routeToPath: routeToPath
+                      ,startPage: startPage
+                      ,topicOverviewRoute: topicOverviewRoute
+                      ,topicRoute: topicRoute
+                      ,trackRoute: trackRoute
+                      ,displayOverview: displayOverview
+                      ,graphRoute: graphRoute
+                      ,route: route
+                      ,trackData: trackData
+                      ,loadTrack: loadTrack
+                      ,loadGraph: loadGraph
+                      ,model: model
+                      ,state: state
+                      ,routed: routed
+                      ,onlyHtml: onlyHtml
+                      ,onlyTasks: onlyTasks
+                      ,main: main};
+   return _elm.Main.values;
+};

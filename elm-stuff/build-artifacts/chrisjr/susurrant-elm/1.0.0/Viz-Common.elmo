@@ -1,0 +1,194 @@
+Elm.Viz = Elm.Viz || {};
+Elm.Viz.Common = Elm.Viz.Common || {};
+Elm.Viz.Common.make = function (_elm) {
+   "use strict";
+   _elm.Viz = _elm.Viz || {};
+   _elm.Viz.Common = _elm.Viz.Common || {};
+   if (_elm.Viz.Common.values)
+   return _elm.Viz.Common.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "Viz.Common",
+   $Basics = Elm.Basics.make(_elm),
+   $Color = Elm.Color.make(_elm),
+   $Common = Elm.Common.make(_elm),
+   $Html = Elm.Html.make(_elm),
+   $Html$Attributes = Elm.Html.Attributes.make(_elm),
+   $List = Elm.List.make(_elm),
+   $String = Elm.String.make(_elm),
+   $Svg = Elm.Svg.make(_elm),
+   $Svg$Attributes = Elm.Svg.Attributes.make(_elm),
+   $Viz$Ordinal = Elm.Viz.Ordinal.make(_elm),
+   $Viz$Scale = Elm.Viz.Scale.make(_elm);
+   var htmlDims = F2(function (ds,
+   ms) {
+      return _L.fromArray([A2($Html$Attributes.attribute,
+                          "height",
+                          $Basics.toString($Basics.floor(ds.height + ms.top + ms.bottom)))
+                          ,A2($Html$Attributes.attribute,
+                          "width",
+                          $Basics.toString($Basics.floor(ds.width + ms.left + ms.right)))]);
+   });
+   var colorStr = function (c) {
+      return function () {
+         var $ = $Color.toRgb(c),
+         red = $.red,
+         green = $.green,
+         blue = $.blue,
+         alpha = $.alpha;
+         var rgb = A2($List.map,
+         $Basics.toString,
+         _L.fromArray([red,green,blue]));
+         var val = $String.join(",")(A2($Basics._op["++"],
+         rgb,
+         _L.fromArray([$Basics.toString(alpha)])));
+         return A2($Basics._op["++"],
+         "rgba(",
+         A2($Basics._op["++"],val,")"));
+      }();
+   };
+   var translate = F2(function (x,
+   y) {
+      return A2($Basics._op["++"],
+      "translate(",
+      A2($Basics._op["++"],
+      $Basics.toString(x),
+      A2($Basics._op["++"],
+      ",",
+      A2($Basics._op["++"],
+      $Basics.toString(y),
+      ")"))));
+   });
+   var svgWithMargin = F4(function (attrs,
+   ds,
+   ms,
+   xs) {
+      return A2($Svg.svg,
+      A2($Basics._op["++"],
+      attrs,
+      A2(htmlDims,ds,ms)),
+      _L.fromArray([A2($Svg.g,
+      _L.fromArray([$Svg$Attributes.transform(A2(translate,
+      ms.left,
+      ms.top))]),
+      xs)]));
+   });
+   var center = F3(function (w,
+   h,
+   xs) {
+      return _L.fromArray([A2($Svg.g,
+      _L.fromArray([$Svg$Attributes.transform(A2(translate,
+      w / 2.0,
+      h / 2.0))]),
+      xs)]);
+   });
+   var extent = function (lst) {
+      return function () {
+         var max = $List.maximum(lst);
+         var min = $List.minimum(lst);
+         return A2($Basics._op["++"],
+         $Common.toList(min),
+         $Common.toList(max));
+      }();
+   };
+   var defaultDomains = {_: {}
+                        ,cDomain: _L.range(0,9)
+                        ,xDomain: _L.fromArray([0.0
+                                               ,1.0])
+                        ,yDomain: _L.fromArray([0.0
+                                               ,1.0])};
+   var scales = F2(function (_v0,
+   _v1) {
+      return function () {
+         return function () {
+            return function () {
+               var cS = $Viz$Ordinal.color$($Viz$Ordinal.category10(_v0.cDomain));
+               var yS = _U.replace([["domain"
+                                    ,_v0.yDomain]
+                                   ,["range"
+                                    ,_L.fromArray([0,_v1.height])]],
+               $Viz$Scale.linear);
+               var xS = _U.replace([["domain"
+                                    ,_v0.xDomain]
+                                   ,["range"
+                                    ,_L.fromArray([0,_v1.width])]],
+               $Viz$Scale.linear);
+               return {_: {}
+                      ,cS: cS
+                      ,xS: xS
+                      ,yS: yS};
+            }();
+         }();
+      }();
+   });
+   var dims = F3(function (margin,
+   w,
+   h) {
+      return {_: {}
+             ,height: h - margin.top - margin.bottom
+             ,width: w - margin.left - margin.right};
+   });
+   var noMargin = {_: {}
+                  ,bottom: 0
+                  ,left: 0
+                  ,right: 0
+                  ,top: 0};
+   var margin = {_: {}
+                ,bottom: 10
+                ,left: 10
+                ,right: 10
+                ,top: 10};
+   var size = 500;
+   var Scales = F3(function (a,
+   b,
+   c) {
+      return {_: {}
+             ,cS: c
+             ,xS: a
+             ,yS: b};
+   });
+   var Domains = F3(function (a,
+   b,
+   c) {
+      return {_: {}
+             ,cDomain: c
+             ,xDomain: a
+             ,yDomain: b};
+   });
+   var Margins = F4(function (a,
+   b,
+   c,
+   d) {
+      return {_: {}
+             ,bottom: d
+             ,left: b
+             ,right: c
+             ,top: a};
+   });
+   var Dimensions = F2(function (a,
+   b) {
+      return {_: {}
+             ,height: a
+             ,width: b};
+   });
+   _elm.Viz.Common.values = {_op: _op
+                            ,Dimensions: Dimensions
+                            ,Margins: Margins
+                            ,Domains: Domains
+                            ,Scales: Scales
+                            ,size: size
+                            ,margin: margin
+                            ,noMargin: noMargin
+                            ,dims: dims
+                            ,scales: scales
+                            ,defaultDomains: defaultDomains
+                            ,extent: extent
+                            ,translate: translate
+                            ,colorStr: colorStr
+                            ,htmlDims: htmlDims
+                            ,svgWithMargin: svgWithMargin
+                            ,center: center};
+   return _elm.Viz.Common.values;
+};

@@ -1,0 +1,526 @@
+Elm.View = Elm.View || {};
+Elm.View.make = function (_elm) {
+   "use strict";
+   _elm.View = _elm.View || {};
+   if (_elm.View.values)
+   return _elm.View.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "View",
+   $Array = Elm.Array.make(_elm),
+   $Audio = Elm.Audio.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Bootstrap$Html = Elm.Bootstrap.Html.make(_elm),
+   $Common = Elm.Common.make(_elm),
+   $Dict = Elm.Dict.make(_elm),
+   $Html = Elm.Html.make(_elm),
+   $Html$Attributes = Elm.Html.Attributes.make(_elm),
+   $Html$Events = Elm.Html.Events.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Model = Elm.Model.make(_elm),
+   $OSC = Elm.OSC.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Set = Elm.Set.make(_elm),
+   $TopicData = Elm.TopicData.make(_elm),
+   $Updates = Elm.Updates.make(_elm),
+   $Viz$Bars = Elm.Viz.Bars.make(_elm),
+   $Viz$Common = Elm.Viz.Common.make(_elm),
+   $Viz$Graph = Elm.Viz.Graph.make(_elm),
+   $Viz$Ordinal = Elm.Viz.Ordinal.make(_elm),
+   $Viz$Stars = Elm.Viz.Stars.make(_elm);
+   var viewGraph = _L.fromArray([$Viz$Graph.graphView]);
+   var playIcon = F4(function (soundId,
+   playMsg,
+   stopMsg,
+   state) {
+      return function () {
+         var stopAct = A3($Updates.soundUpdate,
+         soundId,
+         false,
+         stopMsg);
+         var playAct = A3($Updates.soundUpdate,
+         soundId,
+         true,
+         playMsg);
+         var isPlaying = A2($Set.member,
+         soundId,
+         state.playing);
+         var icon = isPlaying ? $Bootstrap$Html.glyphiconPause_ : $Bootstrap$Html.glyphiconPlay_;
+         var action = isPlaying ? A2($Html$Events.onClick,
+         $Updates.soundUpdates.address,
+         playAct) : A2($Html$Events.onClick,
+         $Updates.soundUpdates.address,
+         stopAct);
+         return A2($Html.div,
+         _L.fromArray([action]),
+         _L.fromArray([icon]));
+      }();
+   });
+   var mkPlayIcon = F4(function (dtype,
+   info,
+   byDtypes,
+   state) {
+      return function () {
+         var stopMsg = $OSC.StopTokens;
+         var tokenProbs = A2($TopicData.tokensToProbDist,
+         dtype,
+         byDtypes);
+         var playMsg = $OSC.PlayTokens(tokenProbs);
+         var soundId = A2($Basics._op["++"],
+         info.trackID,
+         A2($Basics._op["++"],
+         "/",
+         dtype));
+         return A4(playIcon,
+         soundId,
+         playMsg,
+         stopMsg,
+         state);
+      }();
+   });
+   var viewDocTopicBar = F5(function (state,
+   info,
+   dtype,
+   byDtypes,
+   topicDict) {
+      return function () {
+         var playIcon$ = A4(mkPlayIcon,
+         dtype,
+         info,
+         byDtypes,
+         state);
+         var mkTopics = function (xs) {
+            return A2($Array.map,
+            function (x) {
+               return {_: {},x: x,y: 1.0};
+            },
+            xs);
+         };
+         var topics = A2($Array.slice,
+         0,
+         50)($Array.filter(function (x) {
+            return !_U.eq(x,-1);
+         })($Maybe.withDefault($Array.empty)(A2($Dict.get,
+         dtype,
+         topicDict))));
+         var trackTopics = {_: {}
+                           ,topics: mkTopics(topics)
+                           ,track: info};
+         return A2($Html.div,
+         _L.fromArray([]),
+         _L.fromArray([A2($Bootstrap$Html.colXs_,
+                      2,
+                      _L.fromArray([$Html.text(dtype)]))
+                      ,A2($Bootstrap$Html.colXs_,
+                      1,
+                      _L.fromArray([playIcon$]))
+                      ,A2($Bootstrap$Html.colXs_,
+                      9,
+                      _L.fromArray([A5($Viz$Bars.barDisplay,
+                      _L.fromArray([]),
+                      $Viz$Common.noMargin,
+                      500,
+                      36,
+                      trackTopics)]))]));
+      }();
+   });
+   var alertBase = F2(function (b,
+   xs) {
+      return function () {
+         var icon = b ? $Bootstrap$Html.glyphiconExclamationSign_ : $Bootstrap$Html.glyphiconWarningSign_;
+         return A2($Html.div,
+         _L.fromArray([$Html$Attributes.classList(_L.fromArray([{ctor: "_Tuple2"
+                                                                ,_0: "alert"
+                                                                ,_1: true}
+                                                               ,{ctor: "_Tuple2"
+                                                                ,_0: "alert-danger"
+                                                                ,_1: b}
+                                                               ,{ctor: "_Tuple2"
+                                                                ,_0: "alert-warning"
+                                                                ,_1: $Basics.not(b)}]))]),
+         A2($List._op["::"],
+         icon,
+         A2($List._op["::"],
+         $Html.text(" "),
+         xs)));
+      }();
+   });
+   var alert = alertBase(true);
+   var warning = alertBase(false);
+   var showTrack = F2(function (data,
+   mtd) {
+      return function () {
+         var trackViz = A2($Maybe.andThen,
+         A2($Maybe.andThen,
+         A2($Maybe.andThen,
+         mtd,
+         function ($) {
+            return $Maybe.Just($TopicData.trackToTokenTopics(data)($));
+         }),
+         $Dict.get("gfccs")),
+         function ($) {
+            return $Maybe.Just($Html.text($Basics.toString($)));
+         });
+         return A2($Maybe.withDefault,
+         $Html.text("Display failed"),
+         trackViz);
+      }();
+   });
+   var trackInfoFmt = function (inf) {
+      return $Html.text(A2($Basics._op["++"],
+      inf.username,
+      A2($Basics._op["++"],
+      " | ",
+      inf.title)));
+   };
+   var showBar = function (trackTopics) {
+      return function () {
+         var trackID = trackTopics.track.trackID;
+         return A2($Html.div,
+         _L.fromArray([$Html$Attributes.$class("row track-row")
+                      ,A2($Html$Events.onClick,
+                      $Updates.actions.address,
+                      $Updates.toPath(A2($Basics._op["++"],
+                      "/track/",
+                      trackID)))]),
+         _L.fromArray([A2($Bootstrap$Html.colXs_,
+                      9,
+                      _L.fromArray([trackInfoFmt(trackTopics.track)]))
+                      ,A2($Bootstrap$Html.colXs_,
+                      3,
+                      _L.fromArray([A5($Viz$Bars.verticalBarDisplay,
+                      _L.fromArray([]),
+                      $Viz$Common.noMargin,
+                      100,
+                      24,
+                      trackTopics)]))]));
+      }();
+   };
+   var viewDocData = F4(function (state,
+   data,
+   info,
+   tokens) {
+      return function () {
+         var byDtypes = A3($TopicData.tokensByDtype,
+         data,
+         info.trackID,
+         tokens);
+         var topicDict = A2($TopicData.tokensToTopics,
+         data,
+         byDtypes);
+         var info$ = trackInfoFmt(info);
+         return _L.fromArray([A2($Html.h3,
+                             _L.fromArray([]),
+                             _L.fromArray([A2($Html.a,
+                             _L.fromArray([$Html$Attributes.href(info.url)]),
+                             _L.fromArray([info$]))]))
+                             ,A5(viewDocTopicBar,
+                             state,
+                             info,
+                             "gfccs",
+                             byDtypes,
+                             topicDict)
+                             ,A5(viewDocTopicBar,
+                             state,
+                             info,
+                             "beat_coefs",
+                             byDtypes,
+                             topicDict)
+                             ,A5(viewDocTopicBar,
+                             state,
+                             info,
+                             "chroma",
+                             byDtypes,
+                             topicDict)]);
+      }();
+   });
+   var viewDoc = F4(function (doc,
+   data,
+   maybeTrack,
+   state) {
+      return function () {
+         switch (maybeTrack.ctor)
+         {case "Just":
+            switch (maybeTrack._0.ctor)
+              {case "_Tuple2":
+                 return !_U.eq(maybeTrack._0._0,
+                   doc) ? _L.fromArray([alert(_L.fromArray([$Html.text(A2($Basics._op["++"],
+                   "Fetched ",
+                   A2($Basics._op["++"],
+                   maybeTrack._0._0,
+                   A2($Basics._op["++"],
+                   "; doesn\'t match ",
+                   "doc"))))]))]) : A4(viewDocData,
+                   state,
+                   data,
+                   A2($TopicData.trackInfo,
+                   data,
+                   maybeTrack._0._0),
+                   maybeTrack._0._1);}
+              break;
+            case "Nothing":
+            return _L.fromArray([$Html.text("Loading...")]);}
+         _U.badCase($moduleName,
+         "between lines 203 and 209");
+      }();
+   });
+   var colorFor = function (i) {
+      return $Viz$Ordinal.cat10(i);
+   };
+   var colorAttrFor = function (i) {
+      return $Html$Attributes.style(_L.fromArray([{ctor: "_Tuple2"
+                                                  ,_0: "color"
+                                                  ,_1: colorFor(i)}]));
+   };
+   var viewTopicDocOverview = F3(function (data,
+   state,
+   topic) {
+      return function () {
+         var tokenDomains = $Viz$Stars.getTokenDomains(data);
+         var starPlot = A4($Viz$Stars.mediumStar,
+         colorFor(topic),
+         _L.fromArray([A2($Html$Attributes.attribute,
+         "class",
+         "center-block")]),
+         $Maybe.Just(tokenDomains),
+         A2($TopicData.topicTokens,
+         topic,
+         data));
+         return _L.fromArray([$Bootstrap$Html.row_(_L.fromArray([A2($Html.div,
+                                                                _L.fromArray([A2($Html$Events.onClick,
+                                                                             $Updates.actions.address,
+                                                                             $Updates.toPath(A2($Basics._op["++"],
+                                                                             "/topic/",
+                                                                             $Basics.toString(topic))))
+                                                                             ,A2($Html$Events.onMouseEnter,
+                                                                             $Updates.actions.address,
+                                                                             A2($Audio.playTopic,
+                                                                             topic,
+                                                                             data))
+                                                                             ,A2($Html$Events.onMouseLeave,
+                                                                             $Updates.actions.address,
+                                                                             $Audio.stopTopic(topic))
+                                                                             ,$Html$Attributes.$class("col-xs-3 topic-overview")]),
+                                                                _L.fromArray([A2($Html.h2,
+                                                                             _L.fromArray([colorAttrFor(topic)]),
+                                                                             _L.fromArray([$Html.text(A2($Basics._op["++"],
+                                                                                          "Topic ",
+                                                                                          A2($Basics._op["++"],
+                                                                                          $Basics.toString(topic),
+                                                                                          " ")))
+                                                                                          ,A2($Html.br,
+                                                                                          _L.fromArray([]),
+                                                                                          _L.fromArray([]))
+                                                                                          ,A2($Html.small,
+                                                                                          _L.fromArray([]),
+                                                                                          _L.fromArray([$Html.text(A2($TopicData.topicPct,
+                                                                                          topic,
+                                                                                          data))]))]))
+                                                                             ,starPlot]))
+                                                                ,A2($Bootstrap$Html.colXs_,
+                                                                9,
+                                                                A2($List.map,
+                                                                showBar,
+                                                                A2($TopicData.topDocsForTopic,
+                                                                topic,
+                                                                data)))]))
+                             ,$Bootstrap$Html.row_(_L.fromArray([A2($Html.hr,
+                             _L.fromArray([]),
+                             _L.fromArray([]))]))]);
+      }();
+   });
+   var viewTopicTokens = F2(function (data,
+   topic) {
+      return function () {
+         var playPause = function (x) {
+            return _L.fromArray([A2($Html$Events.onMouseEnter,
+                                $Updates.actions.address,
+                                A2($Audio.playToken,x,data))
+                                ,A2($Html$Events.onMouseLeave,
+                                $Updates.actions.address,
+                                $Audio.stopToken(x))]);
+         };
+         var tokens = A2($TopicData.topicTokens,
+         topic,
+         data);
+         var tokenDomains = $Viz$Stars.getDomain(tokens);
+         var f = function (x) {
+            return A2($Html.div,
+            A2($Basics._op["++"],
+            _L.fromArray([$Html$Attributes.style(_L.fromArray([{ctor: "_Tuple2"
+                                                               ,_0: "float"
+                                                               ,_1: "left"}
+                                                              ,{ctor: "_Tuple2"
+                                                               ,_0: "margin"
+                                                               ,_1: "4px"}]))]),
+            playPause(x)),
+            _L.fromArray([A4($Viz$Stars.smallStar,
+                         colorFor(topic),
+                         _L.fromArray([]),
+                         $Maybe.Just(tokenDomains),
+                         _L.fromArray([x]))
+                         ,A2($Html.br,
+                         _L.fromArray([]),
+                         _L.fromArray([]))
+                         ,$Html.text(x.id)
+                         ,A2($Html.div,
+                         _L.fromArray([$Html$Attributes.$class("small")]),
+                         _L.fromArray([$Html.text($Common.roundPct(x.prob))]))]));
+         };
+         return A2($List.map,f,tokens);
+      }();
+   });
+   var viewTopic = F3(function (data,
+   state,
+   topic) {
+      return A2($Basics._op["++"],
+      A3(viewTopicDocOverview,
+      data,
+      state,
+      topic),
+      A2($Basics._op["++"],
+      A2(viewTopicTokens,data,topic),
+      _L.fromArray([A2($Html.br,
+                   _L.fromArray([$Html$Attributes.style(_L.fromArray([{ctor: "_Tuple2"
+                                                                      ,_0: "clear"
+                                                                      ,_1: "both"}]))]),
+                   _L.fromArray([]))
+                   ,alert(_L.fromArray([]))])));
+   });
+   var viewOverview = F2(function (model,
+   state) {
+      return function () {
+         var f = function (data) {
+            return A2($List.concatMap,
+            A2(viewTopicDocOverview,
+            data,
+            state),
+            $TopicData.topicOrder(data));
+         };
+         var output = A2($Result.map,
+         f,
+         model.data);
+         return function () {
+            switch (output.ctor)
+            {case "Err":
+               return _L.fromArray([$Html.text(output._0)]);
+               case "Ok": return output._0;}
+            _U.badCase($moduleName,
+            "between lines 111 and 113");
+         }();
+      }();
+   });
+   var navbrand = A2($Html.a,
+   _L.fromArray([$Html$Attributes.$class("navbar-brand")
+                ,$Html$Attributes.href("/index.html")]),
+   _L.fromArray([$Html.text("Susurrant")]));
+   var navheader = A2($Html.div,
+   _L.fromArray([$Html$Attributes.$class("navbar-header")]),
+   _L.fromArray([A2($Html.button,
+                _L.fromArray([$Html$Attributes.$class("navbar-toggle collapsed")
+                             ,A2($Html$Attributes.attribute,
+                             "data-toggle",
+                             "collapse")
+                             ,A2($Html$Attributes.attribute,
+                             "data-target",
+                             "#collapsed")]),
+                A2($Basics._op["++"],
+                _L.fromArray([A2($Html.span,
+                _L.fromArray([$Html$Attributes.$class("sr-only")]),
+                _L.fromArray([$Html.text("Toggle navigation ")]))]),
+                A2($List.repeat,
+                3,
+                A2($Html.span,
+                _L.fromArray([$Html$Attributes.$class("icon-bar")]),
+                _L.fromArray([])))))
+                ,navbrand]));
+   var aLink = F2(function (current,
+   _v7) {
+      return function () {
+         return A2($Html.li,
+         _L.fromArray([$Html$Attributes.classList(_L.fromArray([{ctor: "_Tuple2"
+                                                                ,_0: "active"
+                                                                ,_1: _U.eq(current,
+                                                                _v7.path)}]))]),
+         _L.fromArray([A2($Html.a,
+         _L.fromArray([A2($Html$Events.onClick,
+                      $Updates.actions.address,
+                      $Updates.toPath(_v7.path))
+                      ,$Html$Attributes.title(_v7.titleText)]),
+         _L.fromArray([$Html.text(_v7.name)]))]));
+      }();
+   });
+   var HeaderLink = F3(function (a,
+   b,
+   c) {
+      return {_: {}
+             ,name: a
+             ,path: c
+             ,titleText: b};
+   });
+   var navLinks = _L.fromArray([A3(HeaderLink,
+                               "Overview",
+                               "Topics and Top Tracks",
+                               "/index.html")
+                               ,A3(HeaderLink,
+                               "Social Graph",
+                               "Tracks in social context",
+                               "/graph")]);
+   var navbar = function (currentPath) {
+      return function () {
+         var links = A2($List.map,
+         aLink(currentPath),
+         navLinks);
+         return A2($Html.nav,
+         _L.fromArray([$Html$Attributes.$class("navbar navbar-default navbar-fixed-top")]),
+         _L.fromArray([$Bootstrap$Html.containerFluid_(_L.fromArray([navheader
+                                                                    ,A2($Html.div,
+                                                                    _L.fromArray([$Html$Attributes.$class("collapse navbar-collapse")
+                                                                                 ,$Html$Attributes.id("collapsed")]),
+                                                                    _L.fromArray([A2($Html.ul,
+                                                                    _L.fromArray([$Html$Attributes.$class("nav navbar-nav")]),
+                                                                    links)]))]))]));
+      }();
+   };
+   var wrap = F2(function (state,
+   xs) {
+      return function () {
+         var alerts = state.oscConnected ? _L.fromArray([]) : _L.fromArray([warning(_L.fromArray([$Html.text("OSC not connected")]))]);
+         return $Bootstrap$Html.container_(A2($Basics._op["++"],
+         _L.fromArray([navbar(state.currentPath)]),
+         A2($Basics._op["++"],
+         alerts,
+         xs)));
+      }();
+   });
+   _elm.View.values = {_op: _op
+                      ,HeaderLink: HeaderLink
+                      ,aLink: aLink
+                      ,navLinks: navLinks
+                      ,navbrand: navbrand
+                      ,navheader: navheader
+                      ,navbar: navbar
+                      ,wrap: wrap
+                      ,viewOverview: viewOverview
+                      ,colorFor: colorFor
+                      ,colorAttrFor: colorAttrFor
+                      ,viewTopicDocOverview: viewTopicDocOverview
+                      ,trackInfoFmt: trackInfoFmt
+                      ,showBar: showBar
+                      ,showTrack: showTrack
+                      ,warning: warning
+                      ,alert: alert
+                      ,alertBase: alertBase
+                      ,viewTopicTokens: viewTopicTokens
+                      ,viewTopic: viewTopic
+                      ,viewDoc: viewDoc
+                      ,viewDocData: viewDocData
+                      ,viewDocTopicBar: viewDocTopicBar
+                      ,mkPlayIcon: mkPlayIcon
+                      ,playIcon: playIcon
+                      ,viewGraph: viewGraph};
+   return _elm.View.values;
+};

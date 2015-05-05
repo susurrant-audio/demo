@@ -1,0 +1,47 @@
+Elm.GraphData = Elm.GraphData || {};
+Elm.GraphData.make = function (_elm) {
+   "use strict";
+   _elm.GraphData = _elm.GraphData || {};
+   if (_elm.GraphData.values)
+   return _elm.GraphData.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "GraphData",
+   $Json$Decode = Elm.Json.Decode.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Model = Elm.Model.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $Task = Elm.Task.make(_elm);
+   var graphRetrieve = $Signal.mailbox($Maybe.Nothing);
+   var sendGraphData = function (d) {
+      return A2($Signal.send,
+      graphRetrieve.address,
+      $Maybe.Just(d));
+   };
+   var link = A3($Json$Decode.tuple2,
+   F2(function (v0,v1) {
+      return {ctor: "_Tuple2"
+             ,_0: v0
+             ,_1: v1};
+   }),
+   $Json$Decode.string,
+   $Json$Decode.string);
+   var node = $Json$Decode.string;
+   var graphDec = A3($Json$Decode.object2,
+   $Model.GraphData,
+   A2($Json$Decode._op[":="],
+   "nodes",
+   $Json$Decode.list(node)),
+   A2($Json$Decode._op[":="],
+   "links",
+   $Json$Decode.list(link)));
+   _elm.GraphData.values = {_op: _op
+                           ,node: node
+                           ,link: link
+                           ,graphDec: graphDec
+                           ,graphRetrieve: graphRetrieve
+                           ,sendGraphData: sendGraphData};
+   return _elm.GraphData.values;
+};

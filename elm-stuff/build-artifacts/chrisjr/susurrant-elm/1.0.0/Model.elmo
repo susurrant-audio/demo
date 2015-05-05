@@ -1,0 +1,144 @@
+Elm.Model = Elm.Model || {};
+Elm.Model.make = function (_elm) {
+   "use strict";
+   _elm.Model = _elm.Model || {};
+   if (_elm.Model.values)
+   return _elm.Model.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "Model",
+   $Array = Elm.Array.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Dict = Elm.Dict.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Set = Elm.Set.make(_elm),
+   $String = Elm.String.make(_elm);
+   var noInfo = function (track) {
+      return {_: {}
+             ,title: ""
+             ,trackID: track
+             ,url: ""
+             ,username: ""};
+   };
+   var State = F4(function (a,
+   b,
+   c,
+   d) {
+      return {_: {}
+             ,currentPath: b
+             ,mode: a
+             ,oscConnected: c
+             ,playing: d};
+   });
+   var DocFocus = function (a) {
+      return {ctor: "DocFocus"
+             ,_0: a};
+   };
+   var TopicFocus = function (a) {
+      return {ctor: "TopicFocus"
+             ,_0: a};
+   };
+   var Overview = {ctor: "Overview"};
+   var defaultState = {_: {}
+                      ,currentPath: "/index.html"
+                      ,mode: Overview
+                      ,oscConnected: false
+                      ,playing: $Set.empty};
+   var GraphData = F2(function (a,
+   b) {
+      return {_: {}
+             ,links: b
+             ,nodes: a};
+   });
+   var TrackTopics = F2(function (a,
+   b) {
+      return {_: {}
+             ,topics: b
+             ,track: a};
+   });
+   var TaggedToken = F3(function (a,
+   b,
+   c) {
+      return {_: {}
+             ,beat_coef: a
+             ,chroma: b
+             ,gfcc: c};
+   });
+   var TrackInfo = F4(function (a,
+   b,
+   c,
+   d) {
+      return {_: {}
+             ,title: b
+             ,trackID: a
+             ,url: d
+             ,username: c};
+   });
+   var Data = F7(function (a,
+   b,
+   c,
+   d,
+   e,
+   f,
+   g) {
+      return {_: {}
+             ,docMetadata: e
+             ,docTopics: b
+             ,tokenMaxLikelyTopic: g
+             ,tokenTopics: c
+             ,topicPrevalence: a
+             ,topicTokens: d
+             ,vocab: f};
+   });
+   var TokenDatum = F4(function (a,
+   b,
+   c,
+   d) {
+      return {_: {}
+             ,id: b
+             ,prob: d
+             ,tokenType: c
+             ,values: a};
+   });
+   var Text = {ctor: "Text"};
+   var Chroma = {ctor: "Chroma"};
+   var BeatCoef = {ctor: "BeatCoef"};
+   var Gfcc = {ctor: "Gfcc"};
+   var tokenTypeOf = function (x) {
+      return A2($String.startsWith,
+      "gfcc",
+      x) ? Gfcc : A2($String.startsWith,
+      "chroma",
+      x) ? Chroma : A2($String.startsWith,
+      "beat_coef",
+      x) ? BeatCoef : Text;
+   };
+   var Model = F2(function (a,b) {
+      return {_: {}
+             ,data: a
+             ,track: b};
+   });
+   _elm.Model.values = {_op: _op
+                       ,Model: Model
+                       ,Gfcc: Gfcc
+                       ,BeatCoef: BeatCoef
+                       ,Chroma: Chroma
+                       ,Text: Text
+                       ,TokenDatum: TokenDatum
+                       ,Data: Data
+                       ,TrackInfo: TrackInfo
+                       ,TaggedToken: TaggedToken
+                       ,TrackTopics: TrackTopics
+                       ,GraphData: GraphData
+                       ,Overview: Overview
+                       ,TopicFocus: TopicFocus
+                       ,DocFocus: DocFocus
+                       ,State: State
+                       ,defaultState: defaultState
+                       ,noInfo: noInfo
+                       ,tokenTypeOf: tokenTypeOf};
+   return _elm.Model.values;
+};

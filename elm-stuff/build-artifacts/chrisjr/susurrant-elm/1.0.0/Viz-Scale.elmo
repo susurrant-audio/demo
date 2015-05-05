@@ -1,0 +1,121 @@
+Elm.Viz = Elm.Viz || {};
+Elm.Viz.Scale = Elm.Viz.Scale || {};
+Elm.Viz.Scale.make = function (_elm) {
+   "use strict";
+   _elm.Viz = _elm.Viz || {};
+   _elm.Viz.Scale = _elm.Viz.Scale || {};
+   if (_elm.Viz.Scale.values)
+   return _elm.Viz.Scale.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "Viz.Scale",
+   $Basics = Elm.Basics.make(_elm),
+   $List = Elm.List.make(_elm);
+   var lerp = F2(function (range,
+   x) {
+      return function () {
+         switch (range.ctor)
+         {case "::":
+            switch (range._1.ctor)
+              {case "::":
+                 switch (range._1._1.ctor)
+                   {case "[]": return function () {
+                           var dist = range._1._0 - range._0;
+                           return range._0 + dist * x;
+                        }();}
+                   break;}
+              break;}
+         _U.badCase($moduleName,
+         "between lines 32 and 35");
+      }();
+   });
+   var toUnitInterval = F2(function (domain,
+   x) {
+      return function () {
+         switch (domain.ctor)
+         {case "::":
+            switch (domain._1.ctor)
+              {case "::":
+                 switch (domain._1._1.ctor)
+                   {case "[]": return function () {
+                           var dist = domain._1._0 - domain._0;
+                           return (x - domain._0) / dist;
+                        }();}
+                   break;}
+              break;}
+         _U.badCase($moduleName,
+         "between lines 25 and 28");
+      }();
+   });
+   var Scale = F3(function (a,
+   b,
+   c) {
+      return {_: {}
+             ,domain: a
+             ,range: b
+             ,scaleType: c};
+   });
+   var Log = function (a) {
+      return {ctor: "Log",_0: a};
+   };
+   var logScale = {_: {}
+                  ,domain: _L.fromArray([1.0e-4
+                                        ,1.0])
+                  ,range: _L.fromArray([0.0,1.0])
+                  ,scaleType: Log(2.0)};
+   var Linear = {ctor: "Linear"};
+   var linear = {_: {}
+                ,domain: _L.fromArray([0.0,1.0])
+                ,range: _L.fromArray([0.0,1.0])
+                ,scaleType: Linear};
+   var logToLinearScale = F3(function (domain,
+   range,
+   base) {
+      return {_: {}
+             ,domain: A2($List.map,
+             $Basics.logBase(base),
+             domain)
+             ,range: range
+             ,scaleType: Linear};
+   });
+   var convert = F2(function (_v10,
+   d) {
+      return function () {
+         return function () {
+            var _v12 = _v10.scaleType;
+            switch (_v12.ctor)
+            {case "Linear":
+               return function () {
+                    var x = A2(toUnitInterval,
+                    _v10.domain,
+                    d);
+                    return A2(lerp,_v10.range,x);
+                 }();
+               case "Log": return function () {
+                    var lin = A3(logToLinearScale,
+                    _v10.domain,
+                    _v10.range,
+                    _v12._0);
+                    return A2(convert,
+                    lin,
+                    A2($Basics.logBase,_v12._0,d));
+                 }();}
+            _U.badCase($moduleName,
+            "between lines 46 and 52");
+         }();
+      }();
+   });
+   _elm.Viz.Scale.values = {_op: _op
+                           ,Linear: Linear
+                           ,Log: Log
+                           ,Scale: Scale
+                           ,linear: linear
+                           ,logScale: logScale
+                           ,toUnitInterval: toUnitInterval
+                           ,lerp: lerp
+                           ,logToLinearScale: logToLinearScale
+                           ,convert: convert};
+   return _elm.Viz.Scale.values;
+};

@@ -1,0 +1,89 @@
+Elm.Audio = Elm.Audio || {};
+Elm.Audio.make = function (_elm) {
+   "use strict";
+   _elm.Audio = _elm.Audio || {};
+   if (_elm.Audio.values)
+   return _elm.Audio.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "Audio",
+   $Basics = Elm.Basics.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Model = Elm.Model.make(_elm),
+   $OSC = Elm.OSC.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $Task = Elm.Task.make(_elm),
+   $TopicData = Elm.TopicData.make(_elm),
+   $Updates = Elm.Updates.make(_elm);
+   var stopToken = function (token) {
+      return function () {
+         var update = A3($Updates.soundUpdate,
+         token.id,
+         false,
+         $OSC.StopTokens);
+         return A2($Signal.send,
+         $Updates.soundUpdates.address,
+         update);
+      }();
+   };
+   var playToken = F2(function (token,
+   data) {
+      return function () {
+         var tokens = _L.fromArray([{ctor: "_Tuple2"
+                                    ,_0: token.id
+                                    ,_1: 1.0}]);
+         var update = A3($Updates.soundUpdate,
+         token.id,
+         true,
+         $OSC.PlayTokens(tokens));
+         return A2($Signal.send,
+         $Updates.soundUpdates.address,
+         update);
+      }();
+   });
+   var stopTopic = function (topic) {
+      return function () {
+         var update = A3($Updates.soundUpdate,
+         A2($Basics._op["++"],
+         "topic",
+         $Basics.toString(topic)),
+         false,
+         $OSC.StopTokens);
+         return A2($Signal.send,
+         $Updates.soundUpdates.address,
+         update);
+      }();
+   };
+   var playTopic = F2(function (topic,
+   data) {
+      return function () {
+         var tokens = A2($TopicData.topicTokens,
+         topic,
+         data);
+         var tokens$ = A2($List.map,
+         function (t) {
+            return {ctor: "_Tuple2"
+                   ,_0: t.id
+                   ,_1: t.prob};
+         },
+         tokens);
+         var update = A3($Updates.soundUpdate,
+         A2($Basics._op["++"],
+         "topic",
+         $Basics.toString(topic)),
+         true,
+         $OSC.PlayTokens(tokens$));
+         return A2($Signal.send,
+         $Updates.soundUpdates.address,
+         update);
+      }();
+   });
+   _elm.Audio.values = {_op: _op
+                       ,playTopic: playTopic
+                       ,stopTopic: stopTopic
+                       ,playToken: playToken
+                       ,stopToken: stopToken};
+   return _elm.Audio.values;
+};

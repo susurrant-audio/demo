@@ -1,0 +1,246 @@
+Elm.Viz = Elm.Viz || {};
+Elm.Viz.Bars = Elm.Viz.Bars || {};
+Elm.Viz.Bars.make = function (_elm) {
+   "use strict";
+   _elm.Viz = _elm.Viz || {};
+   _elm.Viz.Bars = _elm.Viz.Bars || {};
+   if (_elm.Viz.Bars.values)
+   return _elm.Viz.Bars.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "Viz.Bars",
+   $Array = Elm.Array.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Common = Elm.Common.make(_elm),
+   $Html = Elm.Html.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Model = Elm.Model.make(_elm),
+   $Svg = Elm.Svg.make(_elm),
+   $Svg$Attributes = Elm.Svg.Attributes.make(_elm),
+   $Viz$Common = Elm.Viz.Common.make(_elm),
+   $Viz$Ordinal = Elm.Viz.Ordinal.make(_elm),
+   $Viz$Scale = Elm.Viz.Scale.make(_elm);
+   var exampleData = function () {
+      var mkTopics = function (xs) {
+         return A2($Array.indexedMap,
+         F2(function (i,x) {
+            return {_: {},x: i,y: x};
+         }),
+         xs);
+      };
+      var f = function (xs) {
+         return {_: {}
+                ,topics: mkTopics($Array.fromList(xs))
+                ,track: $Model.noInfo("")};
+      };
+      return f(_L.range(0,9));
+   }();
+   var verticalBars = F2(function (_v0,
+   data) {
+      return function () {
+         return function () {
+            var yMax = $Maybe.withDefault(0)($List.head($List.reverse(_v0.yS.range)));
+            var bar = function (d) {
+               return A2($Svg.rect,
+               _L.fromArray([$Svg$Attributes.width($Basics.toString(A2($Viz$Scale.convert,
+                            _v0.xS,
+                            1.0)))
+                            ,$Svg$Attributes.height($Basics.toString(A2($Viz$Scale.convert,
+                            _v0.yS,
+                            d.y)))
+                            ,$Svg$Attributes.fill(_v0.cS(d.x))
+                            ,$Svg$Attributes.x($Basics.toString(A2($Viz$Scale.convert,
+                            _v0.xS,
+                            $Basics.toFloat(d.x))))
+                            ,$Svg$Attributes.y($Basics.toString(yMax - A2($Viz$Scale.convert,
+                            _v0.yS,
+                            d.y)))]),
+               _L.fromArray([]));
+            };
+            return $Array.toList(A2($Array.map,
+            bar,
+            data));
+         }();
+      }();
+   });
+   var bars = F2(function (_v2,
+   data) {
+      return function () {
+         return function () {
+            var bar = function (d) {
+               return A2($Svg.rect,
+               _L.fromArray([$Svg$Attributes.width($Basics.toString(A2($Viz$Scale.convert,
+                            _v2.xS,
+                            d.y)))
+                            ,$Svg$Attributes.height($Basics.toString(A2($Viz$Scale.convert,
+                            _v2.yS,
+                            1.0)))
+                            ,$Svg$Attributes.fill(_v2.cS(d.x))
+                            ,$Svg$Attributes.x($Basics.toString(A2($Viz$Scale.convert,
+                            _v2.xS,
+                            d.y0)))]),
+               _L.fromArray([]));
+            };
+            return $Array.toList(A2($Array.map,
+            bar,
+            data));
+         }();
+      }();
+   });
+   var toXYT = function (_v4) {
+      return function () {
+         return A2($Array.map,
+         function (d) {
+            return _U.insert("track",
+            _v4.track,
+            d);
+         },
+         _v4.topics);
+      }();
+   };
+   var toData = function (trackTopics) {
+      return function () {
+         var cumul = F2(function (_v6,
+         acc) {
+            return function () {
+               return function () {
+                  var y0 = $Maybe.withDefault(0.0)($Maybe.map(function (_) {
+                     return _.y1;
+                  })($Common.last(acc)));
+                  return A2($Array.push,
+                  {_: {}
+                  ,trackInfo: _v6.track
+                  ,x: _v6.x
+                  ,y: _v6.y
+                  ,y0: y0
+                  ,y1: y0 + _v6.y},
+                  acc);
+               }();
+            }();
+         });
+         return A3($Array.foldl,
+         cumul,
+         $Array.empty,
+         toXYT(trackTopics));
+      }();
+   };
+   var baseBarDisplay = F7(function (getDomains,
+   v,
+   attrs,
+   margin,
+   w,
+   h,
+   data) {
+      return function () {
+         var data$ = toData(data);
+         var ds = A3($Viz$Common.dims,
+         margin,
+         w,
+         h);
+         var domains = getDomains(data.topics);
+         return A4($Viz$Common.svgWithMargin,
+         attrs,
+         ds,
+         margin,
+         A2(v,
+         A2($Viz$Common.scales,
+         domains,
+         ds),
+         data$));
+      }();
+   });
+   var colorScale = $Viz$Ordinal.color$($Viz$Ordinal.category10(_L.range(0,
+   9)));
+   var verticalDomains = function (arr) {
+      return function () {
+         var _ = $Viz$Common.extent($Array.toList(A2($Array.map,
+         function (_) {
+            return _.y;
+         },
+         arr)));
+         var a = function () {
+            switch (_.ctor)
+            {case "::": switch (_._1.ctor)
+                 {case "::":
+                    switch (_._1._1.ctor)
+                      {case "[]": return _._0;}
+                      break;}
+                 break;}
+            _U.badCase($moduleName,
+            "on line 37, column 18 to 58");
+         }();
+         var b = function () {
+            switch (_.ctor)
+            {case "::": switch (_._1.ctor)
+                 {case "::":
+                    switch (_._1._1.ctor)
+                      {case "[]": return _._1._0;}
+                      break;}
+                 break;}
+            _U.badCase($moduleName,
+            "on line 37, column 18 to 58");
+         }();
+         var ys = _L.fromArray([a - 0.1
+                               ,b]);
+         return {_: {}
+                ,cDomain: _L.range(0,9)
+                ,xDomain: _L.fromArray([0.0
+                                       ,9.0])
+                ,yDomain: ys};
+      }();
+   };
+   var verticalBarDisplay = A2(baseBarDisplay,
+   verticalDomains,
+   verticalBars);
+   var main = A5(verticalBarDisplay,
+   _L.fromArray([]),
+   $Viz$Common.noMargin,
+   64,
+   100,
+   exampleData);
+   var horizontalDomains = function (arr) {
+      return {_: {}
+             ,cDomain: _L.range(0,9)
+             ,xDomain: _L.fromArray([0
+                                    ,$List.sum($Array.toList(A2($Array.map,
+                                    function (_) {
+                                       return _.y;
+                                    },
+                                    arr)))])
+             ,yDomain: _L.fromArray([0.0
+                                    ,1.0])};
+   };
+   var barDisplay = A2(baseBarDisplay,
+   horizontalDomains,
+   bars);
+   var Datum = F5(function (a,
+   b,
+   c,
+   d,
+   e) {
+      return {_: {}
+             ,trackInfo: e
+             ,x: a
+             ,y: b
+             ,y0: c
+             ,y1: d};
+   });
+   _elm.Viz.Bars.values = {_op: _op
+                          ,Datum: Datum
+                          ,horizontalDomains: horizontalDomains
+                          ,verticalDomains: verticalDomains
+                          ,colorScale: colorScale
+                          ,toXYT: toXYT
+                          ,toData: toData
+                          ,bars: bars
+                          ,verticalBars: verticalBars
+                          ,baseBarDisplay: baseBarDisplay
+                          ,barDisplay: barDisplay
+                          ,verticalBarDisplay: verticalBarDisplay
+                          ,exampleData: exampleData
+                          ,main: main};
+   return _elm.Viz.Bars.values;
+};

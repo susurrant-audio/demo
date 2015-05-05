@@ -1,0 +1,2946 @@
+Elm.Bootstrap = Elm.Bootstrap || {};
+Elm.Bootstrap.Html = Elm.Bootstrap.Html || {};
+Elm.Bootstrap.Html.make = function (_elm) {
+   "use strict";
+   _elm.Bootstrap = _elm.Bootstrap || {};
+   _elm.Bootstrap.Html = _elm.Bootstrap.Html || {};
+   if (_elm.Bootstrap.Html.values)
+   return _elm.Bootstrap.Html.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "Bootstrap.Html",
+   $Basics = Elm.Basics.make(_elm),
+   $Bootstrap$Html$Internal = Elm.Bootstrap.Html.Internal.make(_elm),
+   $Html = Elm.Html.make(_elm),
+   $Html$Shorthand = Elm.Html.Shorthand.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Signal = Elm.Signal.make(_elm);
+   var panelTitle_ = function (t) {
+      return A2($Html$Shorthand.h2$,
+      {_: {},$class: "panel-title"},
+      _L.fromArray([$Html.text(t)]));
+   };
+   var panelBody_ = $Html$Shorthand.div$({_: {}
+                                         ,$class: "panel-body"});
+   var panelHeading_ = $Html$Shorthand.div$({_: {}
+                                            ,$class: "panel-heading"});
+   var panelDefault_ = $Html$Shorthand.div$({_: {}
+                                            ,$class: "panel panel-default"});
+   var navbarHeader_ = $Html$Shorthand.div$({_: {}
+                                            ,$class: "navbar-header"});
+   var navbar$ = function (c) {
+      return $Html$Shorthand.nav$({_: {}
+                                  ,$class: A2($Basics._op["++"],
+                                  "navbar ",
+                                  c)});
+   };
+   var navbarDefault$ = function (c) {
+      return navbar$(A2($Basics._op["++"],
+      "navbar-default ",
+      c));
+   };
+   var glyphiconTreeDeciduous$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-tree-deciduous ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconTreeDeciduous_ = glyphiconTreeDeciduous$("");
+   var glyphiconTreeConifer$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-tree-conifer ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconTreeConifer_ = glyphiconTreeConifer$("");
+   var glyphiconCloudUpload$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-cloud-upload ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconCloudUpload_ = glyphiconCloudUpload$("");
+   var glyphiconCloudDownload$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-cloud-download ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconCloudDownload_ = glyphiconCloudDownload$("");
+   var glyphiconRegistrationMark$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-registration-mark ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconRegistrationMark_ = glyphiconRegistrationMark$("");
+   var glyphiconCopyrightMark$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-copyright-mark ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconCopyrightMark_ = glyphiconCopyrightMark$("");
+   var glyphiconSound71$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-sound-7-1 ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconSound71_ = glyphiconSound71$("");
+   var glyphiconSound61$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-sound-6-1 ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconSound61_ = glyphiconSound61$("");
+   var glyphiconSound51$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-sound-5-1 ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconSound51_ = glyphiconSound51$("");
+   var glyphiconSoundDolby$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-sound-dolby ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconSoundDolby_ = glyphiconSoundDolby$("");
+   var glyphiconSoundStereo$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-sound-stereo ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconSoundStereo_ = glyphiconSoundStereo$("");
+   var glyphiconSubtitles$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-subtitles ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconSubtitles_ = glyphiconSubtitles$("");
+   var glyphiconHdVideo$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-hd-video ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconHdVideo_ = glyphiconHdVideo$("");
+   var glyphiconSdVideo$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-sd-video ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconSdVideo_ = glyphiconSdVideo$("");
+   var glyphiconStats$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-stats ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconStats_ = glyphiconStats$("");
+   var glyphiconTower$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-tower ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconTower_ = glyphiconTower$("");
+   var glyphiconPhoneAlt$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-phone-alt ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconPhoneAlt_ = glyphiconPhoneAlt$("");
+   var glyphiconEarphone$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-earphone ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconEarphone_ = glyphiconEarphone$("");
+   var glyphiconCompressed$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-compressed ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconCompressed_ = glyphiconCompressed$("");
+   var glyphiconHeader$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-header ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconHeader_ = glyphiconHeader$("");
+   var glyphiconCutlery$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-cutlery ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconCutlery_ = glyphiconCutlery$("");
+   var glyphiconTransfer$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-transfer ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconTransfer_ = glyphiconTransfer$("");
+   var glyphiconCreditCard$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-credit-card ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconCreditCard_ = glyphiconCreditCard$("");
+   var glyphiconFloppyOpen$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-floppy-open ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconFloppyOpen_ = glyphiconFloppyOpen$("");
+   var glyphiconFloppySave$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-floppy-save ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconFloppySave_ = glyphiconFloppySave$("");
+   var glyphiconFloppyRemove$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-floppy-remove ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconFloppyRemove_ = glyphiconFloppyRemove$("");
+   var glyphiconFloppySaved$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-floppy-saved ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconFloppySaved_ = glyphiconFloppySaved$("");
+   var glyphiconFloppyDisk$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-floppy-disk ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconFloppyDisk_ = glyphiconFloppyDisk$("");
+   var glyphiconSend$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-send ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconSend_ = glyphiconSend$("");
+   var glyphiconExport$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-export ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconExport_ = glyphiconExport$("");
+   var glyphiconImport$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-import ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconImport_ = glyphiconImport$("");
+   var glyphiconSaved$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-saved ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconSaved_ = glyphiconSaved$("");
+   var glyphiconOpen$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-open ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconOpen_ = glyphiconOpen$("");
+   var glyphiconSave$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-save ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconSave_ = glyphiconSave$("");
+   var glyphiconRecord$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-record ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconRecord_ = glyphiconRecord$("");
+   var glyphiconNewWindow$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-new-window ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconNewWindow_ = glyphiconNewWindow$("");
+   var glyphiconLogOut$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-log-out ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconLogOut_ = glyphiconLogOut$("");
+   var glyphiconFlash$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-flash ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconFlash_ = glyphiconFlash$("");
+   var glyphiconLogIn$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-log-in ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconLogIn_ = glyphiconLogIn$("");
+   var glyphiconCollapseUp$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-collapse-up ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconCollapseUp_ = glyphiconCollapseUp$("");
+   var glyphiconCollapseDown$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-collapse-down ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconCollapseDown_ = glyphiconCollapseDown$("");
+   var glyphiconExpand$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-expand ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconExpand_ = glyphiconExpand$("");
+   var glyphiconUnchecked$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-unchecked ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconUnchecked_ = glyphiconUnchecked$("");
+   var glyphiconSortByAttributesAlt$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-sort-by-attributes-alt ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconSortByAttributesAlt_ = glyphiconSortByAttributesAlt$("");
+   var glyphiconSortByAttributes$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-sort-by-attributes ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconSortByAttributes_ = glyphiconSortByAttributes$("");
+   var glyphiconSortByOrderAlt$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-sort-by-order-alt ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconSortByOrderAlt_ = glyphiconSortByOrderAlt$("");
+   var glyphiconSortByOrder$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-sort-by-order ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconSortByOrder_ = glyphiconSortByOrder$("");
+   var glyphiconSortByAlphabetAlt$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-sort-by-alphabet-alt ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconSortByAlphabetAlt_ = glyphiconSortByAlphabetAlt$("");
+   var glyphiconSortByAlphabet$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-sort-by-alphabet ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconSortByAlphabet_ = glyphiconSortByAlphabet$("");
+   var glyphiconSort$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-sort ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconSort_ = glyphiconSort$("");
+   var glyphiconGbp$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-gbp ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconGbp_ = glyphiconGbp$("");
+   var glyphiconUsd$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-usd ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconUsd_ = glyphiconUsd$("");
+   var glyphiconPushpin$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-pushpin ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconPushpin_ = glyphiconPushpin$("");
+   var glyphiconPhone$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-phone ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconPhone_ = glyphiconPhone$("");
+   var glyphiconLink$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-link ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconLink_ = glyphiconLink$("");
+   var glyphiconHeartEmpty$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-heart-empty ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconHeartEmpty_ = glyphiconHeartEmpty$("");
+   var glyphiconPaperclip$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-paperclip ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconPaperclip_ = glyphiconPaperclip$("");
+   var glyphiconDashboard$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-dashboard ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconDashboard_ = glyphiconDashboard$("");
+   var glyphiconFullscreen$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-fullscreen ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconFullscreen_ = glyphiconFullscreen$("");
+   var glyphiconBriefcase$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-briefcase ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconBriefcase_ = glyphiconBriefcase$("");
+   var glyphiconFilter$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-filter ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconFilter_ = glyphiconFilter$("");
+   var glyphiconTasks$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-tasks ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconTasks_ = glyphiconTasks$("");
+   var glyphiconWrench$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-wrench ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconWrench_ = glyphiconWrench$("");
+   var glyphiconGlobe$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-globe ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconGlobe_ = glyphiconGlobe$("");
+   var glyphiconCircleArrowDown$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-circle-arrow-down ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconCircleArrowDown_ = glyphiconCircleArrowDown$("");
+   var glyphiconCircleArrowUp$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-circle-arrow-up ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconCircleArrowUp_ = glyphiconCircleArrowUp$("");
+   var glyphiconCircleArrowLeft$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-circle-arrow-left ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconCircleArrowLeft_ = glyphiconCircleArrowLeft$("");
+   var glyphiconCircleArrowRight$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-circle-arrow-right ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconCircleArrowRight_ = glyphiconCircleArrowRight$("");
+   var glyphiconHandDown$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-hand-down ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconHandDown_ = glyphiconHandDown$("");
+   var glyphiconHandUp$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-hand-up ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconHandUp_ = glyphiconHandUp$("");
+   var glyphiconHandLeft$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-hand-left ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconHandLeft_ = glyphiconHandLeft$("");
+   var glyphiconHandRight$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-hand-right ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconHandRight_ = glyphiconHandRight$("");
+   var glyphiconThumbsDown$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-thumbs-down ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconThumbsDown_ = glyphiconThumbsDown$("");
+   var glyphiconThumbsUp$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-thumbs-up ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconThumbsUp_ = glyphiconThumbsUp$("");
+   var glyphiconCertificate$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-certificate ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconCertificate_ = glyphiconCertificate$("");
+   var glyphiconBell$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-bell ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconBell_ = glyphiconBell$("");
+   var glyphiconBullhorn$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-bullhorn ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconBullhorn_ = glyphiconBullhorn$("");
+   var glyphiconHdd$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-hdd ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconHdd_ = glyphiconHdd$("");
+   var glyphiconResizeHorizontal$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-resize-horizontal ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconResizeHorizontal_ = glyphiconResizeHorizontal$("");
+   var glyphiconResizeVertical$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-resize-vertical ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconResizeVertical_ = glyphiconResizeVertical$("");
+   var glyphiconFolderOpen$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-folder-open ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconFolderOpen_ = glyphiconFolderOpen$("");
+   var glyphiconFolderClose$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-folder-close ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconFolderClose_ = glyphiconFolderClose$("");
+   var glyphiconShoppingCart$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-shopping-cart ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconShoppingCart_ = glyphiconShoppingCart$("");
+   var glyphiconRetweet$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-retweet ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconRetweet_ = glyphiconRetweet$("");
+   var glyphiconChevronDown$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-chevron-down ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconChevronDown_ = glyphiconChevronDown$("");
+   var glyphiconChevronUp$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-chevron-up ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconChevronUp_ = glyphiconChevronUp$("");
+   var glyphiconMagnet$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-magnet ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconMagnet_ = glyphiconMagnet$("");
+   var glyphiconComment$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-comment ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconComment_ = glyphiconComment$("");
+   var glyphiconRandom$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-random ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconRandom_ = glyphiconRandom$("");
+   var glyphiconCalendar$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-calendar ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconCalendar_ = glyphiconCalendar$("");
+   var glyphiconPlane$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-plane ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconPlane_ = glyphiconPlane$("");
+   var glyphiconWarningSign$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-warning-sign ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconWarningSign_ = glyphiconWarningSign$("");
+   var glyphiconEyeClose$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-eye-close ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconEyeClose_ = glyphiconEyeClose$("");
+   var glyphiconEyeOpen$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-eye-open ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconEyeOpen_ = glyphiconEyeOpen$("");
+   var glyphiconFire$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-fire ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconFire_ = glyphiconFire$("");
+   var glyphiconLeaf$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-leaf ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconLeaf_ = glyphiconLeaf$("");
+   var glyphiconGift$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-gift ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconGift_ = glyphiconGift$("");
+   var glyphiconExclamationSign$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-exclamation-sign ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconExclamationSign_ = glyphiconExclamationSign$("");
+   var glyphiconResizeSmall$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-resize-small ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconResizeSmall_ = glyphiconResizeSmall$("");
+   var glyphiconResizeFull$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-resize-full ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconResizeFull_ = glyphiconResizeFull$("");
+   var glyphiconShareAlt$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-share-alt ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconShareAlt_ = glyphiconShareAlt$("");
+   var glyphiconArrowDown$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-arrow-down ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconArrowDown_ = glyphiconArrowDown$("");
+   var glyphiconArrowUp$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-arrow-up ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconArrowUp_ = glyphiconArrowUp$("");
+   var glyphiconArrowRight$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-arrow-right ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconArrowRight_ = glyphiconArrowRight$("");
+   var glyphiconArrowLeft$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-arrow-left ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconArrowLeft_ = glyphiconArrowLeft$("");
+   var glyphiconBanCircle$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-ban-circle ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconBanCircle_ = glyphiconBanCircle$("");
+   var glyphiconOkCircle$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-ok-circle ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconOkCircle_ = glyphiconOkCircle$("");
+   var glyphiconRemoveCircle$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-remove-circle ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconRemoveCircle_ = glyphiconRemoveCircle$("");
+   var glyphiconScreenshot$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-screenshot ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconScreenshot_ = glyphiconScreenshot$("");
+   var glyphiconInfoSign$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-info-sign ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconInfoSign_ = glyphiconInfoSign$("");
+   var glyphiconQuestionSign$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-question-sign ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconQuestionSign_ = glyphiconQuestionSign$("");
+   var glyphiconOkSign$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-ok-sign ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconOkSign_ = glyphiconOkSign$("");
+   var glyphiconRemoveSign$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-remove-sign ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconRemoveSign_ = glyphiconRemoveSign$("");
+   var glyphiconMinusSign$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-minus-sign ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconMinusSign_ = glyphiconMinusSign$("");
+   var glyphiconPlusSign$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-plus-sign ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconPlusSign_ = glyphiconPlusSign$("");
+   var glyphiconChevronRight$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-chevron-right ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconChevronRight_ = glyphiconChevronRight$("");
+   var glyphiconChevronLeft$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-chevron-left ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconChevronLeft_ = glyphiconChevronLeft$("");
+   var glyphiconEject$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-eject ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconEject_ = glyphiconEject$("");
+   var glyphiconStepForward$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-step-forward ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconStepForward_ = glyphiconStepForward$("");
+   var glyphiconFastForward$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-fast-forward ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconFastForward_ = glyphiconFastForward$("");
+   var glyphiconForward$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-forward ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconForward_ = glyphiconForward$("");
+   var glyphiconStop$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-stop ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconStop_ = glyphiconStop$("");
+   var glyphiconPause$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-pause ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconPause_ = glyphiconPause$("");
+   var glyphiconPlay$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-play ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconPlay_ = glyphiconPlay$("");
+   var glyphiconBackward$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-backward ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconBackward_ = glyphiconBackward$("");
+   var glyphiconFastBackward$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-fast-backward ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconFastBackward_ = glyphiconFastBackward$("");
+   var glyphiconStepBackward$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-step-backward ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconStepBackward_ = glyphiconStepBackward$("");
+   var glyphiconMove$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-move ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconMove_ = glyphiconMove$("");
+   var glyphiconCheck$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-check ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconCheck_ = glyphiconCheck$("");
+   var glyphiconShare$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-share ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconShare_ = glyphiconShare$("");
+   var glyphiconEdit$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-edit ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconEdit_ = glyphiconEdit$("");
+   var glyphiconTint$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-tint ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconTint_ = glyphiconTint$("");
+   var glyphiconAdjust$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-adjust ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconAdjust_ = glyphiconAdjust$("");
+   var glyphiconMapMarker$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-map-marker ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconMapMarker_ = glyphiconMapMarker$("");
+   var glyphiconPicture$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-picture ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconPicture_ = glyphiconPicture$("");
+   var glyphiconFacetimeVideo$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-facetime-video ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconFacetimeVideo_ = glyphiconFacetimeVideo$("");
+   var glyphiconIndentRight$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-indent-right ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconIndentRight_ = glyphiconIndentRight$("");
+   var glyphiconIndentLeft$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-indent-left ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconIndentLeft_ = glyphiconIndentLeft$("");
+   var glyphiconList$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-list ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconList_ = glyphiconList$("");
+   var glyphiconAlignJustify$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-align-justify ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconAlignJustify_ = glyphiconAlignJustify$("");
+   var glyphiconAlignRight$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-align-right ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconAlignRight_ = glyphiconAlignRight$("");
+   var glyphiconAlignCenter$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-align-center ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconAlignCenter_ = glyphiconAlignCenter$("");
+   var glyphiconAlignLeft$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-align-left ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconAlignLeft_ = glyphiconAlignLeft$("");
+   var glyphiconTextWidth$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-text-width ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconTextWidth_ = glyphiconTextWidth$("");
+   var glyphiconTextHeight$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-text-height ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconTextHeight_ = glyphiconTextHeight$("");
+   var glyphiconItalic$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-italic ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconItalic_ = glyphiconItalic$("");
+   var glyphiconBold$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-bold ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconBold_ = glyphiconBold$("");
+   var glyphiconFont$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-font ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconFont_ = glyphiconFont$("");
+   var glyphiconCamera$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-camera ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconCamera_ = glyphiconCamera$("");
+   var glyphiconPrint$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-print ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconPrint_ = glyphiconPrint$("");
+   var glyphiconBookmark$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-bookmark ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconBookmark_ = glyphiconBookmark$("");
+   var glyphiconBook$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-book ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconBook_ = glyphiconBook$("");
+   var glyphiconTags$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-tags ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconTags_ = glyphiconTags$("");
+   var glyphiconTag$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-tag ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconTag_ = glyphiconTag$("");
+   var glyphiconBarcode$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-barcode ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconBarcode_ = glyphiconBarcode$("");
+   var glyphiconQrcode$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-qrcode ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconQrcode_ = glyphiconQrcode$("");
+   var glyphiconVolumeUp$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-volume-up ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconVolumeUp_ = glyphiconVolumeUp$("");
+   var glyphiconVolumeDown$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-volume-down ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconVolumeDown_ = glyphiconVolumeDown$("");
+   var glyphiconVolumeOff$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-volume-off ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconVolumeOff_ = glyphiconVolumeOff$("");
+   var glyphiconHeadphones$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-headphones ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconHeadphones_ = glyphiconHeadphones$("");
+   var glyphiconFlag$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-flag ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconFlag_ = glyphiconFlag$("");
+   var glyphiconLock$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-lock ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconLock_ = glyphiconLock$("");
+   var glyphiconListAlt$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-list-alt ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconListAlt_ = glyphiconListAlt$("");
+   var glyphiconRefresh$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-refresh ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconRefresh_ = glyphiconRefresh$("");
+   var glyphiconRepeat$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-repeat ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconRepeat_ = glyphiconRepeat$("");
+   var glyphiconPlayCircle$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-play-circle ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconPlayCircle_ = glyphiconPlayCircle$("");
+   var glyphiconInbox$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-inbox ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconInbox_ = glyphiconInbox$("");
+   var glyphiconUpload$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-upload ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconUpload_ = glyphiconUpload$("");
+   var glyphiconDownload$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-download ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconDownload_ = glyphiconDownload$("");
+   var glyphiconDownloadAlt$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-download-alt ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconDownloadAlt_ = glyphiconDownloadAlt$("");
+   var glyphiconRoad$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-road ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconRoad_ = glyphiconRoad$("");
+   var glyphiconTime$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-time ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconTime_ = glyphiconTime$("");
+   var glyphiconFile$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-file ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconFile_ = glyphiconFile$("");
+   var glyphiconHome$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-home ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconHome_ = glyphiconHome$("");
+   var glyphiconTrash$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-trash ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconTrash_ = glyphiconTrash$("");
+   var glyphiconCog$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-cog ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconCog_ = glyphiconCog$("");
+   var glyphiconSignal$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-signal ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconSignal_ = glyphiconSignal$("");
+   var glyphiconOff$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-off ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconOff_ = glyphiconOff$("");
+   var glyphiconZoomOut$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-zoom-out ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconZoomOut_ = glyphiconZoomOut$("");
+   var glyphiconZoomIn$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-zoom-in ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconZoomIn_ = glyphiconZoomIn$("");
+   var glyphiconRemove$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-remove ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconRemove_ = glyphiconRemove$("");
+   var glyphiconOk$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-ok ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconOk_ = glyphiconOk$("");
+   var glyphiconThList$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-th-list ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconThList_ = glyphiconThList$("");
+   var glyphiconTh$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-th ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconTh_ = glyphiconTh$("");
+   var glyphiconThLarge$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-th-large ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconThLarge_ = glyphiconThLarge$("");
+   var glyphiconFilm$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-film ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconFilm_ = glyphiconFilm$("");
+   var glyphiconUser$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-user ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconUser_ = glyphiconUser$("");
+   var glyphiconStarEmpty$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-star-empty ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconStarEmpty_ = glyphiconStarEmpty$("");
+   var glyphiconStar$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-star ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconStar_ = glyphiconStar$("");
+   var glyphiconHeart$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-heart ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconHeart_ = glyphiconHeart$("");
+   var glyphiconSearch$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-search ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconSearch_ = glyphiconSearch$("");
+   var glyphiconMusic$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-music ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconMusic_ = glyphiconMusic$("");
+   var glyphiconGlass$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-glass ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconGlass_ = glyphiconGlass$("");
+   var glyphiconPencil$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-pencil ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconPencil_ = glyphiconPencil$("");
+   var glyphiconEnvelope$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-envelope ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconEnvelope_ = glyphiconEnvelope$("");
+   var glyphiconCloud$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-cloud ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconCloud_ = glyphiconCloud$("");
+   var glyphiconMinus$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-minus ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconMinus_ = glyphiconMinus$("");
+   var glyphiconEuro$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-euro ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconEuro_ = glyphiconEuro$("");
+   var glyphiconPlus$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-plus ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconPlus_ = glyphiconPlus$("");
+   var glyphiconAsterisk$ = function (c) {
+      return A2($Html$Shorthand.span$,
+      {_: {}
+      ,$class: A2($Basics._op["++"],
+      "glyphicon glyphicon-asterisk ",
+      c)},
+      _L.fromArray([]));
+   };
+   var glyphiconAsterisk_ = glyphiconAsterisk$("");
+   var skipNavigation_ = function (t) {
+      return A2($Html$Shorthand.a$,
+      {_: {}
+      ,$class: "sr-only sr-only-focusable"
+      ,href: "#content"},
+      _L.fromArray([$Html.text(t)]));
+   };
+   var btnSubmitLgPrimary_ = function (p) {
+      return A4($Bootstrap$Html$Internal.btnc,
+      "btn-lg btn-primary",
+      "submit",
+      p,
+      $Maybe.Nothing);
+   };
+   var btnSubmitLgPrimary$ = F2(function (c,
+   p) {
+      return A4($Bootstrap$Html$Internal.btnc,
+      A2($Basics._op["++"],
+      "btn-lg btn-primary ",
+      c),
+      "submit",
+      p,
+      $Maybe.Nothing);
+   });
+   var btnSubmitSmPrimary_ = function (p) {
+      return A4($Bootstrap$Html$Internal.btnc,
+      "btn-sm btn-primary",
+      "submit",
+      p,
+      $Maybe.Nothing);
+   };
+   var btnSubmitSmPrimary$ = F2(function (c,
+   p) {
+      return A4($Bootstrap$Html$Internal.btnc,
+      A2($Basics._op["++"],
+      "btn-sm btn-primary ",
+      c),
+      "submit",
+      p,
+      $Maybe.Nothing);
+   });
+   var btnSubmitXsPrimary_ = function (p) {
+      return A4($Bootstrap$Html$Internal.btnc,
+      "btn-xs btn-primary ",
+      "submit",
+      p,
+      $Maybe.Nothing);
+   };
+   var btnSubmitXsPrimary$ = F2(function (c,
+   p) {
+      return A4($Bootstrap$Html$Internal.btnc,
+      A2($Basics._op["++"],
+      "btn-xs btn-primary ",
+      c),
+      "submit",
+      p,
+      $Maybe.Nothing);
+   });
+   var btnSubmitPrimary_ = function (p) {
+      return A4($Bootstrap$Html$Internal.btnc,
+      "btn-primary",
+      "submit",
+      p,
+      $Maybe.Nothing);
+   };
+   var btnSubmitPrimary$ = F2(function (c,
+   p) {
+      return A4($Bootstrap$Html$Internal.btnc,
+      A2($Basics._op["++"],
+      "btn-primary ",
+      c),
+      "submit",
+      p,
+      $Maybe.Nothing);
+   });
+   var btnLgDanger_ = function (p) {
+      return function ($) {
+         return A3($Bootstrap$Html$Internal.btnc,
+         "btn-lg btn-danger",
+         "button",
+         p)($Maybe.Just($));
+      };
+   };
+   var btnLgDanger$ = F2(function (c,
+   p) {
+      return function ($) {
+         return A3($Bootstrap$Html$Internal.btnc,
+         A2($Basics._op["++"],
+         "btn-lg btn-danger ",
+         c),
+         "button",
+         p)($Maybe.Just($));
+      };
+   });
+   var btnSmDanger_ = function (p) {
+      return function ($) {
+         return A3($Bootstrap$Html$Internal.btnc,
+         "btn-sm btn-danger",
+         "button",
+         p)($Maybe.Just($));
+      };
+   };
+   var btnSmDanger$ = F2(function (c,
+   p) {
+      return function ($) {
+         return A3($Bootstrap$Html$Internal.btnc,
+         A2($Basics._op["++"],
+         "btn-sm btn-danger ",
+         c),
+         "button",
+         p)($Maybe.Just($));
+      };
+   });
+   var btnXsDanger_ = function (p) {
+      return function ($) {
+         return A3($Bootstrap$Html$Internal.btnc,
+         "btn-xs btn-danger ",
+         "button",
+         p)($Maybe.Just($));
+      };
+   };
+   var btnXsDanger$ = F2(function (c,
+   p) {
+      return function ($) {
+         return A3($Bootstrap$Html$Internal.btnc,
+         A2($Basics._op["++"],
+         "btn-xs btn-danger ",
+         c),
+         "button",
+         p)($Maybe.Just($));
+      };
+   });
+   var btnDanger_ = function (p) {
+      return function ($) {
+         return A3($Bootstrap$Html$Internal.btnc,
+         "btn-danger",
+         "button",
+         p)($Maybe.Just($));
+      };
+   };
+   var btnDanger$ = F2(function (c,
+   p) {
+      return function ($) {
+         return A3($Bootstrap$Html$Internal.btnc,
+         A2($Basics._op["++"],
+         "btn-danger ",
+         c),
+         "button",
+         p)($Maybe.Just($));
+      };
+   });
+   var btnLgWarning_ = function (p) {
+      return function ($) {
+         return A3($Bootstrap$Html$Internal.btnc,
+         "btn-lg btn-warning",
+         "button",
+         p)($Maybe.Just($));
+      };
+   };
+   var btnLgWarning$ = F2(function (c,
+   p) {
+      return function ($) {
+         return A3($Bootstrap$Html$Internal.btnc,
+         A2($Basics._op["++"],
+         "btn-lg btn-warning ",
+         c),
+         "button",
+         p)($Maybe.Just($));
+      };
+   });
+   var btnSmWarning_ = function (p) {
+      return function ($) {
+         return A3($Bootstrap$Html$Internal.btnc,
+         "btn-sm btn-warning",
+         "button",
+         p)($Maybe.Just($));
+      };
+   };
+   var btnSmWarning$ = F2(function (c,
+   p) {
+      return function ($) {
+         return A3($Bootstrap$Html$Internal.btnc,
+         A2($Basics._op["++"],
+         "btn-sm btn-warning ",
+         c),
+         "button",
+         p)($Maybe.Just($));
+      };
+   });
+   var btnXsWarning_ = function (p) {
+      return function ($) {
+         return A3($Bootstrap$Html$Internal.btnc,
+         "btn-xs btn-warning ",
+         "button",
+         p)($Maybe.Just($));
+      };
+   };
+   var btnXsWarning$ = F2(function (c,
+   p) {
+      return function ($) {
+         return A3($Bootstrap$Html$Internal.btnc,
+         A2($Basics._op["++"],
+         "btn-xs btn-warning ",
+         c),
+         "button",
+         p)($Maybe.Just($));
+      };
+   });
+   var btnWarning_ = function (p) {
+      return function ($) {
+         return A3($Bootstrap$Html$Internal.btnc,
+         "btn-warning",
+         "button",
+         p)($Maybe.Just($));
+      };
+   };
+   var btnWarning$ = F2(function (c,
+   p) {
+      return function ($) {
+         return A3($Bootstrap$Html$Internal.btnc,
+         A2($Basics._op["++"],
+         "btn-warning ",
+         c),
+         "button",
+         p)($Maybe.Just($));
+      };
+   });
+   var btnLgInfo_ = function (p) {
+      return function ($) {
+         return A3($Bootstrap$Html$Internal.btnc,
+         "btn-lg btn-info",
+         "button",
+         p)($Maybe.Just($));
+      };
+   };
+   var btnLgInfo$ = F2(function (c,
+   p) {
+      return function ($) {
+         return A3($Bootstrap$Html$Internal.btnc,
+         A2($Basics._op["++"],
+         "btn-lg btn-info ",
+         c),
+         "button",
+         p)($Maybe.Just($));
+      };
+   });
+   var btnSmInfo_ = function (p) {
+      return function ($) {
+         return A3($Bootstrap$Html$Internal.btnc,
+         "btn-sm btn-info",
+         "button",
+         p)($Maybe.Just($));
+      };
+   };
+   var btnSmInfo$ = F2(function (c,
+   p) {
+      return function ($) {
+         return A3($Bootstrap$Html$Internal.btnc,
+         A2($Basics._op["++"],
+         "btn-sm btn-info ",
+         c),
+         "button",
+         p)($Maybe.Just($));
+      };
+   });
+   var btnXsInfo_ = function (p) {
+      return function ($) {
+         return A3($Bootstrap$Html$Internal.btnc,
+         "btn-xs btn-info ",
+         "button",
+         p)($Maybe.Just($));
+      };
+   };
+   var btnXsInfo$ = F2(function (c,
+   p) {
+      return function ($) {
+         return A3($Bootstrap$Html$Internal.btnc,
+         A2($Basics._op["++"],
+         "btn-xs btn-info ",
+         c),
+         "button",
+         p)($Maybe.Just($));
+      };
+   });
+   var btnInfo_ = function (p) {
+      return function ($) {
+         return A3($Bootstrap$Html$Internal.btnc,
+         "btn-info",
+         "button",
+         p)($Maybe.Just($));
+      };
+   };
+   var btnInfo$ = F2(function (c,
+   p) {
+      return function ($) {
+         return A3($Bootstrap$Html$Internal.btnc,
+         A2($Basics._op["++"],
+         "btn-info ",
+         c),
+         "button",
+         p)($Maybe.Just($));
+      };
+   });
+   var btnLgSuccess_ = function (p) {
+      return function ($) {
+         return A3($Bootstrap$Html$Internal.btnc,
+         "btn-lg btn-success",
+         "button",
+         p)($Maybe.Just($));
+      };
+   };
+   var btnLgSuccess$ = F2(function (c,
+   p) {
+      return function ($) {
+         return A3($Bootstrap$Html$Internal.btnc,
+         A2($Basics._op["++"],
+         "btn-lg btn-success ",
+         c),
+         "button",
+         p)($Maybe.Just($));
+      };
+   });
+   var btnSmSuccess_ = function (p) {
+      return function ($) {
+         return A3($Bootstrap$Html$Internal.btnc,
+         "btn-sm btn-success",
+         "button",
+         p)($Maybe.Just($));
+      };
+   };
+   var btnSmSuccess$ = F2(function (c,
+   p) {
+      return function ($) {
+         return A3($Bootstrap$Html$Internal.btnc,
+         A2($Basics._op["++"],
+         "btn-sm btn-success ",
+         c),
+         "button",
+         p)($Maybe.Just($));
+      };
+   });
+   var btnXsSuccess_ = function (p) {
+      return function ($) {
+         return A3($Bootstrap$Html$Internal.btnc,
+         "btn-xs btn-success ",
+         "button",
+         p)($Maybe.Just($));
+      };
+   };
+   var btnXsSuccess$ = F2(function (c,
+   p) {
+      return function ($) {
+         return A3($Bootstrap$Html$Internal.btnc,
+         A2($Basics._op["++"],
+         "btn-xs btn-success ",
+         c),
+         "button",
+         p)($Maybe.Just($));
+      };
+   });
+   var panelDefault$ = F3(function (t,
+   btns,
+   bs) {
+      return panelDefault_(_L.fromArray([panelHeading_(A2($Basics._op["++"],
+                                        A2($List.map,
+                                        $Basics.uncurry(btnXsSuccess$("pull-right")),
+                                        $List.reverse(btns)),
+                                        _L.fromArray([panelTitle_(t)])))
+                                        ,panelBody_(bs)]));
+   });
+   var btnSuccess_ = function (p) {
+      return function ($) {
+         return A3($Bootstrap$Html$Internal.btnc,
+         "btn-success",
+         "button",
+         p)($Maybe.Just($));
+      };
+   };
+   var btnSuccess$ = F2(function (c,
+   p) {
+      return function ($) {
+         return A3($Bootstrap$Html$Internal.btnc,
+         A2($Basics._op["++"],
+         "btn-success ",
+         c),
+         "button",
+         p)($Maybe.Just($));
+      };
+   });
+   var btnLgPrimary_ = function (p) {
+      return function ($) {
+         return A3($Bootstrap$Html$Internal.btnc,
+         "btn-lg btn-primary",
+         "button",
+         p)($Maybe.Just($));
+      };
+   };
+   var btnLgPrimary$ = F2(function (c,
+   p) {
+      return function ($) {
+         return A3($Bootstrap$Html$Internal.btnc,
+         A2($Basics._op["++"],
+         "btn-lg btn-primary ",
+         c),
+         "button",
+         p)($Maybe.Just($));
+      };
+   });
+   var btnSmPrimary_ = function (p) {
+      return function ($) {
+         return A3($Bootstrap$Html$Internal.btnc,
+         "btn-sm btn-primary",
+         "button",
+         p)($Maybe.Just($));
+      };
+   };
+   var btnSmPrimary$ = F2(function (c,
+   p) {
+      return function ($) {
+         return A3($Bootstrap$Html$Internal.btnc,
+         A2($Basics._op["++"],
+         "btn-sm btn-primary ",
+         c),
+         "button",
+         p)($Maybe.Just($));
+      };
+   });
+   var btnXsPrimary_ = function (p) {
+      return function ($) {
+         return A3($Bootstrap$Html$Internal.btnc,
+         "btn-xs btn-primary ",
+         "button",
+         p)($Maybe.Just($));
+      };
+   };
+   var btnXsPrimary$ = F2(function (c,
+   p) {
+      return function ($) {
+         return A3($Bootstrap$Html$Internal.btnc,
+         A2($Basics._op["++"],
+         "btn-xs btn-primary ",
+         c),
+         "button",
+         p)($Maybe.Just($));
+      };
+   });
+   var btnPrimary_ = function (p) {
+      return function ($) {
+         return A3($Bootstrap$Html$Internal.btnc,
+         "btn-primary",
+         "button",
+         p)($Maybe.Just($));
+      };
+   };
+   var btnPrimary$ = F2(function (c,
+   p) {
+      return function ($) {
+         return A3($Bootstrap$Html$Internal.btnc,
+         A2($Basics._op["++"],
+         "btn-primary ",
+         c),
+         "button",
+         p)($Maybe.Just($));
+      };
+   });
+   var btnLgDefault_ = function (p) {
+      return function ($) {
+         return A3($Bootstrap$Html$Internal.btnc,
+         "btn-lg btn-default",
+         "button",
+         p)($Maybe.Just($));
+      };
+   };
+   var btnLgDefault$ = F2(function (c,
+   p) {
+      return function ($) {
+         return A3($Bootstrap$Html$Internal.btnc,
+         A2($Basics._op["++"],
+         "btn-lg btn-default ",
+         c),
+         "button",
+         p)($Maybe.Just($));
+      };
+   });
+   var btnSmDefault_ = function (p) {
+      return function ($) {
+         return A3($Bootstrap$Html$Internal.btnc,
+         "btn-sm btn-default",
+         "button",
+         p)($Maybe.Just($));
+      };
+   };
+   var btnSmDefault$ = F2(function (c,
+   p) {
+      return function ($) {
+         return A3($Bootstrap$Html$Internal.btnc,
+         A2($Basics._op["++"],
+         "btn-sm btn-default ",
+         c),
+         "button",
+         p)($Maybe.Just($));
+      };
+   });
+   var btnXsDefault_ = function (p) {
+      return function ($) {
+         return A3($Bootstrap$Html$Internal.btnc,
+         "btn-xs btn-default ",
+         "button",
+         p)($Maybe.Just($));
+      };
+   };
+   var btnXsDefault$ = F2(function (c,
+   p) {
+      return function ($) {
+         return A3($Bootstrap$Html$Internal.btnc,
+         A2($Basics._op["++"],
+         "btn-xs btn-default  ",
+         c),
+         "button",
+         p)($Maybe.Just($));
+      };
+   });
+   var btnDefault_ = function (p) {
+      return function ($) {
+         return A3($Bootstrap$Html$Internal.btnc,
+         "btn-default",
+         "button",
+         p)($Maybe.Just($));
+      };
+   };
+   var btnDefault$ = F2(function (c,
+   p) {
+      return function ($) {
+         return A3($Bootstrap$Html$Internal.btnc,
+         A2($Basics._op["++"],
+         "btn-default ",
+         c),
+         "button",
+         p)($Maybe.Just($));
+      };
+   });
+   var btnParam = {_: {}
+                  ,icon: $Maybe.Nothing
+                  ,label: $Maybe.Nothing
+                  ,tooltip: $Maybe.Nothing};
+   var formGroup_ = $Html$Shorthand.div$({_: {}
+                                         ,$class: "form-group"});
+   var tableBodyStriped$ = function (c) {
+      return $Html$Shorthand.table$({_: {}
+                                    ,$class: A2($Basics._op["++"],
+                                    "table table-body-striped ",
+                                    c)});
+   };
+   var tableBodyStriped_ = tableBodyStriped$("");
+   var tableStriped_ = tableBodyStriped$("");
+   var tableStriped$ = function (c) {
+      return $Html$Shorthand.table$({_: {}
+                                    ,$class: A2($Basics._op["++"],
+                                    "table table-striped ",
+                                    c)});
+   };
+   var colLg_ = F4(function (xs,
+   sm,
+   md,
+   lg) {
+      return $Html$Shorthand.div$({_: {}
+                                  ,$class: A2($Basics._op["++"],
+                                  "col-xs-",
+                                  A2($Basics._op["++"],
+                                  $Basics.toString(xs),
+                                  A2($Basics._op["++"],
+                                  " col-sm-",
+                                  A2($Basics._op["++"],
+                                  $Basics.toString(sm),
+                                  A2($Basics._op["++"],
+                                  " col-md-",
+                                  A2($Basics._op["++"],
+                                  $Basics.toString(md),
+                                  A2($Basics._op["++"],
+                                  " col-lg-",
+                                  $Basics.toString(lg))))))))});
+   });
+   var colMd_ = F3(function (xs,
+   sm,
+   md) {
+      return $Html$Shorthand.div$({_: {}
+                                  ,$class: A2($Basics._op["++"],
+                                  "col-xs-",
+                                  A2($Basics._op["++"],
+                                  $Basics.toString(xs),
+                                  A2($Basics._op["++"],
+                                  " col-sm-",
+                                  A2($Basics._op["++"],
+                                  $Basics.toString(sm),
+                                  A2($Basics._op["++"],
+                                  " col-md-",
+                                  $Basics.toString(md))))))});
+   });
+   var colSm_ = F2(function (xs,
+   sm) {
+      return $Html$Shorthand.div$({_: {}
+                                  ,$class: A2($Basics._op["++"],
+                                  "col-xs-",
+                                  A2($Basics._op["++"],
+                                  $Basics.toString(xs),
+                                  A2($Basics._op["++"],
+                                  " col-sm-",
+                                  $Basics.toString(sm))))});
+   });
+   var colXs_ = function (xs) {
+      return $Html$Shorthand.div$({_: {}
+                                  ,$class: A2($Basics._op["++"],
+                                  "col-xs-",
+                                  $Basics.toString(xs))});
+   };
+   var row_ = $Html$Shorthand.div$({_: {}
+                                   ,$class: "row"});
+   var containerFluid_ = $Html$Shorthand.div$({_: {}
+                                              ,$class: "container-fluid"});
+   var container_ = $Html$Shorthand.div$({_: {}
+                                         ,$class: "container"});
+   _elm.Bootstrap.Html.values = {_op: _op
+                                ,container_: container_
+                                ,containerFluid_: containerFluid_
+                                ,row_: row_
+                                ,colXs_: colXs_
+                                ,colSm_: colSm_
+                                ,colMd_: colMd_
+                                ,colLg_: colLg_
+                                ,tableStriped$: tableStriped$
+                                ,tableStriped_: tableStriped_
+                                ,tableBodyStriped$: tableBodyStriped$
+                                ,tableBodyStriped_: tableBodyStriped_
+                                ,formGroup_: formGroup_
+                                ,btnParam: btnParam
+                                ,btnDefault$: btnDefault$
+                                ,btnDefault_: btnDefault_
+                                ,btnXsDefault$: btnXsDefault$
+                                ,btnXsDefault_: btnXsDefault_
+                                ,btnSmDefault$: btnSmDefault$
+                                ,btnSmDefault_: btnSmDefault_
+                                ,btnLgDefault$: btnLgDefault$
+                                ,btnLgDefault_: btnLgDefault_
+                                ,btnPrimary$: btnPrimary$
+                                ,btnPrimary_: btnPrimary_
+                                ,btnXsPrimary$: btnXsPrimary$
+                                ,btnXsPrimary_: btnXsPrimary_
+                                ,btnSmPrimary$: btnSmPrimary$
+                                ,btnSmPrimary_: btnSmPrimary_
+                                ,btnLgPrimary$: btnLgPrimary$
+                                ,btnLgPrimary_: btnLgPrimary_
+                                ,btnSuccess$: btnSuccess$
+                                ,btnSuccess_: btnSuccess_
+                                ,btnXsSuccess$: btnXsSuccess$
+                                ,btnXsSuccess_: btnXsSuccess_
+                                ,btnSmSuccess$: btnSmSuccess$
+                                ,btnSmSuccess_: btnSmSuccess_
+                                ,btnLgSuccess$: btnLgSuccess$
+                                ,btnLgSuccess_: btnLgSuccess_
+                                ,btnInfo$: btnInfo$
+                                ,btnInfo_: btnInfo_
+                                ,btnXsInfo$: btnXsInfo$
+                                ,btnXsInfo_: btnXsInfo_
+                                ,btnSmInfo$: btnSmInfo$
+                                ,btnSmInfo_: btnSmInfo_
+                                ,btnLgInfo$: btnLgInfo$
+                                ,btnLgInfo_: btnLgInfo_
+                                ,btnWarning$: btnWarning$
+                                ,btnWarning_: btnWarning_
+                                ,btnXsWarning$: btnXsWarning$
+                                ,btnXsWarning_: btnXsWarning_
+                                ,btnSmWarning$: btnSmWarning$
+                                ,btnSmWarning_: btnSmWarning_
+                                ,btnLgWarning$: btnLgWarning$
+                                ,btnLgWarning_: btnLgWarning_
+                                ,btnDanger$: btnDanger$
+                                ,btnDanger_: btnDanger_
+                                ,btnXsDanger$: btnXsDanger$
+                                ,btnXsDanger_: btnXsDanger_
+                                ,btnSmDanger$: btnSmDanger$
+                                ,btnSmDanger_: btnSmDanger_
+                                ,btnLgDanger$: btnLgDanger$
+                                ,btnLgDanger_: btnLgDanger_
+                                ,btnSubmitPrimary$: btnSubmitPrimary$
+                                ,btnSubmitPrimary_: btnSubmitPrimary_
+                                ,btnSubmitXsPrimary$: btnSubmitXsPrimary$
+                                ,btnSubmitXsPrimary_: btnSubmitXsPrimary_
+                                ,btnSubmitSmPrimary$: btnSubmitSmPrimary$
+                                ,btnSubmitSmPrimary_: btnSubmitSmPrimary_
+                                ,btnSubmitLgPrimary$: btnSubmitLgPrimary$
+                                ,btnSubmitLgPrimary_: btnSubmitLgPrimary_
+                                ,skipNavigation_: skipNavigation_
+                                ,glyphiconAsterisk$: glyphiconAsterisk$
+                                ,glyphiconAsterisk_: glyphiconAsterisk_
+                                ,glyphiconPlus$: glyphiconPlus$
+                                ,glyphiconPlus_: glyphiconPlus_
+                                ,glyphiconEuro$: glyphiconEuro$
+                                ,glyphiconEuro_: glyphiconEuro_
+                                ,glyphiconMinus$: glyphiconMinus$
+                                ,glyphiconMinus_: glyphiconMinus_
+                                ,glyphiconCloud$: glyphiconCloud$
+                                ,glyphiconCloud_: glyphiconCloud_
+                                ,glyphiconEnvelope$: glyphiconEnvelope$
+                                ,glyphiconEnvelope_: glyphiconEnvelope_
+                                ,glyphiconPencil$: glyphiconPencil$
+                                ,glyphiconPencil_: glyphiconPencil_
+                                ,glyphiconGlass$: glyphiconGlass$
+                                ,glyphiconGlass_: glyphiconGlass_
+                                ,glyphiconMusic$: glyphiconMusic$
+                                ,glyphiconMusic_: glyphiconMusic_
+                                ,glyphiconSearch$: glyphiconSearch$
+                                ,glyphiconSearch_: glyphiconSearch_
+                                ,glyphiconHeart$: glyphiconHeart$
+                                ,glyphiconHeart_: glyphiconHeart_
+                                ,glyphiconStar$: glyphiconStar$
+                                ,glyphiconStar_: glyphiconStar_
+                                ,glyphiconStarEmpty$: glyphiconStarEmpty$
+                                ,glyphiconStarEmpty_: glyphiconStarEmpty_
+                                ,glyphiconUser$: glyphiconUser$
+                                ,glyphiconUser_: glyphiconUser_
+                                ,glyphiconFilm$: glyphiconFilm$
+                                ,glyphiconFilm_: glyphiconFilm_
+                                ,glyphiconThLarge$: glyphiconThLarge$
+                                ,glyphiconThLarge_: glyphiconThLarge_
+                                ,glyphiconTh$: glyphiconTh$
+                                ,glyphiconTh_: glyphiconTh_
+                                ,glyphiconThList$: glyphiconThList$
+                                ,glyphiconThList_: glyphiconThList_
+                                ,glyphiconOk$: glyphiconOk$
+                                ,glyphiconOk_: glyphiconOk_
+                                ,glyphiconRemove$: glyphiconRemove$
+                                ,glyphiconRemove_: glyphiconRemove_
+                                ,glyphiconZoomIn$: glyphiconZoomIn$
+                                ,glyphiconZoomIn_: glyphiconZoomIn_
+                                ,glyphiconZoomOut$: glyphiconZoomOut$
+                                ,glyphiconZoomOut_: glyphiconZoomOut_
+                                ,glyphiconOff$: glyphiconOff$
+                                ,glyphiconOff_: glyphiconOff_
+                                ,glyphiconSignal$: glyphiconSignal$
+                                ,glyphiconSignal_: glyphiconSignal_
+                                ,glyphiconCog$: glyphiconCog$
+                                ,glyphiconCog_: glyphiconCog_
+                                ,glyphiconTrash$: glyphiconTrash$
+                                ,glyphiconTrash_: glyphiconTrash_
+                                ,glyphiconHome$: glyphiconHome$
+                                ,glyphiconHome_: glyphiconHome_
+                                ,glyphiconFile$: glyphiconFile$
+                                ,glyphiconFile_: glyphiconFile_
+                                ,glyphiconTime$: glyphiconTime$
+                                ,glyphiconTime_: glyphiconTime_
+                                ,glyphiconRoad$: glyphiconRoad$
+                                ,glyphiconRoad_: glyphiconRoad_
+                                ,glyphiconDownloadAlt$: glyphiconDownloadAlt$
+                                ,glyphiconDownloadAlt_: glyphiconDownloadAlt_
+                                ,glyphiconDownload$: glyphiconDownload$
+                                ,glyphiconDownload_: glyphiconDownload_
+                                ,glyphiconUpload$: glyphiconUpload$
+                                ,glyphiconUpload_: glyphiconUpload_
+                                ,glyphiconInbox$: glyphiconInbox$
+                                ,glyphiconInbox_: glyphiconInbox_
+                                ,glyphiconPlayCircle$: glyphiconPlayCircle$
+                                ,glyphiconPlayCircle_: glyphiconPlayCircle_
+                                ,glyphiconRepeat$: glyphiconRepeat$
+                                ,glyphiconRepeat_: glyphiconRepeat_
+                                ,glyphiconRefresh$: glyphiconRefresh$
+                                ,glyphiconRefresh_: glyphiconRefresh_
+                                ,glyphiconListAlt$: glyphiconListAlt$
+                                ,glyphiconListAlt_: glyphiconListAlt_
+                                ,glyphiconLock$: glyphiconLock$
+                                ,glyphiconLock_: glyphiconLock_
+                                ,glyphiconFlag$: glyphiconFlag$
+                                ,glyphiconFlag_: glyphiconFlag_
+                                ,glyphiconHeadphones$: glyphiconHeadphones$
+                                ,glyphiconHeadphones_: glyphiconHeadphones_
+                                ,glyphiconVolumeOff$: glyphiconVolumeOff$
+                                ,glyphiconVolumeOff_: glyphiconVolumeOff_
+                                ,glyphiconVolumeDown$: glyphiconVolumeDown$
+                                ,glyphiconVolumeDown_: glyphiconVolumeDown_
+                                ,glyphiconVolumeUp$: glyphiconVolumeUp$
+                                ,glyphiconVolumeUp_: glyphiconVolumeUp_
+                                ,glyphiconQrcode$: glyphiconQrcode$
+                                ,glyphiconQrcode_: glyphiconQrcode_
+                                ,glyphiconBarcode$: glyphiconBarcode$
+                                ,glyphiconBarcode_: glyphiconBarcode_
+                                ,glyphiconTag$: glyphiconTag$
+                                ,glyphiconTag_: glyphiconTag_
+                                ,glyphiconTags$: glyphiconTags$
+                                ,glyphiconTags_: glyphiconTags_
+                                ,glyphiconBook$: glyphiconBook$
+                                ,glyphiconBook_: glyphiconBook_
+                                ,glyphiconBookmark$: glyphiconBookmark$
+                                ,glyphiconBookmark_: glyphiconBookmark_
+                                ,glyphiconPrint$: glyphiconPrint$
+                                ,glyphiconPrint_: glyphiconPrint_
+                                ,glyphiconCamera$: glyphiconCamera$
+                                ,glyphiconCamera_: glyphiconCamera_
+                                ,glyphiconFont$: glyphiconFont$
+                                ,glyphiconFont_: glyphiconFont_
+                                ,glyphiconBold$: glyphiconBold$
+                                ,glyphiconBold_: glyphiconBold_
+                                ,glyphiconItalic$: glyphiconItalic$
+                                ,glyphiconItalic_: glyphiconItalic_
+                                ,glyphiconTextHeight$: glyphiconTextHeight$
+                                ,glyphiconTextHeight_: glyphiconTextHeight_
+                                ,glyphiconTextWidth$: glyphiconTextWidth$
+                                ,glyphiconTextWidth_: glyphiconTextWidth_
+                                ,glyphiconAlignLeft$: glyphiconAlignLeft$
+                                ,glyphiconAlignLeft_: glyphiconAlignLeft_
+                                ,glyphiconAlignCenter$: glyphiconAlignCenter$
+                                ,glyphiconAlignCenter_: glyphiconAlignCenter_
+                                ,glyphiconAlignRight$: glyphiconAlignRight$
+                                ,glyphiconAlignRight_: glyphiconAlignRight_
+                                ,glyphiconAlignJustify$: glyphiconAlignJustify$
+                                ,glyphiconAlignJustify_: glyphiconAlignJustify_
+                                ,glyphiconList$: glyphiconList$
+                                ,glyphiconList_: glyphiconList_
+                                ,glyphiconIndentLeft$: glyphiconIndentLeft$
+                                ,glyphiconIndentLeft_: glyphiconIndentLeft_
+                                ,glyphiconIndentRight$: glyphiconIndentRight$
+                                ,glyphiconIndentRight_: glyphiconIndentRight_
+                                ,glyphiconFacetimeVideo$: glyphiconFacetimeVideo$
+                                ,glyphiconFacetimeVideo_: glyphiconFacetimeVideo_
+                                ,glyphiconPicture$: glyphiconPicture$
+                                ,glyphiconPicture_: glyphiconPicture_
+                                ,glyphiconMapMarker$: glyphiconMapMarker$
+                                ,glyphiconMapMarker_: glyphiconMapMarker_
+                                ,glyphiconAdjust$: glyphiconAdjust$
+                                ,glyphiconAdjust_: glyphiconAdjust_
+                                ,glyphiconTint$: glyphiconTint$
+                                ,glyphiconTint_: glyphiconTint_
+                                ,glyphiconEdit$: glyphiconEdit$
+                                ,glyphiconEdit_: glyphiconEdit_
+                                ,glyphiconShare$: glyphiconShare$
+                                ,glyphiconShare_: glyphiconShare_
+                                ,glyphiconCheck$: glyphiconCheck$
+                                ,glyphiconCheck_: glyphiconCheck_
+                                ,glyphiconMove$: glyphiconMove$
+                                ,glyphiconMove_: glyphiconMove_
+                                ,glyphiconStepBackward$: glyphiconStepBackward$
+                                ,glyphiconStepBackward_: glyphiconStepBackward_
+                                ,glyphiconFastBackward$: glyphiconFastBackward$
+                                ,glyphiconFastBackward_: glyphiconFastBackward_
+                                ,glyphiconBackward$: glyphiconBackward$
+                                ,glyphiconBackward_: glyphiconBackward_
+                                ,glyphiconPlay$: glyphiconPlay$
+                                ,glyphiconPlay_: glyphiconPlay_
+                                ,glyphiconPause$: glyphiconPause$
+                                ,glyphiconPause_: glyphiconPause_
+                                ,glyphiconStop$: glyphiconStop$
+                                ,glyphiconStop_: glyphiconStop_
+                                ,glyphiconForward$: glyphiconForward$
+                                ,glyphiconForward_: glyphiconForward_
+                                ,glyphiconFastForward$: glyphiconFastForward$
+                                ,glyphiconFastForward_: glyphiconFastForward_
+                                ,glyphiconStepForward$: glyphiconStepForward$
+                                ,glyphiconStepForward_: glyphiconStepForward_
+                                ,glyphiconEject$: glyphiconEject$
+                                ,glyphiconEject_: glyphiconEject_
+                                ,glyphiconChevronLeft$: glyphiconChevronLeft$
+                                ,glyphiconChevronLeft_: glyphiconChevronLeft_
+                                ,glyphiconChevronRight$: glyphiconChevronRight$
+                                ,glyphiconChevronRight_: glyphiconChevronRight_
+                                ,glyphiconPlusSign$: glyphiconPlusSign$
+                                ,glyphiconPlusSign_: glyphiconPlusSign_
+                                ,glyphiconMinusSign$: glyphiconMinusSign$
+                                ,glyphiconMinusSign_: glyphiconMinusSign_
+                                ,glyphiconRemoveSign$: glyphiconRemoveSign$
+                                ,glyphiconRemoveSign_: glyphiconRemoveSign_
+                                ,glyphiconOkSign$: glyphiconOkSign$
+                                ,glyphiconOkSign_: glyphiconOkSign_
+                                ,glyphiconQuestionSign$: glyphiconQuestionSign$
+                                ,glyphiconQuestionSign_: glyphiconQuestionSign_
+                                ,glyphiconInfoSign$: glyphiconInfoSign$
+                                ,glyphiconInfoSign_: glyphiconInfoSign_
+                                ,glyphiconScreenshot$: glyphiconScreenshot$
+                                ,glyphiconScreenshot_: glyphiconScreenshot_
+                                ,glyphiconRemoveCircle$: glyphiconRemoveCircle$
+                                ,glyphiconRemoveCircle_: glyphiconRemoveCircle_
+                                ,glyphiconOkCircle$: glyphiconOkCircle$
+                                ,glyphiconOkCircle_: glyphiconOkCircle_
+                                ,glyphiconBanCircle$: glyphiconBanCircle$
+                                ,glyphiconBanCircle_: glyphiconBanCircle_
+                                ,glyphiconArrowLeft$: glyphiconArrowLeft$
+                                ,glyphiconArrowLeft_: glyphiconArrowLeft_
+                                ,glyphiconArrowRight$: glyphiconArrowRight$
+                                ,glyphiconArrowRight_: glyphiconArrowRight_
+                                ,glyphiconArrowUp$: glyphiconArrowUp$
+                                ,glyphiconArrowUp_: glyphiconArrowUp_
+                                ,glyphiconArrowDown$: glyphiconArrowDown$
+                                ,glyphiconArrowDown_: glyphiconArrowDown_
+                                ,glyphiconShareAlt$: glyphiconShareAlt$
+                                ,glyphiconShareAlt_: glyphiconShareAlt_
+                                ,glyphiconResizeFull$: glyphiconResizeFull$
+                                ,glyphiconResizeFull_: glyphiconResizeFull_
+                                ,glyphiconResizeSmall$: glyphiconResizeSmall$
+                                ,glyphiconResizeSmall_: glyphiconResizeSmall_
+                                ,glyphiconExclamationSign$: glyphiconExclamationSign$
+                                ,glyphiconExclamationSign_: glyphiconExclamationSign_
+                                ,glyphiconGift$: glyphiconGift$
+                                ,glyphiconGift_: glyphiconGift_
+                                ,glyphiconLeaf$: glyphiconLeaf$
+                                ,glyphiconLeaf_: glyphiconLeaf_
+                                ,glyphiconFire$: glyphiconFire$
+                                ,glyphiconFire_: glyphiconFire_
+                                ,glyphiconEyeOpen$: glyphiconEyeOpen$
+                                ,glyphiconEyeOpen_: glyphiconEyeOpen_
+                                ,glyphiconEyeClose$: glyphiconEyeClose$
+                                ,glyphiconEyeClose_: glyphiconEyeClose_
+                                ,glyphiconWarningSign$: glyphiconWarningSign$
+                                ,glyphiconWarningSign_: glyphiconWarningSign_
+                                ,glyphiconPlane$: glyphiconPlane$
+                                ,glyphiconPlane_: glyphiconPlane_
+                                ,glyphiconCalendar$: glyphiconCalendar$
+                                ,glyphiconCalendar_: glyphiconCalendar_
+                                ,glyphiconRandom$: glyphiconRandom$
+                                ,glyphiconRandom_: glyphiconRandom_
+                                ,glyphiconComment$: glyphiconComment$
+                                ,glyphiconComment_: glyphiconComment_
+                                ,glyphiconMagnet$: glyphiconMagnet$
+                                ,glyphiconMagnet_: glyphiconMagnet_
+                                ,glyphiconChevronUp$: glyphiconChevronUp$
+                                ,glyphiconChevronUp_: glyphiconChevronUp_
+                                ,glyphiconChevronDown$: glyphiconChevronDown$
+                                ,glyphiconChevronDown_: glyphiconChevronDown_
+                                ,glyphiconRetweet$: glyphiconRetweet$
+                                ,glyphiconRetweet_: glyphiconRetweet_
+                                ,glyphiconShoppingCart$: glyphiconShoppingCart$
+                                ,glyphiconShoppingCart_: glyphiconShoppingCart_
+                                ,glyphiconFolderClose$: glyphiconFolderClose$
+                                ,glyphiconFolderClose_: glyphiconFolderClose_
+                                ,glyphiconFolderOpen$: glyphiconFolderOpen$
+                                ,glyphiconFolderOpen_: glyphiconFolderOpen_
+                                ,glyphiconResizeVertical$: glyphiconResizeVertical$
+                                ,glyphiconResizeVertical_: glyphiconResizeVertical_
+                                ,glyphiconResizeHorizontal$: glyphiconResizeHorizontal$
+                                ,glyphiconResizeHorizontal_: glyphiconResizeHorizontal_
+                                ,glyphiconHdd$: glyphiconHdd$
+                                ,glyphiconHdd_: glyphiconHdd_
+                                ,glyphiconBullhorn$: glyphiconBullhorn$
+                                ,glyphiconBullhorn_: glyphiconBullhorn_
+                                ,glyphiconBell$: glyphiconBell$
+                                ,glyphiconBell_: glyphiconBell_
+                                ,glyphiconCertificate$: glyphiconCertificate$
+                                ,glyphiconCertificate_: glyphiconCertificate_
+                                ,glyphiconThumbsUp$: glyphiconThumbsUp$
+                                ,glyphiconThumbsUp_: glyphiconThumbsUp_
+                                ,glyphiconThumbsDown$: glyphiconThumbsDown$
+                                ,glyphiconThumbsDown_: glyphiconThumbsDown_
+                                ,glyphiconHandRight$: glyphiconHandRight$
+                                ,glyphiconHandRight_: glyphiconHandRight_
+                                ,glyphiconHandLeft$: glyphiconHandLeft$
+                                ,glyphiconHandLeft_: glyphiconHandLeft_
+                                ,glyphiconHandUp$: glyphiconHandUp$
+                                ,glyphiconHandUp_: glyphiconHandUp_
+                                ,glyphiconHandDown$: glyphiconHandDown$
+                                ,glyphiconHandDown_: glyphiconHandDown_
+                                ,glyphiconCircleArrowRight$: glyphiconCircleArrowRight$
+                                ,glyphiconCircleArrowRight_: glyphiconCircleArrowRight_
+                                ,glyphiconCircleArrowLeft$: glyphiconCircleArrowLeft$
+                                ,glyphiconCircleArrowLeft_: glyphiconCircleArrowLeft_
+                                ,glyphiconCircleArrowUp$: glyphiconCircleArrowUp$
+                                ,glyphiconCircleArrowUp_: glyphiconCircleArrowUp_
+                                ,glyphiconCircleArrowDown$: glyphiconCircleArrowDown$
+                                ,glyphiconCircleArrowDown_: glyphiconCircleArrowDown_
+                                ,glyphiconGlobe$: glyphiconGlobe$
+                                ,glyphiconGlobe_: glyphiconGlobe_
+                                ,glyphiconWrench$: glyphiconWrench$
+                                ,glyphiconWrench_: glyphiconWrench_
+                                ,glyphiconTasks$: glyphiconTasks$
+                                ,glyphiconTasks_: glyphiconTasks_
+                                ,glyphiconFilter$: glyphiconFilter$
+                                ,glyphiconFilter_: glyphiconFilter_
+                                ,glyphiconBriefcase$: glyphiconBriefcase$
+                                ,glyphiconBriefcase_: glyphiconBriefcase_
+                                ,glyphiconFullscreen$: glyphiconFullscreen$
+                                ,glyphiconFullscreen_: glyphiconFullscreen_
+                                ,glyphiconDashboard$: glyphiconDashboard$
+                                ,glyphiconDashboard_: glyphiconDashboard_
+                                ,glyphiconPaperclip$: glyphiconPaperclip$
+                                ,glyphiconPaperclip_: glyphiconPaperclip_
+                                ,glyphiconHeartEmpty$: glyphiconHeartEmpty$
+                                ,glyphiconHeartEmpty_: glyphiconHeartEmpty_
+                                ,glyphiconLink$: glyphiconLink$
+                                ,glyphiconLink_: glyphiconLink_
+                                ,glyphiconPhone$: glyphiconPhone$
+                                ,glyphiconPhone_: glyphiconPhone_
+                                ,glyphiconPushpin$: glyphiconPushpin$
+                                ,glyphiconPushpin_: glyphiconPushpin_
+                                ,glyphiconUsd$: glyphiconUsd$
+                                ,glyphiconUsd_: glyphiconUsd_
+                                ,glyphiconGbp$: glyphiconGbp$
+                                ,glyphiconGbp_: glyphiconGbp_
+                                ,glyphiconSort$: glyphiconSort$
+                                ,glyphiconSort_: glyphiconSort_
+                                ,glyphiconSortByAlphabet$: glyphiconSortByAlphabet$
+                                ,glyphiconSortByAlphabet_: glyphiconSortByAlphabet_
+                                ,glyphiconSortByAlphabetAlt$: glyphiconSortByAlphabetAlt$
+                                ,glyphiconSortByAlphabetAlt_: glyphiconSortByAlphabetAlt_
+                                ,glyphiconSortByOrder$: glyphiconSortByOrder$
+                                ,glyphiconSortByOrder_: glyphiconSortByOrder_
+                                ,glyphiconSortByOrderAlt$: glyphiconSortByOrderAlt$
+                                ,glyphiconSortByOrderAlt_: glyphiconSortByOrderAlt_
+                                ,glyphiconSortByAttributes$: glyphiconSortByAttributes$
+                                ,glyphiconSortByAttributes_: glyphiconSortByAttributes_
+                                ,glyphiconSortByAttributesAlt$: glyphiconSortByAttributesAlt$
+                                ,glyphiconSortByAttributesAlt_: glyphiconSortByAttributesAlt_
+                                ,glyphiconUnchecked$: glyphiconUnchecked$
+                                ,glyphiconUnchecked_: glyphiconUnchecked_
+                                ,glyphiconExpand$: glyphiconExpand$
+                                ,glyphiconExpand_: glyphiconExpand_
+                                ,glyphiconCollapseDown$: glyphiconCollapseDown$
+                                ,glyphiconCollapseDown_: glyphiconCollapseDown_
+                                ,glyphiconCollapseUp$: glyphiconCollapseUp$
+                                ,glyphiconCollapseUp_: glyphiconCollapseUp_
+                                ,glyphiconLogIn$: glyphiconLogIn$
+                                ,glyphiconLogIn_: glyphiconLogIn_
+                                ,glyphiconFlash$: glyphiconFlash$
+                                ,glyphiconFlash_: glyphiconFlash_
+                                ,glyphiconLogOut$: glyphiconLogOut$
+                                ,glyphiconLogOut_: glyphiconLogOut_
+                                ,glyphiconNewWindow$: glyphiconNewWindow$
+                                ,glyphiconNewWindow_: glyphiconNewWindow_
+                                ,glyphiconRecord$: glyphiconRecord$
+                                ,glyphiconRecord_: glyphiconRecord_
+                                ,glyphiconSave$: glyphiconSave$
+                                ,glyphiconSave_: glyphiconSave_
+                                ,glyphiconOpen$: glyphiconOpen$
+                                ,glyphiconOpen_: glyphiconOpen_
+                                ,glyphiconSaved$: glyphiconSaved$
+                                ,glyphiconSaved_: glyphiconSaved_
+                                ,glyphiconImport$: glyphiconImport$
+                                ,glyphiconImport_: glyphiconImport_
+                                ,glyphiconExport$: glyphiconExport$
+                                ,glyphiconExport_: glyphiconExport_
+                                ,glyphiconSend$: glyphiconSend$
+                                ,glyphiconSend_: glyphiconSend_
+                                ,glyphiconFloppyDisk$: glyphiconFloppyDisk$
+                                ,glyphiconFloppyDisk_: glyphiconFloppyDisk_
+                                ,glyphiconFloppySaved$: glyphiconFloppySaved$
+                                ,glyphiconFloppySaved_: glyphiconFloppySaved_
+                                ,glyphiconFloppyRemove$: glyphiconFloppyRemove$
+                                ,glyphiconFloppyRemove_: glyphiconFloppyRemove_
+                                ,glyphiconFloppySave$: glyphiconFloppySave$
+                                ,glyphiconFloppySave_: glyphiconFloppySave_
+                                ,glyphiconFloppyOpen$: glyphiconFloppyOpen$
+                                ,glyphiconFloppyOpen_: glyphiconFloppyOpen_
+                                ,glyphiconCreditCard$: glyphiconCreditCard$
+                                ,glyphiconCreditCard_: glyphiconCreditCard_
+                                ,glyphiconTransfer$: glyphiconTransfer$
+                                ,glyphiconTransfer_: glyphiconTransfer_
+                                ,glyphiconCutlery$: glyphiconCutlery$
+                                ,glyphiconCutlery_: glyphiconCutlery_
+                                ,glyphiconHeader$: glyphiconHeader$
+                                ,glyphiconHeader_: glyphiconHeader_
+                                ,glyphiconCompressed$: glyphiconCompressed$
+                                ,glyphiconCompressed_: glyphiconCompressed_
+                                ,glyphiconEarphone$: glyphiconEarphone$
+                                ,glyphiconEarphone_: glyphiconEarphone_
+                                ,glyphiconPhoneAlt$: glyphiconPhoneAlt$
+                                ,glyphiconPhoneAlt_: glyphiconPhoneAlt_
+                                ,glyphiconTower$: glyphiconTower$
+                                ,glyphiconTower_: glyphiconTower_
+                                ,glyphiconStats$: glyphiconStats$
+                                ,glyphiconStats_: glyphiconStats_
+                                ,glyphiconSdVideo$: glyphiconSdVideo$
+                                ,glyphiconSdVideo_: glyphiconSdVideo_
+                                ,glyphiconHdVideo$: glyphiconHdVideo$
+                                ,glyphiconHdVideo_: glyphiconHdVideo_
+                                ,glyphiconSubtitles$: glyphiconSubtitles$
+                                ,glyphiconSubtitles_: glyphiconSubtitles_
+                                ,glyphiconSoundStereo$: glyphiconSoundStereo$
+                                ,glyphiconSoundStereo_: glyphiconSoundStereo_
+                                ,glyphiconSoundDolby$: glyphiconSoundDolby$
+                                ,glyphiconSoundDolby_: glyphiconSoundDolby_
+                                ,glyphiconSound51$: glyphiconSound51$
+                                ,glyphiconSound51_: glyphiconSound51_
+                                ,glyphiconSound61$: glyphiconSound61$
+                                ,glyphiconSound61_: glyphiconSound61_
+                                ,glyphiconSound71$: glyphiconSound71$
+                                ,glyphiconSound71_: glyphiconSound71_
+                                ,glyphiconCopyrightMark$: glyphiconCopyrightMark$
+                                ,glyphiconCopyrightMark_: glyphiconCopyrightMark_
+                                ,glyphiconRegistrationMark$: glyphiconRegistrationMark$
+                                ,glyphiconRegistrationMark_: glyphiconRegistrationMark_
+                                ,glyphiconCloudDownload$: glyphiconCloudDownload$
+                                ,glyphiconCloudDownload_: glyphiconCloudDownload_
+                                ,glyphiconCloudUpload$: glyphiconCloudUpload$
+                                ,glyphiconCloudUpload_: glyphiconCloudUpload_
+                                ,glyphiconTreeConifer$: glyphiconTreeConifer$
+                                ,glyphiconTreeConifer_: glyphiconTreeConifer_
+                                ,glyphiconTreeDeciduous$: glyphiconTreeDeciduous$
+                                ,glyphiconTreeDeciduous_: glyphiconTreeDeciduous_
+                                ,navbar$: navbar$
+                                ,navbarDefault$: navbarDefault$
+                                ,navbarHeader_: navbarHeader_
+                                ,panelDefault_: panelDefault_
+                                ,panelHeading_: panelHeading_
+                                ,panelBody_: panelBody_
+                                ,panelTitle_: panelTitle_
+                                ,panelDefault$: panelDefault$};
+   return _elm.Bootstrap.Html.values;
+};

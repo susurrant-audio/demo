@@ -1,0 +1,207 @@
+Elm.Test = Elm.Test || {};
+Elm.Test.make = function (_elm) {
+   "use strict";
+   _elm.Test = _elm.Test || {};
+   if (_elm.Test.values)
+   return _elm.Test.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "Test",
+   $Basics = Elm.Basics.make(_elm),
+   $Common = Elm.Common.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $ElmTest$Assertion = Elm.ElmTest.Assertion.make(_elm),
+   $ElmTest$Runner$Element = Elm.ElmTest.Runner.Element.make(_elm),
+   $ElmTest$Test = Elm.ElmTest.Test.make(_elm),
+   $Json$Decode = Elm.Json.Decode.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Test$Fixtures = Elm.Test.Fixtures.make(_elm),
+   $TopicData = Elm.TopicData.make(_elm),
+   $Viz$Scale = Elm.Viz.Scale.make(_elm),
+   $Viz$Stars = Elm.Viz.Stars.make(_elm);
+   var getTopWordsFrom = $Result.map($TopicData.topWordsForTopic(0));
+   var topicFixtureData = $TopicData.fromResults(A2($List.map,
+   $Result.Ok,
+   _L.fromArray([$Test$Fixtures.topics_json
+                ,$Test$Fixtures.doc_topics_json
+                ,$Test$Fixtures.token_topics_json
+                ,$Test$Fixtures.topic_tokens_json
+                ,$Test$Fixtures.doc_metadata_json
+                ,$Test$Fixtures.vocab_json])));
+   var topWordsTest = function () {
+      var topWords = getTopWordsFrom(topicFixtureData);
+      var lenTopWords = A2($Result.map,
+      $List.length,
+      topWords);
+      return A2($ElmTest$Test.test,
+      "topWordsForTopic",
+      A2($ElmTest$Assertion.assertEqual,
+      $Result.Ok(10),
+      lenTopWords));
+   }();
+   var topWordVectorsTest = function () {
+      var topWords = getTopWordsFrom(topicFixtureData);
+      var tokens = A3($Result.map2,
+      $TopicData.getTokenVectors,
+      topicFixtureData,
+      topWords);
+      return A2($ElmTest$Test.test,
+      "getTokenVectors",
+      A2($ElmTest$Assertion.assertEqual,
+      $Result.Ok(10),
+      A2($Result.map,
+      $List.length,
+      tokens)));
+   }();
+   var radialResult = "M0,-10L16.82941969615793,-10.806046117362794L18.185948536513635,8.32293673094285L1.4112000805986715,9.899924966004454Z";
+   var radialPoints = _L.fromArray([{ctor: "_Tuple2"
+                                    ,_0: 10
+                                    ,_1: 0}
+                                   ,{ctor: "_Tuple2",_0: 20,_1: 1}
+                                   ,{ctor: "_Tuple2",_0: 20,_1: 2}
+                                   ,{ctor: "_Tuple2"
+                                    ,_0: 10
+                                    ,_1: 3}]);
+   var suiteVizStars = A2($ElmTest$Test.Suite,
+   "Viz.Stars",
+   _L.fromArray([A2($ElmTest$Test.equals,
+   radialResult,
+   $Viz$Stars.lineRadial(radialPoints))]));
+   var minMax = function (scale) {
+      return function () {
+         var r2 = A2($Maybe.map,
+         $Viz$Scale.convert(scale),
+         $List.head($List.reverse(scale.domain)));
+         var r1 = A2($Maybe.map,
+         $Viz$Scale.convert(scale),
+         $List.head(scale.domain));
+         return A2($ElmTest$Test.equals,
+         A2($Basics._op["++"],
+         $Common.toList(r1),
+         $Common.toList(r2)),
+         scale.range);
+      }();
+   };
+   var lerpTests = _L.fromArray([A2($ElmTest$Test.equals,
+                                A2($Viz$Scale.lerp,
+                                _L.fromArray([0.0,1.0]),
+                                0.5),
+                                0.5)
+                                ,A2($ElmTest$Test.equals,
+                                A2($Viz$Scale.lerp,
+                                _L.fromArray([-2.0,5.0]),
+                                0.0),
+                                -2.0)
+                                ,A2($ElmTest$Test.equals,
+                                A2($Viz$Scale.lerp,
+                                _L.fromArray([-1.0,1.0]),
+                                0.75),
+                                0.5)]);
+   var suiteVizScale = $ElmTest$Test.Suite("Viz.Scale")(A2($Basics._op["++"],
+   lerpTests,
+   _L.fromArray([minMax($Viz$Scale.linear)
+                ,minMax(_U.replace([["domain"
+                                    ,_L.fromArray([-200,500])]],
+                $Viz$Scale.linear))
+                ,minMax(_U.replace([["range"
+                                    ,_L.fromArray([-5.0,-3.0])]],
+                $Viz$Scale.linear))])));
+   var unsafeGetOk = function (x) {
+      return function () {
+         switch (x.ctor)
+         {case "Err":
+            return $Debug.crash(A2($Basics._op["++"],
+              "Not OK: ",
+              $Basics.toString(x._0)));
+            case "Ok": return x._0;}
+         _U.badCase($moduleName,
+         "between lines 31 and 33");
+      }();
+   };
+   var Failure = function (a) {
+      return {ctor: "Failure"
+             ,_0: a};
+   };
+   var Success = {ctor: "Success"};
+   var toTrial = function (x) {
+      return function () {
+         switch (x.ctor)
+         {case "Err":
+            return Failure(x._0);
+            case "Ok": return Success;}
+         _U.badCase($moduleName,
+         "between lines 22 and 24");
+      }();
+   };
+   var isOk = function ($) {
+      return $ElmTest$Assertion.assertEqual(Success)(toTrial($));
+   };
+   var assertDec = F2(function (dec,
+   s) {
+      return isOk(A2($Json$Decode.decodeString,
+      dec,
+      s));
+   });
+   var assertTopicDist = assertDec($TopicData.topicDist);
+   var jsonTests = _L.fromArray([A2($ElmTest$Test.test,
+                                "topic_tokens",
+                                A2(assertDec,
+                                $TopicData.topicTokenDec,
+                                $Test$Fixtures.topic_tokens_json))
+                                ,A2($ElmTest$Test.test,
+                                "doc_topics",
+                                assertTopicDist($Test$Fixtures.doc_topics_json))
+                                ,A2($ElmTest$Test.test,
+                                "token_topics",
+                                assertTopicDist($Test$Fixtures.token_topics_json))
+                                ,A2($ElmTest$Test.test,
+                                "doc_metadata",
+                                A2(assertDec,
+                                $Json$Decode.dict($TopicData.trackInfoDec),
+                                $Test$Fixtures.doc_metadata_json))
+                                ,A2($ElmTest$Test.test,
+                                "token_topics",
+                                assertTopicDist($Test$Fixtures.token_topics_json))
+                                ,A2($ElmTest$Test.test,
+                                "vocab",
+                                A2(assertDec,
+                                $Json$Decode.dict($Json$Decode.list($Json$Decode.$float)),
+                                $Test$Fixtures.vocab_json))]);
+   var suiteTopicData = $ElmTest$Test.Suite("TopicData")(A2($Basics._op["++"],
+   jsonTests,
+   _L.fromArray([topWordsTest
+                ,topWordVectorsTest])));
+   var allTests = A2($ElmTest$Test.Suite,
+   "App",
+   _L.fromArray([suiteVizStars
+                ,suiteVizScale
+                ,suiteTopicData]));
+   var main = $ElmTest$Runner$Element.runDisplay(allTests);
+   _elm.Test.values = {_op: _op
+                      ,Success: Success
+                      ,Failure: Failure
+                      ,toTrial: toTrial
+                      ,isOk: isOk
+                      ,unsafeGetOk: unsafeGetOk
+                      ,lerpTests: lerpTests
+                      ,minMax: minMax
+                      ,suiteVizScale: suiteVizScale
+                      ,radialPoints: radialPoints
+                      ,radialResult: radialResult
+                      ,suiteVizStars: suiteVizStars
+                      ,assertDec: assertDec
+                      ,assertTopicDist: assertTopicDist
+                      ,jsonTests: jsonTests
+                      ,topicFixtureData: topicFixtureData
+                      ,getTopWordsFrom: getTopWordsFrom
+                      ,topWordsTest: topWordsTest
+                      ,topWordVectorsTest: topWordVectorsTest
+                      ,suiteTopicData: suiteTopicData
+                      ,allTests: allTests
+                      ,main: main};
+   return _elm.Test.values;
+};

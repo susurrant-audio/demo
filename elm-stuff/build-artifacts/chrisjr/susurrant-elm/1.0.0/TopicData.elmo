@@ -1,0 +1,617 @@
+Elm.TopicData = Elm.TopicData || {};
+Elm.TopicData.make = function (_elm) {
+   "use strict";
+   _elm.TopicData = _elm.TopicData || {};
+   if (_elm.TopicData.values)
+   return _elm.TopicData.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "TopicData",
+   $Array = Elm.Array.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Common = Elm.Common.make(_elm),
+   $Dict = Elm.Dict.make(_elm),
+   $Http = Elm.Http.make(_elm),
+   $Json$Decode = Elm.Json.Decode.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Model = Elm.Model.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $String = Elm.String.make(_elm),
+   $Task = Elm.Task.make(_elm);
+   var topicData = $Signal.mailbox($Result.Err("Loading..."));
+   var calcBestTopics = function (data) {
+      return function () {
+         var bestTopics = A2($Dict.map,
+         F2(function (k,v) {
+            return $Common.argmax(v);
+         }),
+         data.tokenTopics);
+         return _U.replace([["tokenMaxLikelyTopic"
+                            ,bestTopics]],
+         data);
+      }();
+   };
+   var receivedData = function (data) {
+      return function () {
+         var data$ = calcBestTopics(data);
+         return A2($Signal.send,
+         topicData.address,
+         $Result.Ok(data$));
+      }();
+   };
+   var prefix = "/data/";
+   var addVocab = F2(function (a,
+   data) {
+      return _U.replace([["vocab"
+                         ,a]],
+      data);
+   });
+   var addDocMetadata = F2(function (a,
+   data) {
+      return _U.replace([["docMetadata"
+                         ,a]],
+      data);
+   });
+   var addTopicTokens = F2(function (a,
+   data) {
+      return _U.replace([["topicTokens"
+                         ,a]],
+      data);
+   });
+   var addTokenTopics = F2(function (a,
+   data) {
+      return _U.replace([["tokenTopics"
+                         ,a]],
+      data);
+   });
+   var addDocTopics = F2(function (a,
+   data) {
+      return _U.replace([["docTopics"
+                         ,a]],
+      data);
+   });
+   var addTopicPrevalence = F2(function (a,
+   data) {
+      return _U.replace([["topicPrevalence"
+                         ,a]],
+      data);
+   });
+   var updateOrFail = F4(function (update,
+   dec,
+   resp,
+   data) {
+      return function () {
+         var decoded = A2($Result.andThen,
+         resp,
+         $Json$Decode.decodeString(dec));
+         return function () {
+            switch (decoded.ctor)
+            {case "Err":
+               return $Result.Err(decoded._0);
+               case "Ok":
+               return $Result.Ok(A2(update,
+                 decoded._0,
+                 data));}
+            _U.badCase($moduleName,
+            "between lines 185 and 187");
+         }();
+      }();
+   });
+   var topicPct = F2(function (i,
+   data) {
+      return function () {
+         var amt = $Maybe.withDefault(0.0)(A2($Array.get,
+         i,
+         data.topicPrevalence));
+         return $Common.roundPct(amt);
+      }();
+   });
+   var trackInfo = F2(function (data,
+   track) {
+      return $Maybe.withDefault($Model.noInfo(track))(A2($Dict.get,
+      track,
+      data.docMetadata));
+   });
+   var segToTrackId = function (seg) {
+      return function () {
+         var parts = A2($String.split,
+         ".",
+         seg);
+         return $Maybe.withDefault("")($List.head(parts));
+      }();
+   };
+   var getVector = F2(function (data,
+   _v3) {
+      return function () {
+         switch (_v3.ctor)
+         {case "_Tuple2":
+            return function () {
+                 var f = function (v) {
+                    return {_: {}
+                           ,id: _v3._0
+                           ,prob: _v3._1
+                           ,tokenType: $Model.tokenTypeOf(_v3._0)
+                           ,values: v};
+                 };
+                 var vec = A2($Dict.get,
+                 _v3._0,
+                 data.vocab);
+                 return A2($Maybe.map,f,vec);
+              }();}
+         _U.badCase($moduleName,
+         "between lines 152 and 154");
+      }();
+   });
+   var getTokenVectors = F2(function (data,
+   tokens) {
+      return A2($List.filterMap,
+      getVector(data),
+      tokens);
+   });
+   var topWordsForTopic = F2(function (topic,
+   data) {
+      return function () {
+         var topWords = $Maybe.withDefault(_L.fromArray([]))(A2($Dict.get,
+         topic,
+         data.topicTokens));
+         var sorted = $List.reverse(A2($List.sortBy,
+         $Basics.snd,
+         topWords));
+         var nonzero = A2($List.filter,
+         function (_v7) {
+            return function () {
+               switch (_v7.ctor)
+               {case "_Tuple2":
+                  return _U.cmp(_v7._1,
+                    1.0e-2) > 0;}
+               _U.badCase($moduleName,
+               "on line 147, column 43 to 51");
+            }();
+         },
+         sorted);
+         return A2($List.take,
+         10,
+         nonzero);
+      }();
+   });
+   var topicTokens = F2(function (topic,
+   data) {
+      return getTokenVectors(data)(A2(topWordsForTopic,
+      topic,
+      data));
+   });
+   var toXY = $Array.indexedMap(F2(function (i,
+   y) {
+      return {_: {},x: i,y: y};
+   }));
+   var getTopicsForDoc = F2(function (data,
+   doc) {
+      return A2($Result.fromMaybe,
+      A2($Basics._op["++"],
+      "Doc ",
+      A2($Basics._op["++"],
+      doc,
+      "not found")),
+      A2($Dict.get,
+      doc,
+      data.docTopics));
+   });
+   var trackTokenDec = A4($Json$Decode.tuple3,
+   F3(function (v0,v1,v2) {
+      return {ctor: "_Tuple3"
+             ,_0: v0
+             ,_1: v1
+             ,_2: v2};
+   }),
+   $Json$Decode.maybe($Json$Decode.$int),
+   $Json$Decode.$int,
+   $Json$Decode.$int);
+   var trackDataDec = function (trackID) {
+      return A2($Json$Decode.map,
+      function (xs) {
+         return {ctor: "_Tuple2"
+                ,_0: trackID
+                ,_1: xs};
+      },
+      $Json$Decode.array(trackTokenDec));
+   };
+   var incrementOrAdd = F2(function (x,
+   d) {
+      return function () {
+         var f = function (maybeV) {
+            return function () {
+               switch (maybeV.ctor)
+               {case "Just":
+                  return $Maybe.Just(maybeV._0 + 1);
+                  case "Nothing":
+                  return $Maybe.Just(1);}
+               _U.badCase($moduleName,
+               "between lines 84 and 87");
+            }();
+         };
+         return A3($Dict.update,x,f,d);
+      }();
+   });
+   var count = A2($List.foldl,
+   incrementOrAdd,
+   $Dict.empty);
+   var mkProbList = function (xs) {
+      return function () {
+         var counts = count(xs);
+         var countLst = $Dict.toList(counts);
+         var n = $List.length(xs);
+         var f = function (_v13) {
+            return function () {
+               switch (_v13.ctor)
+               {case "_Tuple2":
+                  return {ctor: "_Tuple2"
+                         ,_0: _v13._0
+                         ,_1: $Basics.toFloat(_v13._1) / $Basics.toFloat(n)};}
+               _U.badCase($moduleName,
+               "on line 97, column 20 to 44");
+            }();
+         };
+         return _U.eq(n,
+         0) ? _L.fromArray([]) : A2($List.map,
+         f,
+         countLst);
+      }();
+   };
+   var tokensToProbDist = F2(function (dtype,
+   byDtypes) {
+      return function () {
+         var tokenStr = function (i) {
+            return A2($Basics._op["++"],
+            dtype,
+            $Basics.toString(i));
+         };
+         var tokens = $Maybe.withDefault($Array.empty)(A2($Dict.get,
+         dtype,
+         byDtypes));
+         var tokenStrs = $Array.toList(A2($Array.map,
+         tokenStr,
+         tokens));
+         return mkProbList(tokenStrs);
+      }();
+   });
+   var tokensToTagged = function (tokens) {
+      return A2($Array.map,
+      function (_v17) {
+         return function () {
+            switch (_v17.ctor)
+            {case "_Tuple3":
+               return A3($Model.TaggedToken,
+                 _v17._0,
+                 _v17._1,
+                 _v17._2);}
+            _U.badCase($moduleName,
+            "on line 79, column 30 to 47");
+         }();
+      },
+      tokens);
+   };
+   var tokensByDtype = F3(function (data,
+   track,
+   allTokens) {
+      return function () {
+         var tagged = tokensToTagged(allTokens);
+         var get = F2(function (dtype,
+         getter) {
+            return {ctor: "_Tuple2"
+                   ,_0: dtype
+                   ,_1: A2($Array.map,
+                   getter,
+                   tagged)};
+         });
+         return $Dict.fromList(_L.fromArray([A2(get,
+                                            "gfccs",
+                                            function (_) {
+                                               return _.gfcc;
+                                            })
+                                            ,A2(get,
+                                            "beat_coefs",
+                                            function ($) {
+                                               return $Maybe.withDefault(-1)(function (_) {
+                                                  return _.beat_coef;
+                                               }($));
+                                            })
+                                            ,A2(get,
+                                            "chroma",
+                                            function (_) {
+                                               return _.chroma;
+                                            })]));
+      }();
+   });
+   var tokenTopic = F3(function (data,
+   dtype,
+   dnum) {
+      return function () {
+         var tokName = A2($Basics._op["++"],
+         dtype,
+         $Basics.toString(dnum));
+         return $Maybe.withDefault(-1)(A2($Dict.get,
+         tokName,
+         data.tokenMaxLikelyTopic));
+      }();
+   });
+   var tokensToTopics = function (data) {
+      return $Dict.map(F2(function (dtype,
+      xs) {
+         return A2($Array.map,
+         A2(tokenTopic,data,dtype),
+         xs);
+      }));
+   };
+   var trackToTokenTopics = F2(function (data,
+   _v22) {
+      return function () {
+         switch (_v22.ctor)
+         {case "_Tuple2":
+            return function () {
+                 var f = function (xs) {
+                    return A2($Array.map,
+                    function (i) {
+                       return {_: {}
+                              ,x: i
+                              ,y: 1.0 / $Basics.toFloat($Array.length(xs))};
+                    },
+                    xs);
+                 };
+                 var info = A2(trackInfo,
+                 data,
+                 _v22._0);
+                 var byDtype = A3(tokensByDtype,
+                 data,
+                 _v22._0,
+                 _v22._1);
+                 var topicDict = A2(tokensToTopics,
+                 data,
+                 byDtype);
+                 return A2($Dict.map,
+                 F2(function (_v26,v) {
+                    return function () {
+                       return {_: {}
+                              ,topics: f(v)
+                              ,track: info};
+                    }();
+                 }),
+                 topicDict);
+              }();}
+         _U.badCase($moduleName,
+         "between lines 66 and 70");
+      }();
+   });
+   var thresh = F4(function (topic,
+   min,
+   _v28,
+   arr) {
+      return function () {
+         return _U.cmp(A2($Common.nth,
+         topic,
+         arr),
+         min) > 0;
+      }();
+   });
+   var topDocsForTopic = F2(function (topic,
+   data) {
+      return function () {
+         var getInfo = function (t) {
+            return A2(trackInfo,
+            data,
+            segToTrackId(t));
+         };
+         var aboveThresh = $Dict.toList(A2($Dict.filter,
+         A2(thresh,topic,0.1),
+         data.docTopics));
+         var docs = A2($List.map,
+         function (_v30) {
+            return function () {
+               switch (_v30.ctor)
+               {case "_Tuple2": return {_: {}
+                                       ,topics: toXY(_v30._1)
+                                       ,track: getInfo(_v30._0)};}
+               _U.badCase($moduleName,
+               "on line 139, column 37 to 67");
+            }();
+         },
+         aboveThresh);
+         var topDocs = $List.reverse(A2($List.sortBy,
+         function ($) {
+            return $Common.nth(topic)($Array.map(function (_) {
+               return _.y;
+            })(function (_) {
+               return _.topics;
+            }($)));
+         },
+         docs));
+         return A2($List.take,
+         10,
+         topDocs);
+      }();
+   });
+   var unsafeToInt = function (s) {
+      return function () {
+         var _v34 = $String.toInt(s);
+         switch (_v34.ctor)
+         {case "Ok": return _v34._0;}
+         _U.badCase($moduleName,
+         "between lines 50 and 51");
+      }();
+   };
+   var toIntDict = function ($) {
+      return $Dict.fromList($List.map(function (_v36) {
+         return function () {
+            switch (_v36.ctor)
+            {case "_Tuple2":
+               return {ctor: "_Tuple2"
+                      ,_0: unsafeToInt(_v36._0)
+                      ,_1: _v36._1};}
+            _U.badCase($moduleName,
+            "on line 55, column 38 to 54");
+         }();
+      })($Dict.toList($)));
+   };
+   var topicTokenDec = $Json$Decode.map(toIntDict)($Json$Decode.dict($Json$Decode.keyValuePairs($Json$Decode.$float)));
+   var topicDist = $Json$Decode.dict($Json$Decode.array($Json$Decode.$float));
+   var trackInfoDec = A5($Json$Decode.object4,
+   $Model.TrackInfo,
+   $Json$Decode.map($Basics.toString)(A2($Json$Decode._op[":="],
+   "id",
+   $Json$Decode.$int)),
+   A2($Json$Decode._op[":="],
+   "title",
+   $Json$Decode.string),
+   A2($Json$Decode.at,
+   _L.fromArray(["user"
+                ,"username"]),
+   $Json$Decode.string),
+   A2($Json$Decode._op[":="],
+   "permalink_url",
+   $Json$Decode.string));
+   var loadData = A2($Task.andMap,
+   A2($Task.andMap,
+   A2($Task.andMap,
+   A2($Task.andMap,
+   A2($Task.andMap,
+   A2($Task.andMap,
+   A2($Task.map,
+   $Model.Data,
+   A2($Http.get,
+   $Json$Decode.array($Json$Decode.$float),
+   A2($Basics._op["++"],
+   prefix,
+   "topics.json"))),
+   A2($Http.get,
+   topicDist,
+   A2($Basics._op["++"],
+   prefix,
+   "doc_topics.json"))),
+   A2($Http.get,
+   topicDist,
+   A2($Basics._op["++"],
+   prefix,
+   "token_topics.json"))),
+   A2($Http.get,
+   topicTokenDec,
+   A2($Basics._op["++"],
+   prefix,
+   "topic_tokens.json"))),
+   A2($Http.get,
+   $Json$Decode.dict(trackInfoDec),
+   A2($Basics._op["++"],
+   prefix,
+   "doc_metadata.json"))),
+   A2($Http.get,
+   $Json$Decode.dict($Json$Decode.list($Json$Decode.$float)),
+   A2($Basics._op["++"],
+   prefix,
+   "vocab.json"))),
+   $Task.succeed($Dict.empty));
+   var emptyData = A7($Model.Data,
+   $Array.empty,
+   $Dict.empty,
+   $Dict.empty,
+   $Dict.empty,
+   $Dict.empty,
+   $Dict.empty,
+   $Dict.empty);
+   var fromResults = function (results) {
+      return function () {
+         var updates = _L.fromArray([A2(updateOrFail,
+                                    addTopicPrevalence,
+                                    $Json$Decode.array($Json$Decode.$float))
+                                    ,A2(updateOrFail,
+                                    addDocTopics,
+                                    topicDist)
+                                    ,A2(updateOrFail,
+                                    addTokenTopics,
+                                    topicDist)
+                                    ,A2(updateOrFail,
+                                    addTopicTokens,
+                                    topicTokenDec)
+                                    ,A2(updateOrFail,
+                                    addDocMetadata,
+                                    $Json$Decode.dict(trackInfoDec))
+                                    ,A2(updateOrFail,
+                                    addVocab,
+                                    $Json$Decode.dict($Json$Decode.list($Json$Decode.$float)))]);
+         var updates$ = A3($List.map2,
+         F2(function (x,y) {
+            return y(x);
+         }),
+         results,
+         updates);
+         return A3($List.foldl,
+         $Basics.flip($Result.andThen),
+         $Result.Ok(emptyData),
+         updates$);
+      }();
+   };
+   var numTopics = function ($) {
+      return $Array.length(function (_) {
+         return _.topicPrevalence;
+      }($));
+   };
+   var topicOrder = function (data) {
+      return function () {
+         var f = function (a) {
+            return $Maybe.withDefault(0.0)(A2($Array.get,
+            a,
+            data.topicPrevalence));
+         };
+         return $List.reverse(A2($List.sortBy,
+         f,
+         _L.range(0,
+         numTopics(data) - 1)));
+      }();
+   };
+   _elm.TopicData.values = {_op: _op
+                           ,numTopics: numTopics
+                           ,emptyData: emptyData
+                           ,trackInfoDec: trackInfoDec
+                           ,topicDist: topicDist
+                           ,unsafeToInt: unsafeToInt
+                           ,toIntDict: toIntDict
+                           ,topicTokenDec: topicTokenDec
+                           ,thresh: thresh
+                           ,trackToTokenTopics: trackToTokenTopics
+                           ,tokenTopic: tokenTopic
+                           ,tokensToTagged: tokensToTagged
+                           ,incrementOrAdd: incrementOrAdd
+                           ,count: count
+                           ,mkProbList: mkProbList
+                           ,tokensToProbDist: tokensToProbDist
+                           ,trackTokenDec: trackTokenDec
+                           ,trackDataDec: trackDataDec
+                           ,tokensByDtype: tokensByDtype
+                           ,tokensToTopics: tokensToTopics
+                           ,getTopicsForDoc: getTopicsForDoc
+                           ,toXY: toXY
+                           ,topDocsForTopic: topDocsForTopic
+                           ,topWordsForTopic: topWordsForTopic
+                           ,getVector: getVector
+                           ,getTokenVectors: getTokenVectors
+                           ,topicTokens: topicTokens
+                           ,segToTrackId: segToTrackId
+                           ,trackInfo: trackInfo
+                           ,topicPct: topicPct
+                           ,topicOrder: topicOrder
+                           ,updateOrFail: updateOrFail
+                           ,addTopicPrevalence: addTopicPrevalence
+                           ,addDocTopics: addDocTopics
+                           ,addTokenTopics: addTokenTopics
+                           ,addTopicTokens: addTopicTokens
+                           ,addDocMetadata: addDocMetadata
+                           ,addVocab: addVocab
+                           ,fromResults: fromResults
+                           ,prefix: prefix
+                           ,calcBestTopics: calcBestTopics
+                           ,loadData: loadData
+                           ,topicData: topicData
+                           ,receivedData: receivedData};
+   return _elm.TopicData.values;
+};
