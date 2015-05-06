@@ -10071,7 +10071,7 @@ Elm.Main.make = function (_elm) {
    var loadGraph = A2($Task.andThen,
    A2($Http.get,
    $GraphData.graphDec,
-   "http://susurrant-audio.github.io/demo/data/graph.json"),
+   "/demo/data/graph.json"),
    $GraphData.sendGraphData);
    var fetchTopicData = Elm.Native.Task.make(_elm).perform(A2($Task.andThen,
    $TopicData.loadData,
@@ -22419,7 +22419,7 @@ Elm.TopicData.make = function (_elm) {
          $Result.Ok(data$));
       }();
    };
-   var prefix = "http://susurrant-audio.github.io/demo/data/";
+   var prefix = "/demo/data/";
    var addVocab = F2(function (a,
    data) {
       return _U.replace([["vocab"
