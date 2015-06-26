@@ -10714,7 +10714,7 @@ Elm.Main.make = function (_elm) {
    var loadGraph = A2($Task.andThen,
    A2($Http.get,
    $GraphData.graphDec,
-   "/data/graph.json"),
+   "data/graph.json"),
    $GraphData.sendGraphData);
    var fetchTopicData = Elm.Native.Task.make(_elm).perform(A2($Task.andThen,
    $TopicData.loadData,
@@ -10736,7 +10736,7 @@ Elm.Main.make = function (_elm) {
             "between lines 73 and 76");
          }();
          var trackUrl = A2($Basics._op["++"],
-         "/data/tracks/",
+         "data/tracks/",
          A2($Basics._op["++"],
          trackID,
          ".json"));
