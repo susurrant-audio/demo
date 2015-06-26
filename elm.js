@@ -585,7 +585,7 @@ Elm.Audio.Granular.make = function (_elm) {
    var audioBuffer = A2($Task.andThen,
    A2($WebAudio.loadAudioBufferFromUrl,
    $WebAudio.DefaultContext,
-   "/data/samples.ogg"),
+   "data/samples.ogg"),
    function (x) {
       return A2($Signal.send,
       actions.address,
@@ -10822,7 +10822,7 @@ Elm.Main.make = function (_elm) {
       return function () {
          return function () {
             return function () {
-               return routeToPath("/index.html");
+               return routeToPath($Model.siteRoot);
             }();
          }();
       }();
@@ -10864,7 +10864,7 @@ Elm.Main.make = function (_elm) {
    });
    var route = A2($Router.match,
    _L.fromArray([A2($Router._op[":->"],
-                "/index.html",
+                $Model.siteRoot,
                 displayOverview)
                 ,A2($Router._op[":->"],
                 "/track",
@@ -11009,6 +11009,7 @@ Elm.Model.make = function (_elm) {
    $Set = Elm.Set.make(_elm),
    $Signal = Elm.Signal.make(_elm),
    $String = Elm.String.make(_elm);
+   var siteRoot = "/demo";
    var noInfo = function (track) {
       return {_: {}
              ,title: ""
@@ -11143,7 +11144,8 @@ Elm.Model.make = function (_elm) {
                        ,State: State
                        ,defaultState: defaultState
                        ,noInfo: noInfo
-                       ,tokenTypeOf: tokenTypeOf};
+                       ,tokenTypeOf: tokenTypeOf
+                       ,siteRoot: siteRoot};
    return _elm.Model.values;
 };
 Elm.Mouse = Elm.Mouse || {};
@@ -25328,7 +25330,7 @@ Elm.View.make = function (_elm) {
    var viewOverview = viewAllTopicsWith(viewTopicDocOverview);
    var navbrand = A2($Html.a,
    _L.fromArray([$Html$Attributes.$class("navbar-brand")
-                ,$Html$Attributes.href("/index.html")]),
+                ,$Html$Attributes.href($Model.siteRoot)]),
    _L.fromArray([$Html.text("Susurrant")]));
    var navheader = A2($Html.div,
    _L.fromArray([$Html$Attributes.$class("navbar-header")]),
@@ -25377,7 +25379,7 @@ Elm.View.make = function (_elm) {
    var navLinks = _L.fromArray([A3(HeaderLink,
                                "Overview",
                                "Topics and Top Tracks",
-                               "/index.html")
+                               $Model.siteRoot)
                                ,A3(HeaderLink,
                                "Topics",
                                "All topics at once",
