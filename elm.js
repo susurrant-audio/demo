@@ -585,7 +585,7 @@ Elm.Audio.Granular.make = function (_elm) {
    var audioBuffer = A2($Task.andThen,
    A2($WebAudio.loadAudioBufferFromUrl,
    $WebAudio.DefaultContext,
-   "/data/samples.mp3"),
+   "/data/samples.ogg"),
    function (x) {
       return A2($Signal.send,
       actions.address,
