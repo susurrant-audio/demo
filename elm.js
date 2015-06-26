@@ -16,6 +16,10 @@ Elm.Array.make = function (_elm) {
    $Native$Array = Elm.Native.Array.make(_elm);
    var append = $Native$Array.append;
    var length = $Native$Array.length;
+   var isEmpty = function (array) {
+      return _U.eq(length(array),
+      0);
+   };
    var slice = $Native$Array.slice;
    var set = $Native$Array.set;
    var get = F2(function (i,
@@ -72,6 +76,7 @@ Elm.Array.make = function (_elm) {
                        ,repeat: repeat
                        ,initialize: initialize
                        ,fromList: fromList
+                       ,isEmpty: isEmpty
                        ,length: length
                        ,push: push
                        ,append: append
@@ -106,10 +111,10 @@ Elm.Audio.make = function (_elm) {
    $Task = Elm.Task.make(_elm),
    $TopicData = Elm.TopicData.make(_elm),
    $Updates = Elm.Updates.make(_elm);
-   var stopToken = function (token) {
+   var stopTokens = function (soundID) {
       return function () {
          var update = A3($Updates.soundUpdate,
-         token.id,
+         soundID,
          false,
          $OSC.StopTokens);
          return A2($Signal.send,
@@ -117,21 +122,28 @@ Elm.Audio.make = function (_elm) {
          update);
       }();
    };
-   var playToken = F2(function (token,
-   data) {
+   var stopToken = function (token) {
+      return stopTokens(token.id);
+   };
+   var playTokens = F2(function (soundID,
+   tokenProbs) {
       return function () {
-         var tokens = _L.fromArray([{ctor: "_Tuple2"
-                                    ,_0: token.id
-                                    ,_1: 1.0}]);
          var update = A3($Updates.soundUpdate,
-         token.id,
+         soundID,
          true,
-         $OSC.PlayTokens(tokens));
+         $OSC.PlayTokens(tokenProbs));
          return A2($Signal.send,
          $Updates.soundUpdates.address,
          update);
       }();
    });
+   var playToken = function (token) {
+      return A2(playTokens,
+      token.id,
+      _L.fromArray([{ctor: "_Tuple2"
+                    ,_0: token.id
+                    ,_1: 1.0}]));
+   };
    var stopTopic = function (topic) {
       return function () {
          var update = A3($Updates.soundUpdate,
@@ -172,9 +184,603 @@ Elm.Audio.make = function (_elm) {
    _elm.Audio.values = {_op: _op
                        ,playTopic: playTopic
                        ,stopTopic: stopTopic
+                       ,playTokens: playTokens
+                       ,stopTokens: stopTokens
                        ,playToken: playToken
                        ,stopToken: stopToken};
    return _elm.Audio.values;
+};
+Elm.Audio = Elm.Audio || {};
+Elm.Audio.Common = Elm.Audio.Common || {};
+Elm.Audio.Common.make = function (_elm) {
+   "use strict";
+   _elm.Audio = _elm.Audio || {};
+   _elm.Audio.Common = _elm.Audio.Common || {};
+   if (_elm.Audio.Common.values)
+   return _elm.Audio.Common.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "Audio.Common",
+   $Basics = Elm.Basics.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $WebAudio = Elm.WebAudio.make(_elm);
+   var maybeConnect = F3(function (a,
+   b,
+   c) {
+      return function () {
+         switch (b.ctor)
+         {case "Just":
+            return A3($WebAudio.connectNodes,
+              c,
+              0,
+              0)(A3($WebAudio.connectNodes,
+              b._0,
+              0,
+              0)(a));
+            case "Nothing":
+            return A3($WebAudio.connectNodes,
+              c,
+              0,
+              0)(a);}
+         _U.badCase($moduleName,
+         "between lines 34 and 36");
+      }();
+   });
+   var makeLinearPanner = function (x) {
+      return A3($WebAudio.setPosition,
+      x,
+      0.0,
+      0.0)($WebAudio.setDistanceModel($WebAudio.Linear)($WebAudio.setPanningModel($WebAudio.EqualPower)($WebAudio.createPannerNode($WebAudio.DefaultContext))));
+   };
+   var makePanner = function (pan) {
+      return function () {
+         switch (pan.ctor)
+         {case "NoPan":
+            return $Maybe.Nothing;
+            case "Pan":
+            return $Maybe.Just(makeLinearPanner(pan._0));}
+         _U.badCase($moduleName,
+         "between lines 28 and 30");
+      }();
+   };
+   var mulParam = F2(function (mul,
+   param) {
+      return A2($WebAudio.setValue,
+      mul * $WebAudio.getValue(param),
+      param);
+   });
+   var makeGain = function (x) {
+      return A2($WebAudio.tapNode,
+      function (_) {
+         return _.gain;
+      },
+      $WebAudio.setValue(x))($WebAudio.createGainNode($WebAudio.DefaultContext));
+   };
+   var defaultGainNode = A3($WebAudio.connectNodes,
+   $WebAudio.getDestinationNode($WebAudio.DefaultContext),
+   0,
+   0)(makeGain(0.7));
+   var Pan = function (a) {
+      return {ctor: "Pan",_0: a};
+   };
+   var NoPan = {ctor: "NoPan"};
+   _elm.Audio.Common.values = {_op: _op
+                              ,NoPan: NoPan
+                              ,Pan: Pan
+                              ,makeGain: makeGain
+                              ,defaultGainNode: defaultGainNode
+                              ,mulParam: mulParam
+                              ,makeLinearPanner: makeLinearPanner
+                              ,makePanner: makePanner
+                              ,maybeConnect: maybeConnect};
+   return _elm.Audio.Common.values;
+};
+Elm.Audio = Elm.Audio || {};
+Elm.Audio.Granular = Elm.Audio.Granular || {};
+Elm.Audio.Granular.make = function (_elm) {
+   "use strict";
+   _elm.Audio = _elm.Audio || {};
+   _elm.Audio.Granular = _elm.Audio.Granular || {};
+   if (_elm.Audio.Granular.values)
+   return _elm.Audio.Granular.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "Audio.Granular",
+   $Audio$Common = Elm.Audio.Common.make(_elm),
+   $Audio$Probabilities = Elm.Audio.Probabilities.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Html = Elm.Html.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Model = Elm.Model.make(_elm),
+   $Random = Elm.Random.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $Task = Elm.Task.make(_elm),
+   $Time = Elm.Time.make(_elm),
+   $WebAudio = Elm.WebAudio.make(_elm);
+   var grainTrigger = $Time.every(400 * $Time.millisecond);
+   var numVoices = 8;
+   var view = function ($) {
+      return $Html.text($Basics.toString(function (_) {
+         return _.offsets;
+      }($)));
+   };
+   var update = F2(function (action,
+   model) {
+      return function () {
+         switch (action.ctor)
+         {case "BufferChange":
+            return _U.replace([["buffer"
+                               ,action._0]],
+              model);
+            case "NewEnv":
+            return _U.replace([["envelope"
+                               ,action._0]],
+              model);
+            case "NewSeed":
+            return _U.replace([["seed"
+                               ,action._0]],
+              model);
+            case "NoOp": return model;
+            case "PlayOffsets":
+            return _U.replace([["offsets"
+                               ,action._0]],
+              model);}
+         _U.badCase($moduleName,
+         "between lines 133 and 138");
+      }();
+   });
+   var untilLength = function (n) {
+      return function ($) {
+         return $List.take(n)($List.concat($List.repeat(n)($)));
+      };
+   };
+   var randomParams = function (n) {
+      return A2($Random.list,
+      n,
+      A2($Random.list,
+      4,
+      A2($Random.$float,0,1)));
+   };
+   var makeRandomParams = F2(function (voices,
+   model) {
+      return function () {
+         var $ = A2($Random.generate,
+         randomParams(voices),
+         model.seed),
+         params = $._0,
+         seed$ = $._1;
+         var $ = function () {
+            var _v5 = model.offsets;
+            switch (_v5.ctor)
+            {case "Just":
+               return A2($Random.generate,
+                 A2($Random.list,
+                 voices,
+                 $Audio$Probabilities.sampleOffsets(_v5._0)),
+                 seed$);
+               case "Nothing":
+               return {ctor: "_Tuple2"
+                      ,_0: _L.fromArray([])
+                      ,_1: seed$};}
+            _U.badCase($moduleName,
+            "between lines 115 and 118");
+         }(),
+         offsets = $._0,
+         seed$$ = $._1;
+         return {ctor: "_Tuple2"
+                ,_0: A3($List.map2,
+                F2(function (x,y) {
+                   return A2($List._op["::"],
+                   x,
+                   y);
+                }),
+                offsets,
+                params)
+                ,_1: seed$$};
+      }();
+   });
+   var isJust = function (x) {
+      return function () {
+         switch (x.ctor)
+         {case "Just": return true;
+            case "Nothing": return false;}
+         _U.badCase($moduleName,
+         "between lines 72 and 74");
+      }();
+   };
+   var totalTime = function (_v9) {
+      return function () {
+         return _v9.attack + _v9.release;
+      }();
+   };
+   var startSourceAndEnv = F6(function (source,
+   localGain,
+   envelope,
+   bufferOffset,
+   triggerAt,
+   amp) {
+      return function () {
+         var start = triggerAt + $WebAudio.getCurrentTime($WebAudio.DefaultContext);
+         var dur = totalTime(envelope);
+         var source$ = $WebAudio.stopAudioBufferNode(start + dur + 0.1)(A3($WebAudio.startAudioBufferNode,
+         start,
+         bufferOffset,
+         $Maybe.Just(dur))(source));
+         var localGain$ = A2($WebAudio.tapNode,
+         function (_) {
+            return _.gain;
+         },
+         A2($WebAudio.linearRampToValue,
+         0.0,
+         start + dur))(A2($WebAudio.tapNode,
+         function (_) {
+            return _.gain;
+         },
+         A2($WebAudio.linearRampToValue,
+         amp,
+         start + envelope.attack))(localGain));
+         return localGain$;
+      }();
+   });
+   var makeGrain = F3(function (localGain,
+   buffer,
+   _v11) {
+      return function () {
+         return function () {
+            var source = A3($WebAudio.connectNodes,
+            localGain,
+            0,
+            0)(A2($WebAudio.tapNode,
+            function (_) {
+               return _.playbackRate;
+            },
+            $Audio$Common.mulParam(_v11.transposition))($WebAudio.setAudioBufferForNode(buffer)($WebAudio.createAudioBufferSourceNode($WebAudio.DefaultContext))));
+            var dur = totalTime(_v11.envelope);
+            var panner = $Audio$Common.makePanner(_v11.pan);
+            var _ = A3($Audio$Common.maybeConnect,
+            localGain,
+            panner,
+            $Audio$Common.defaultGainNode);
+            return A6(startSourceAndEnv,
+            source,
+            localGain,
+            _v11.envelope,
+            _v11.bufferOffset,
+            _v11.triggerAt,
+            _v11.amp);
+         }();
+      }();
+   });
+   var defaultEnvelope = {_: {}
+                         ,attack: 0.2
+                         ,release: 0.2};
+   var defaultModel = {_: {}
+                      ,buffer: $Maybe.Nothing
+                      ,bufferSpread: 0.3
+                      ,envelope: defaultEnvelope
+                      ,gainNodes: A2($List.map,
+                      function (_v13) {
+                         return function () {
+                            return $Audio$Common.makeGain(0.0);
+                         }();
+                      },
+                      _L.range(1,numVoices))
+                      ,offsets: $Maybe.Nothing
+                      ,seed: $Random.initialSeed(0)
+                      ,triggerSpread: 0.2
+                      ,volume: 0.7};
+   var defaultGrainParams = {_: {}
+                            ,amp: 0.8
+                            ,bufferOffset: 0.0
+                            ,envelope: defaultEnvelope
+                            ,pan: $Audio$Common.NoPan
+                            ,transposition: 1.0
+                            ,triggerAt: 0.0};
+   var makeParams = F2(function (model,
+   _v15) {
+      return function () {
+         switch (_v15.ctor)
+         {case "::":
+            switch (_v15._1.ctor)
+              {case "::":
+                 switch (_v15._1._1.ctor)
+                   {case "::":
+                      switch (_v15._1._1._1.ctor)
+                        {case "::":
+                           switch (_v15._1._1._1._1.ctor)
+                             {case "::":
+                                switch (_v15._1._1._1._1._1.ctor)
+                                  {case "[]": return function () {
+                                          var bufferOffset = _v15._0 + model.bufferSpread * _v15._1._0;
+                                          var pan = _U.cmp(_v15._1._1._1._1._0,
+                                          0.5) < 0 ? $Audio$Common.Pan(_v15._1._1._1._0 * 2.0 - 1.0) : $Audio$Common.NoPan;
+                                          return _U.replace([["bufferOffset"
+                                                             ,bufferOffset]
+                                                            ,["triggerAt"
+                                                             ,_v15._1._1._0 * model.triggerSpread]
+                                                            ,["pan",pan]
+                                                            ,["amp"
+                                                             ,model.volume * defaultGrainParams.amp]
+                                                            ,["envelope"
+                                                             ,model.envelope]],
+                                          defaultGrainParams);
+                                       }();}
+                                  break;}
+                             break;}
+                        break;}
+                   break;}
+              break;}
+         _U.badCase($moduleName,
+         "between lines 100 and 106");
+      }();
+   });
+   var PlayOffsets = function (a) {
+      return {ctor: "PlayOffsets"
+             ,_0: a};
+   };
+   var BufferChange = function (a) {
+      return {ctor: "BufferChange"
+             ,_0: a};
+   };
+   var NewSeed = function (a) {
+      return {ctor: "NewSeed"
+             ,_0: a};
+   };
+   var NewEnv = function (a) {
+      return {ctor: "NewEnv"
+             ,_0: a};
+   };
+   var NoOp = {ctor: "NoOp"};
+   var actions = $Signal.mailbox(NoOp);
+   var triggerGrains = F2(function (voices,
+   model) {
+      return function () {
+         var _v27 = model.buffer;
+         switch (_v27.ctor)
+         {case "Just":
+            return function () {
+                 var grainsWith = F2(function (gain,
+                 off) {
+                    return A2(makeGrain,
+                    gain,
+                    _v27._0)(A2(makeParams,
+                    model,
+                    off));
+                 });
+                 var $ = A2(makeRandomParams,
+                 voices,
+                 model),
+                 offsets = $._0,
+                 seed$ = $._1;
+                 var _ = A3($List.map2,
+                 grainsWith,
+                 model.gainNodes,
+                 offsets);
+                 return A2($Signal.send,
+                 actions.address,
+                 NewSeed(seed$));
+              }();
+            case "Nothing":
+            return $Task.succeed({ctor: "_Tuple0"});}
+         _U.badCase($moduleName,
+         "between lines 122 and 128");
+      }();
+   });
+   var doAudio = function (model) {
+      return A2(triggerGrains,
+      numVoices,
+      model);
+   };
+   var audioBuffer = A2($Task.andThen,
+   A2($WebAudio.loadAudioBufferFromUrl,
+   $WebAudio.DefaultContext,
+   "/data/samples.mp3"),
+   function (x) {
+      return A2($Signal.send,
+      actions.address,
+      BufferChange($Maybe.Just(x)));
+   });
+   var model = A3($Signal.foldp,
+   update,
+   defaultModel,
+   actions.signal);
+   var audioTasks = $Signal.map(doAudio)($Signal.sampleOn(grainTrigger)(model));
+   var playOffsets = function ($) {
+      return $Signal.send(actions.address)(PlayOffsets($));
+   };
+   var Model = F8(function (a,
+   b,
+   c,
+   d,
+   e,
+   f,
+   g,
+   h) {
+      return {_: {}
+             ,buffer: a
+             ,bufferSpread: d
+             ,envelope: b
+             ,gainNodes: h
+             ,offsets: f
+             ,seed: c
+             ,triggerSpread: e
+             ,volume: g};
+   });
+   var GrainParams = F6(function (a,
+   b,
+   c,
+   d,
+   e,
+   f) {
+      return {_: {}
+             ,amp: e
+             ,bufferOffset: c
+             ,envelope: f
+             ,pan: b
+             ,transposition: a
+             ,triggerAt: d};
+   });
+   var Envelope = F2(function (a,
+   b) {
+      return {_: {}
+             ,attack: a
+             ,release: b};
+   });
+   _elm.Audio.Granular.values = {_op: _op
+                                ,Envelope: Envelope
+                                ,GrainParams: GrainParams
+                                ,Model: Model
+                                ,NoOp: NoOp
+                                ,NewEnv: NewEnv
+                                ,NewSeed: NewSeed
+                                ,BufferChange: BufferChange
+                                ,PlayOffsets: PlayOffsets
+                                ,defaultEnvelope: defaultEnvelope
+                                ,defaultModel: defaultModel
+                                ,defaultGrainParams: defaultGrainParams
+                                ,totalTime: totalTime
+                                ,isJust: isJust
+                                ,startSourceAndEnv: startSourceAndEnv
+                                ,makeGrain: makeGrain
+                                ,makeParams: makeParams
+                                ,randomParams: randomParams
+                                ,untilLength: untilLength
+                                ,makeRandomParams: makeRandomParams
+                                ,triggerGrains: triggerGrains
+                                ,update: update
+                                ,view: view
+                                ,numVoices: numVoices
+                                ,doAudio: doAudio
+                                ,actions: actions
+                                ,audioBuffer: audioBuffer
+                                ,model: model
+                                ,grainTrigger: grainTrigger
+                                ,audioTasks: audioTasks
+                                ,playOffsets: playOffsets};
+   return _elm.Audio.Granular.values;
+};
+Elm.Audio = Elm.Audio || {};
+Elm.Audio.Probabilities = Elm.Audio.Probabilities || {};
+Elm.Audio.Probabilities.make = function (_elm) {
+   "use strict";
+   _elm.Audio = _elm.Audio || {};
+   _elm.Audio.Probabilities = _elm.Audio.Probabilities || {};
+   if (_elm.Audio.Probabilities.values)
+   return _elm.Audio.Probabilities.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "Audio.Probabilities",
+   $Basics = Elm.Basics.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Model = Elm.Model.make(_elm),
+   $Random = Elm.Random.make(_elm);
+   var map = F2(function (f,g) {
+      return $Random.customGenerator(function (seed) {
+         return function () {
+            var $ = A2($Random.generate,
+            g,
+            seed),
+            result = $._0,
+            seed$ = $._1;
+            return {ctor: "_Tuple2"
+                   ,_0: f(result)
+                   ,_1: seed$};
+         }();
+      });
+   });
+   var probability = A2($Random.$float,
+   0,
+   1);
+   var CDF = function (a) {
+      return {ctor: "CDF",_0: a};
+   };
+   var selectFrom = F2(function (cdf,
+   s) {
+      return function () {
+         switch (cdf.ctor)
+         {case "CDF":
+            switch (cdf._0.ctor)
+              {case "::":
+                 switch (cdf._0._1.ctor)
+                   {case "[]": return cdf._0._0;}
+                   return _U.cmp(s,
+                   cdf._0._0.prob) < 1 ? cdf._0._0 : A2(selectFrom,
+                   CDF(cdf._0._1),
+                   s);
+                 case "[]":
+                 return $Debug.crash("Empty CDF passed to selectFrom");}
+              break;}
+         _U.badCase($moduleName,
+         "between lines 35 and 38");
+      }();
+   });
+   var sampleOffsets = function (cdf) {
+      return A2(map,
+      function ($) {
+         return function (_) {
+            return _.offset;
+         }(selectFrom(cdf)($));
+      },
+      probability);
+   };
+   var mapAccumL = F3(function (f,
+   s,
+   xs) {
+      return function () {
+         switch (xs.ctor)
+         {case "::": return function () {
+                 var $ = A2(f,s,xs._0),
+                 s$ = $._0,
+                 y = $._1;
+                 var $ = A3(mapAccumL,
+                 f,
+                 s$,
+                 xs._1),
+                 s$$ = $._0,
+                 ys = $._1;
+                 return {ctor: "_Tuple2"
+                        ,_0: s$$
+                        ,_1: A2($List._op["::"],y,ys)};
+              }();
+            case "[]":
+            return {ctor: "_Tuple2"
+                   ,_0: s
+                   ,_1: _L.fromArray([])};}
+         _U.badCase($moduleName,
+         "between lines 11 and 15");
+      }();
+   });
+   var toCDF = function () {
+      var f = F2(function (s,x) {
+         return {ctor: "_Tuple2"
+                ,_0: s + x.prob
+                ,_1: _U.replace([["prob"
+                                 ,s + x.prob]],
+                x)};
+      });
+      return function ($) {
+         return CDF($Basics.snd(A2(mapAccumL,
+         f,
+         0.0)($)));
+      };
+   }();
+   _elm.Audio.Probabilities.values = {_op: _op
+                                     ,mapAccumL: mapAccumL
+                                     ,CDF: CDF
+                                     ,toCDF: toCDF
+                                     ,probability: probability
+                                     ,map: map
+                                     ,selectFrom: selectFrom
+                                     ,sampleOffsets: sampleOffsets};
+   return _elm.Audio.Probabilities.values;
 };
 Elm.Basics = Elm.Basics || {};
 Elm.Basics.make = function (_elm) {
@@ -4031,7 +4637,7 @@ Elm.Dict.make = function (_elm) {
               A3(foldr,f,acc,t._4)),
               t._3);}
          _U.badCase($moduleName,
-         "between lines 408 and 416");
+         "between lines 417 and 425");
       }();
    });
    var keys = function (dict) {
@@ -4087,7 +4693,7 @@ Elm.Dict.make = function (_elm) {
               A3(foldl,f,acc,dict._3)),
               dict._4);}
          _U.badCase($moduleName,
-         "between lines 397 and 405");
+         "between lines 406 and 414");
       }();
    });
    var isBBlack = function (dict) {
@@ -4111,7 +4717,7 @@ Elm.Dict.make = function (_elm) {
             case "Remove": return "Remove";
             case "Same": return "Same";}
          _U.badCase($moduleName,
-         "between lines 173 and 179");
+         "between lines 182 and 188");
       }();
    };
    var Same = {ctor: "Same"};
@@ -4155,7 +4761,7 @@ Elm.Dict.make = function (_elm) {
          {case "Just": return true;
             case "Nothing": return false;}
          _U.badCase($moduleName,
-         "between lines 138 and 140");
+         "between lines 138 and 146");
       }();
    });
    var max = function (dict) {
@@ -4225,6 +4831,9 @@ Elm.Dict.make = function (_elm) {
    var LBBlack = {ctor: "LBBlack"};
    var LBlack = {ctor: "LBlack"};
    var empty = RBEmpty(LBlack);
+   var isEmpty = function (dict) {
+      return _U.eq(dict,empty);
+   };
    var map = F2(function (f,dict) {
       return function () {
          switch (dict.ctor)
@@ -4240,7 +4849,7 @@ Elm.Dict.make = function (_elm) {
               A2(map,f,dict._3),
               A2(map,f,dict._4));}
          _U.badCase($moduleName,
-         "between lines 385 and 394");
+         "between lines 394 and 403");
       }();
    });
    var showNColor = function (c) {
@@ -4289,7 +4898,7 @@ Elm.Dict.make = function (_elm) {
                    dict._4);}
               break;}
          _U.badCase($moduleName,
-         "between lines 145 and 157");
+         "between lines 154 and 166");
       }();
    };
    var blackish = function (t) {
@@ -4300,7 +4909,7 @@ Elm.Dict.make = function (_elm) {
             return _U.eq(t._0,
               Black) || _U.eq(t._0,BBlack);}
          _U.badCase($moduleName,
-         "between lines 330 and 332");
+         "between lines 339 and 341");
       }();
    };
    var blacken = function (t) {
@@ -4315,7 +4924,7 @@ Elm.Dict.make = function (_elm) {
               t._3,
               t._4);}
          _U.badCase($moduleName,
-         "between lines 369 and 371");
+         "between lines 378 and 380");
       }();
    };
    var Red = {ctor: "Red"};
@@ -4328,7 +4937,7 @@ Elm.Dict.make = function (_elm) {
             case "NBlack": return Red;
             case "Red": return Black;}
          _U.badCase($moduleName,
-         "between lines 235 and 239");
+         "between lines 244 and 248");
       }();
    };
    var lessBlack = function (color) {
@@ -4340,7 +4949,7 @@ Elm.Dict.make = function (_elm) {
             return $Native$Debug.crash("Can\'t make a negative black node less black!");
             case "Red": return NBlack;}
          _U.badCase($moduleName,
-         "between lines 244 and 248");
+         "between lines 253 and 257");
       }();
    };
    var lessBlackTree = function (dict) {
@@ -4358,7 +4967,7 @@ Elm.Dict.make = function (_elm) {
               dict._3,
               dict._4);}
          _U.badCase($moduleName,
-         "between lines 253 and 255");
+         "between lines 262 and 264");
       }();
    };
    var redden = function (t) {
@@ -4373,7 +4982,7 @@ Elm.Dict.make = function (_elm) {
               t._3,
               t._4);}
          _U.badCase($moduleName,
-         "between lines 377 and 382");
+         "between lines 386 and 391");
       }();
    };
    var balance_node = function (t) {
@@ -4575,7 +5184,7 @@ Elm.Dict.make = function (_elm) {
               r._3,
               r._4));}
          _U.badCase($moduleName,
-         "between lines 314 and 319");
+         "between lines 323 and 328");
       }();
    });
    var rem = F3(function (c,l,r) {
@@ -4596,7 +5205,7 @@ Elm.Dict.make = function (_elm) {
                               case "Red":
                               return RBEmpty(LBlack);}
                            _U.badCase($moduleName,
-                           "between lines 273 and 277");
+                           "between lines 282 and 286");
                         }();
                       case "RBNode":
                       return function () {
@@ -4686,7 +5295,7 @@ Elm.Dict.make = function (_elm) {
                    break;}
               break;}
          _U.badCase($moduleName,
-         "between lines 271 and 300");
+         "between lines 280 and 309");
       }();
    });
    var update = F3(function (k,
@@ -4716,7 +5325,7 @@ Elm.Dict.make = function (_elm) {
                                       ,_0: Same
                                       ,_1: empty};}
                             _U.badCase($moduleName,
-                            "between lines 185 and 189");
+                            "between lines 194 and 198");
                          }();}
                     break;
                   case "RBNode":
@@ -4745,7 +5354,7 @@ Elm.Dict.make = function (_elm) {
                                          dict._3,
                                          dict._4)};}
                                _U.badCase($moduleName,
-                               "between lines 192 and 197");
+                               "between lines 201 and 206");
                             }();
                           case "GT": return function () {
                                var $ = up(dict._4),
@@ -4781,7 +5390,7 @@ Elm.Dict.make = function (_elm) {
                                             dict._3,
                                             newRight)};}
                                   _U.badCase($moduleName,
-                                  "between lines 206 and 211");
+                                  "between lines 215 and 220");
                                }();
                             }();
                           case "LT": return function () {
@@ -4818,14 +5427,14 @@ Elm.Dict.make = function (_elm) {
                                             newLeft,
                                             dict._4)};}
                                   _U.badCase($moduleName,
-                                  "between lines 199 and 204");
+                                  "between lines 208 and 213");
                                }();
                             }();}
                        _U.badCase($moduleName,
-                       "between lines 190 and 211");
+                       "between lines 199 and 220");
                     }();}
                _U.badCase($moduleName,
-               "between lines 183 and 211");
+               "between lines 192 and 220");
             }();
          };
          var $ = up(dict),
@@ -4840,7 +5449,7 @@ Elm.Dict.make = function (_elm) {
                case "Same":
                return updatedDict;}
             _U.badCase($moduleName,
-            "between lines 213 and 219");
+            "between lines 222 and 228");
          }();
       }();
    });
@@ -4857,7 +5466,7 @@ Elm.Dict.make = function (_elm) {
       return A3(insert,
       key,
       value,
-      RBEmpty(LBlack));
+      empty);
    });
    var union = F2(function (t1,
    t2) {
@@ -4877,7 +5486,7 @@ Elm.Dict.make = function (_elm) {
                  _v214._1,
                  dict);}
             _U.badCase($moduleName,
-            "on line 457, column 38 to 59");
+            "on line 466, column 38 to 59");
          }();
       }),
       empty,
@@ -4935,7 +5544,7 @@ Elm.Dict.make = function (_elm) {
                                               value,
                                               _v220._1)};}
                _U.badCase($moduleName,
-               "between lines 478 and 480");
+               "between lines 487 and 489");
             }();
          });
          return A3(foldl,
@@ -4966,6 +5575,7 @@ Elm.Dict.make = function (_elm) {
                       ,singleton: singleton
                       ,insert: insert
                       ,update: update
+                      ,isEmpty: isEmpty
                       ,get: get
                       ,remove: remove
                       ,member: member
@@ -9527,9 +10137,23 @@ Elm.Json.Decode.make = function (_elm) {
    };
    var Decoder = {ctor: "Decoder"};
    _elm.Json.Decode.values = {_op: _op
-                             ,Decoder: Decoder
-                             ,map: map
                              ,decodeString: decodeString
+                             ,decodeValue: decodeValue
+                             ,string: string
+                             ,$int: $int
+                             ,$float: $float
+                             ,bool: bool
+                             ,$null: $null
+                             ,list: list
+                             ,array: array
+                             ,tuple1: tuple1
+                             ,tuple2: tuple2
+                             ,tuple3: tuple3
+                             ,tuple4: tuple4
+                             ,tuple5: tuple5
+                             ,tuple6: tuple6
+                             ,tuple7: tuple7
+                             ,tuple8: tuple8
                              ,at: at
                              ,object1: object1
                              ,object2: object2
@@ -9541,29 +10165,15 @@ Elm.Json.Decode.make = function (_elm) {
                              ,object8: object8
                              ,keyValuePairs: keyValuePairs
                              ,dict: dict
-                             ,oneOf: oneOf
-                             ,string: string
-                             ,$float: $float
-                             ,$int: $int
-                             ,bool: bool
-                             ,list: list
-                             ,array: array
-                             ,$null: $null
                              ,maybe: maybe
-                             ,value: value
-                             ,decodeValue: decodeValue
-                             ,customDecoder: customDecoder
-                             ,andThen: andThen
+                             ,oneOf: oneOf
+                             ,map: map
                              ,fail: fail
                              ,succeed: succeed
-                             ,tuple1: tuple1
-                             ,tuple2: tuple2
-                             ,tuple3: tuple3
-                             ,tuple4: tuple4
-                             ,tuple5: tuple5
-                             ,tuple6: tuple6
-                             ,tuple7: tuple7
-                             ,tuple8: tuple8};
+                             ,andThen: andThen
+                             ,value: value
+                             ,customDecoder: customDecoder
+                             ,Decoder: Decoder};
    return _elm.Json.Decode.values;
 };
 Elm.Json = Elm.Json || {};
@@ -9592,16 +10202,16 @@ Elm.Json.Encode.make = function (_elm) {
    var encode = $Native$Json.encode;
    var Value = {ctor: "Value"};
    _elm.Json.Encode.values = {_op: _op
-                             ,Value: Value
                              ,encode: encode
                              ,string: string
                              ,$int: $int
                              ,$float: $float
                              ,bool: bool
                              ,$null: $null
-                             ,object: object
+                             ,list: list
                              ,array: array
-                             ,list: list};
+                             ,object: object
+                             ,Value: Value};
    return _elm.Json.Encode.values;
 };
 Elm.List = Elm.List || {};
@@ -9970,16 +10580,19 @@ Elm.Main.make = function (_elm) {
    _U = _N.Utils.make(_elm),
    _L = _N.List.make(_elm),
    $moduleName = "Main",
+   $Audio$Granular = Elm.Audio.Granular.make(_elm),
    $Basics = Elm.Basics.make(_elm),
    $Common = Elm.Common.make(_elm),
+   $Dict = Elm.Dict.make(_elm),
    $GraphData = Elm.GraphData.make(_elm),
    $History = Elm.History.make(_elm),
    $Html = Elm.Html.make(_elm),
    $Http = Elm.Http.make(_elm),
    $Maybe = Elm.Maybe.make(_elm),
    $Model = Elm.Model.make(_elm),
-   $OSC = Elm.OSC.make(_elm),
+   $Result = Elm.Result.make(_elm),
    $Router = Elm.Router.make(_elm),
+   $Set = Elm.Set.make(_elm),
    $Signal = Elm.Signal.make(_elm),
    $String = Elm.String.make(_elm),
    $Task = Elm.Task.make(_elm),
@@ -10013,25 +10626,9 @@ Elm.Main.make = function (_elm) {
                                            })};
    },
    $GraphData.graphRetrieve.signal);
-   var oscOut = Elm.Native.Port.make(_elm).outboundSignal("oscOut",
-   function (v) {
-      return v.ctor === "Nothing" ? null : [v._0._0
-                                           ,Elm.Native.List.make(_elm).toArray(v._0._1).map(function (v) {
-                                              return [Elm.Native.List.make(_elm).toArray(v._0).map(function (v) {
-                                                        return v;
-                                                     })
-                                                     ,Elm.Native.List.make(_elm).toArray(v._1).map(function (v) {
-                                                        return v;
-                                                     })];
-                                           })];
-   },
-   $Updates.oscMessages);
-   var oscConnection = Elm.Native.Port.make(_elm).inboundSignal("oscConnection",
-   "Bool",
-   function (v) {
-      return typeof v === "boolean" ? v : _U.badPort("a boolean (true or false)",
-      v);
-   });
+   var audioDone = Elm.Native.Task.make(_elm).performSignal("audioDone",
+   $Audio$Granular.audioTasks);
+   var bufferDone = Elm.Native.Task.make(_elm).perform($Audio$Granular.audioBuffer);
    var runActions = Elm.Native.Task.make(_elm).performSignal("runActions",
    $Updates.actions.signal);
    var onlyTasks = function (rr) {
@@ -10056,35 +10653,49 @@ Elm.Main.make = function (_elm) {
    };
    var state = function () {
       var f = F3(function (x,y,z) {
-         return _U.replace([["oscConnected"
+         return _U.replace([["currentPath"
                             ,x]
-                           ,["currentPath",y]
-                           ,["playing",z]],
+                           ,["playing"
+                            ,$Set.fromList($Dict.keys(y))]
+                           ,["neighborhood",z]],
          $Model.defaultState);
       });
       return A4($Signal.map3,
       f,
-      oscConnection,
       $History.path,
-      $Updates.nowPlaying);
+      $Updates.nowPlaying,
+      neighborhood);
    }();
    var loadGraph = A2($Task.andThen,
    A2($Http.get,
    $GraphData.graphDec,
-   "/demo/data/graph.json"),
+   "/data/graph.json"),
    $GraphData.sendGraphData);
    var fetchTopicData = Elm.Native.Task.make(_elm).perform(A2($Task.andThen,
    $TopicData.loadData,
    $TopicData.receivedData));
    var trackData = $Signal.mailbox($Maybe.Nothing);
-   var loadTrack = function (trackID) {
+   var loadTrack = F2(function (currentData,
+   trackID) {
       return function () {
+         var alreadyLoaded = function () {
+            switch (currentData.ctor)
+            {case "Just":
+               switch (currentData._0.ctor)
+                 {case "_Tuple2":
+                    return _U.eq(currentData._0._0,
+                      trackID);}
+                 break;
+               case "Nothing": return false;}
+            _U.badCase($moduleName,
+            "between lines 73 and 76");
+         }();
          var trackUrl = A2($Basics._op["++"],
          "/data/tracks/",
          A2($Basics._op["++"],
          trackID,
          ".json"));
-         return A2($Task.andThen,
+         return alreadyLoaded ? $Task.succeed({ctor: "_Tuple0"}) : A2($Task.andThen,
          A2($Http.get,
          $TopicData.trackDataDec(trackID),
          trackUrl),
@@ -10092,11 +10703,32 @@ Elm.Main.make = function (_elm) {
             return $Signal.send(trackData.address)($Maybe.Just($));
          });
       }();
-   };
+   });
    var model = A3($Signal.map2,
    $Model.Model,
    $TopicData.topicData.signal,
    trackData.signal);
+   var offsets = Elm.Native.Task.make(_elm).performSignal("offsets",
+   function () {
+      var f = F2(function (_v12,
+      tokens) {
+         return function () {
+            return function () {
+               var _v14 = _v12.data;
+               switch (_v14.ctor)
+               {case "Ok":
+                  return $Audio$Granular.playOffsets(A2($Updates.getOffsetCDF,
+                    _v14._0,
+                    tokens));}
+               return $Task.succeed({ctor: "_Tuple0"});
+            }();
+         }();
+      });
+      return A3($Signal.map2,
+      f,
+      model,
+      $Updates.nowPlaying);
+   }());
    var ActionPage = F2(function (a,
    b) {
       return {ctor: "ActionPage"
@@ -10114,20 +10746,22 @@ Elm.Main.make = function (_elm) {
          var trackID = A2($String.dropLeft,
          1,
          path);
-         return ActionPage(loadTrack(trackID))($View.wrap(state)(A4($View.viewDoc,
+         return ActionPage(A2(loadTrack,
+         track,
+         trackID))($View.wrap(state)(A4($View.viewDoc,
          trackID,
          data,
          track,
          state)));
       }();
    });
-   var graphRoute = F3(function (_v8,
-   _v9,
+   var graphRoute = F3(function (_v16,
+   model,
    state) {
       return function () {
-         return function () {
-            return ActionPage(loadGraph)($View.wrap(state)($View.viewGraph));
-         }();
+         return ActionPage(loadGraph)($View.wrap(state)(A2($View.viewGraph,
+         model,
+         state)));
       }();
    });
    var Redirect = function (a) {
@@ -10137,13 +10771,13 @@ Elm.Main.make = function (_elm) {
    var routeToPath = function (x) {
       return Redirect($Updates.toPath(x));
    };
-   var startPage = F3(function (_v12,
-   _v13,
-   _v14) {
+   var startPage = F3(function (_v18,
+   _v19,
+   _v20) {
       return function () {
          return function () {
             return function () {
-               return routeToPath("/demo/index.html");
+               return routeToPath("/index.html");
             }();
          }();
       }();
@@ -10154,7 +10788,9 @@ Elm.Main.make = function (_elm) {
    var topicOverviewRoute = F3(function (path,
    model,
    state) {
-      return Page($Html.text("null"));
+      return Page($View.wrap(state)(A2($View.viewAllTopics,
+      model,
+      state)));
    });
    var topicRoute = F3(function (path,
    model,
@@ -10183,7 +10819,7 @@ Elm.Main.make = function (_elm) {
    });
    var route = A2($Router.match,
    _L.fromArray([A2($Router._op[":->"],
-                "/demo/index.html",
+                "/index.html",
                 displayOverview)
                 ,A2($Router._op[":->"],
                 "/track",
@@ -10340,8 +10976,8 @@ Elm.Model.make = function (_elm) {
       return {_: {}
              ,currentPath: b
              ,mode: a
-             ,oscConnected: c
-             ,playing: d};
+             ,neighborhood: d
+             ,playing: c};
    });
    var DocFocus = function (a) {
       return {ctor: "DocFocus"
@@ -10353,9 +10989,9 @@ Elm.Model.make = function (_elm) {
    };
    var Overview = {ctor: "Overview"};
    var defaultState = {_: {}
-                      ,currentPath: "/demo/index.html"
+                      ,currentPath: "/index.html"
                       ,mode: Overview
-                      ,oscConnected: false
+                      ,neighborhood: _L.fromArray([])
                       ,playing: $Set.empty};
    var GraphData = F2(function (a,
    b) {
@@ -10387,21 +11023,30 @@ Elm.Model.make = function (_elm) {
              ,url: d
              ,username: c};
    });
-   var Data = F7(function (a,
+   var Data = F8(function (a,
    b,
    c,
    d,
    e,
    f,
-   g) {
+   g,
+   h) {
       return {_: {}
              ,docMetadata: e
              ,docTopics: b
              ,tokenMaxLikelyTopic: g
+             ,tokenOffsets: h
              ,tokenTopics: c
              ,topicPrevalence: a
              ,topicTokens: d
              ,vocab: f};
+   });
+   var TokenOffset = function (a) {
+      return {_: {},offset: a};
+   };
+   var Probable = F2(function (a,
+   b) {
+      return _U.insert("prob",a,b);
    });
    var TokenDatum = F4(function (a,
    b,
@@ -10438,6 +11083,8 @@ Elm.Model.make = function (_elm) {
                        ,Chroma: Chroma
                        ,Text: Text
                        ,TokenDatum: TokenDatum
+                       ,Probable: Probable
+                       ,TokenOffset: TokenOffset
                        ,Data: Data
                        ,TrackInfo: TrackInfo
                        ,TaggedToken: TaggedToken
@@ -14221,7 +14868,7 @@ Elm.Native.Port.make = function(localRuntime) {
 				"Regarding the port named '" + name + "' with type:\n\n" +
 				"    " + type.split('\n').join('\n        ') + "\n\n" +
 				"You just sent the value:\n\n" +
-				"    " + JSON.stringify(arg.value) + "\n\n" +
+				"    " + JSON.stringify(value) + "\n\n" +
 				"but it cannot be converted to the necessary type.\n" +
 				e.message
 			);
@@ -15055,9 +15702,7 @@ Elm.Native.Show.make = function(localRuntime) {
 		}
 		if (type === 'object' && 'notify' in v && 'id' in v)
 		{
-			return 'initialValue' in v
-				? '<Signal>'
-				: '<Stream>';
+			return '<Signal>';
 		}
 		return "<internal structure>";
 	};
@@ -15402,6 +16047,7 @@ Elm.Native.Signal.make = function(localRuntime) {
 		var node = {
 			id: Utils.guid(),
 			name: 'merge',
+			value: A2(tieBreaker, leftStream.value, rightStream.value),
 			parents: [leftStream, rightStream],
 			kids: []
 		};
@@ -19013,6 +19659,648 @@ Elm.Native.VirtualDom.make = function(elm)
 
 },{}]},{},[39]);
 
+Elm.Native.WebAudio = {};
+Elm.Native.WebAudio.make = function(elm) {
+  elm.Native = elm.Native || {};
+  elm.Native.WebAudio = elm.Native.WebAudio || {};
+  if (elm.Native.WebAudio.values) return elm.Native.WebAudio.values;
+
+  var Maybe = Elm.Maybe.make(elm);
+  var Signal = Elm.Signal.make(elm);
+  var Task = Elm.Native.Task.make(elm);
+  var List = Elm.Native.List.make(elm);
+  var toArray = List.toArray;
+  var fromArray = List.fromArray;
+
+
+
+  var values = {};
+
+  /* AudioContext */
+  function createStandardContext() {
+    return new (window.AudioContext || window.webkitAudioContext)();
+  }
+
+  function createAudioContext(context) {
+    return {ctor: "AudioContext", _context: context};
+  }
+
+  values.createContext = function() {
+    return createAudioContext(createStandardContext());
+  };
+
+  var defaultContext = null;
+  function extractContext(context) {
+    if (context.ctor === "DefaultContext")
+      return defaultContext || (defaultContext = createStandardContext());
+    return context._context;
+  }
+
+  values.getSampleRate = function(context) {
+    return extractContext(context).sampleRate;
+  };
+
+  values.getCurrentTime = function(context) {
+    return extractContext(context).currentTime;
+  };
+
+  values.createOfflineContext = F3(function(channels, length, sampleRate) {
+    var context = new (window.OfflineAudioContext || window.webkitOfflineAudioContext)(channels, length, sampleRate);
+    var signal = Signal.constant(Maybe.Nothing);
+    context.oncomplete = function(e) {
+      elm.notify(signal.id, Maybe.Just(values.createAudioBuffer(e.renderedBuffer)));
+    };
+    return {_:{}, _context: createAudioContext(context), _signal: signal};
+  });
+
+  values.startOfflineRendering = function(offlineContext) {
+    offlineContext._context._context.startRendering();
+    return offlineContext;
+  };
+
+
+
+  /* AudioParam */
+  values.setValue = F2(function(val, param) {
+    param._node._node[param._0].value = val;
+    return param;
+  });
+
+  values.getValue = function(param) {
+    return param._node._node[param._0].value;
+  };
+
+  values.setValueAtTime = F3(function(value, time, param) {
+    param._node._node[param._0].setValueAtTime(value, time);
+    return param;
+  });
+
+  values.linearRampToValue = F3(function(value, time, param) {
+    param._node._node[param._0].linearRampToValueAtTime(value, time);
+    return param;
+  });
+
+  values.exponentialRampToValue = F3(function(value, time, param) {
+    param._node._node[param._0].exponentialRampToValueAtTime(value, time);
+    return param;
+  });
+
+  values.setTargetAtTime = F4(function(target, starttime, constant, param) {
+    param._node._node[param._0].setTargetAtTime(target, starttime, constant);
+    return param;
+  });
+
+  values.setValueCurveAtTime = F4(function(curve, starttime, duration, param) {
+    param._node._node[param._0].setValueCurveAtTime(toArray(curve), starttime, duration);
+    return param;
+  });
+
+  values.cancelScheduledValues = F2(function(time, param) {
+    param._node._node[param._0].cancelScheduledValues(time);
+    return param;
+  });
+
+
+
+  /* AudioBuffer */
+  values.createAudioBuffer = function(buffer) {
+    return {ctor: "AudioBuffer", _buffer: buffer};
+  };
+
+  values.loadAudioBufferFromUrl = F2(function(context, url) {
+      return Task.asyncFunction(function (callback) {
+          var request = new XMLHttpRequest();
+          request.open('GET', url, true);
+          request.responseType = 'arraybuffer';
+          request.addEventListener('error', function() {
+			  return callback(Task.fail({ ctor: 'RawNetworkError' }));
+		  });
+
+		  request.addEventListener('timeout', function() {
+			  return callback(Task.fail({ ctor: 'RawTimeout' }));
+		  });
+
+		  request.addEventListener('load', function() {
+              extractContext(context).decodeAudioData(request.response, function(buffer) {
+			      return callback(Task.succeed(values.createAudioBuffer(buffer)));
+		      });
+          });
+          request.send();
+      });
+  });
+
+  values.getBufferSampleRate = function(buffer) {
+    return buffer._buffer.sampleRate;
+  };
+
+  values.getBufferLength = function(buffer) {
+    return buffer._buffer.length;
+  };
+
+  values.getBufferDuration = function(buffer) {
+    return buffer._buffer.duration;
+  };
+
+  values.getBufferNumberOfChannels = function(buffer) {
+    return buffer._buffer.numberOfChannels;
+  };
+
+  values.getChannelData = F2(function(channel, buffer) {
+    return fromArray(buffer._buffer.getChannelData(channel));
+  });
+
+  values.getChannelDataSlice = F4(function(channel, start, length, buffer) {
+    if (!buffer._slice || buffer._slice.length != length)
+      buffer._slice = new Float32Array(length);
+    buffer._buffer.copyFromChannel(buffer._slice, channel, start);
+    return fromArray(buffer._buffer);
+  });
+
+  values.setChannelDataSlice = F4(function(channel, start, data, buffer) {
+    buffer._buffer.copyToChannel(toArray(data), channel, start);
+    return buffer;
+  });
+
+
+
+  /* Audio Node Utility Functions*/
+  function buildAudioNode(node) {
+    return {_:{}, inputs:node.numberOfInputs, outputs:node.numberOfOutputs, _node:node};
+  }
+
+  function buildAudioParam(externalName, internalName, node) {
+    node[externalName] = {ctor: "AudioParam", _0: internalName, _node: node};
+  }
+
+  function buildGetter(externalName, internalName) {
+    values[externalName] = function(node) {
+      return node._node[internalName];
+    };
+  }
+
+  function buildSetter(externalName, internalName) {
+    values[externalName] = F2(function(value, node) {
+      node._node[internalName] = value;
+      return node;
+    });
+  }
+
+  function buildProperty(externalName, internalName) {
+    buildGetter('get' + externalName, internalName);
+    buildSetter('set' + externalName, internalName);
+  }
+
+
+
+  /* Audio Node */
+  values.connectNodes = F4(function(destination, outputIdx, inputIdx, source) {
+    source._node.connect(destination._node, outputIdx, inputIdx);
+    return source;
+  });
+
+  values.connectToParam = F3(function(destination, outputIdx, source) {
+    source._node.connect(destination.param, outputIdx);
+    return source;
+  });
+
+  buildProperty('ChannelCount', 'channelCount');
+
+  values.getChannelCountMode = function(node) {
+    switch (node._node.channelCountMode) {
+      case "max":
+        return elm.WebAudio.values.Max;
+      case "clamped-max":
+        return elm.WebAudio.values.ClampedMax;
+      case "explicit":
+        return elm.WebAudio.values.Explicit;
+    }
+  };
+
+  values.setChannelCountMode = F2(function(mode, node) {
+    switch (mode.ctor) {
+      case "Max":
+        node._node.channelCountMode = "max";
+        break;
+      case "ClampedMax":
+        node._node.channelCountMode = "clamped-max";
+        break;
+      case "Explicit":
+        node._node.channelCountMode = "explicit";
+        break;
+    }
+    return node;
+  });
+
+  values.getChannelInterpretation = function(node) {
+    switch (node._node.channelInterpretation) {
+      case "speakers":
+        return elm.WebAudio.values.Speakers;
+      case "discrete":
+        return elm.WebAudio.values.Discrete;
+    }
+  };
+
+  values.setChannelInterpretation = F2(function(mode, node) {
+    switch (mode.ctor) {
+      case "Speakers":
+        node._node.channelInterpretation = "speakers";
+        break;
+      case "Discrete":
+        node._node.channelInterpretation = "discrete";
+        break;
+    }
+    return node;
+  });
+
+
+
+  /* Analyser Node */
+  values.createAnalyserNode = function(context) {
+    var node = extractContext(context).createAnalyser();
+    return buildAudioNode(node);
+  };
+
+  buildProperty('FFTSize', 'fftSize');
+  buildProperty('MaxDecibels', 'maxDecibels');
+  buildProperty('MinDecibels', 'minDecibels');
+  buildProperty('SmoothingConstant', 'smoothingTimeConstant');
+
+  values.getByteFrequencyData = function(node) {
+    if (!node._bFreq || node._bFreq.length != node._node.frequencyBinCount)
+      node._bFreq = new Uint8Array(node._node.frequencyBinCount);
+    node._node.getByteFrequencyData(node._bFreq);
+    return fromArray(node._bFreq);
+  };
+
+  values.getByteTimeDomainData = function(node) {
+    if (!node._bTime || node._bTime.length != node._node.fftSize)
+      node._bTime = new Uint8Array(node._node.fftSize);
+    node._node.getByteTimeDomainData(node._bTime);
+    return fromArray(node._bTime);
+  };
+
+  values.getFloatFrequencyData = function(node) {
+    if (!node._fFreq || node._fFreq.length != node._node.frequencyBinCount)
+      node._fFreq = new Float32Array(node._node.frequencyBinCount);
+    node._node.getFloatFrequencyData(node._fFreq);
+    return fromArray(node._fFreq);
+  };
+
+  values.getFloatTimeDomainData = function(node) {
+    if (!node._fTime || node._fTime.length != node._node.fftSize)
+      node._fTime = new Float32Array(node._node.fftSize);
+    node._node.getFloatTimeDomainData(node._fTime);
+    return fromArray(node._fTime);
+  };
+
+
+
+  /* Audio Buffer Source Node */
+  values.createAudioBufferSourceNode = function(context) {
+    var node = extractContext(context).createBufferSource();
+    var ret = buildAudioNode(node);
+    buildAudioParam('playbackRate', 'playbackRate', ret);
+
+    var signal = Signal.constant(false);
+    ret._ended = signal;
+    node.onended = function() {
+      elm.notify(signal.id, true);
+    };
+
+    return ret;
+  };
+
+  buildGetter('AudioBufferFromNode', 'buffer');
+  values.setAudioBufferForNode = F2(function(value, node) {
+    node._node.buffer = value._buffer;
+    return node;
+  });
+
+  buildProperty('AudioBufferIsLooping', 'loop');
+  buildProperty('AudioBufferLoopStart', 'loopStart');
+  buildProperty('AudioBufferLoopEnd', 'loopEnd');
+
+  values.startAudioBufferNode = F4(function(when, offset, duration, node) {
+    if (duration.ctor == "Nothing")
+      node._node.start(when, offset);
+    else
+      node._node.start(when, offset, duration._0);
+    return node;
+  });
+
+  values.stopAudioBufferNode = F2(function(when, node) {
+    node._node.stop(when);
+    return node;
+  });
+
+
+
+  /* AudioDestinationNode */
+  values.getDestinationNode = function(context) {
+    var node = extractContext(context).destination;
+    return buildAudioNode(node);
+  }
+
+  buildGetter('MaxChannelCount', 'maxChannelCount');
+
+
+
+  /* TODO: Audio Worker Node */
+
+
+
+  /* Biquad Filter Node */
+  values.createBiquadFilterNode = function(context) {
+    var node = extractContext(context).createBiquadFilter();
+    var ret = buildAudioNode(node);
+    buildAudioParam('frequency', 'frequency', ret);
+    buildAudioParam('detune', 'detune', ret);
+    buildAudioParam('q', 'q', ret);
+    buildAudioParam('gain', 'gain', ret);
+    return ret;
+  }
+
+  values.getFilterType = function(node) {
+    switch (node._node.type) {
+      case "lowpass":
+        return elm.WebAudio.values.LowPass;
+      case "highpass":
+        return elm.WebAudio.values.HighPass;
+      case "bandpass":
+        return elm.WebAudio.values.BandPass;
+      case "lowshelf":
+        return elm.WebAudio.values.LowShelf;
+      case "highshelf":
+        return elm.WebAudio.values.HighShelf;
+      case "peaking":
+        return elm.WebAudio.values.Peaking;
+      case "notch":
+        return elm.WebAudio.values.Notch;
+      case "allpass":
+        return elm.WebAudio.values.AllPass;
+    }
+  }
+
+  values.setFilterType = F2(function(type, node) {
+    switch (type.ctor) {
+      case "LowPass":
+        node._node.type = "lowpass";
+        break;
+      case "HighPass":
+        node._node.type = "highpass";
+        break;
+      case "BandPass":
+        node._node.type = "bandpass";
+        break;
+      case "LowShelf":
+        node._node.type = "lowshelf";
+        break;
+      case "HighShelf":
+        node._node.type = "highshelf";
+        break;
+      case "Peaking":
+        node._node.type = "peaking";
+        break;
+      case "Notch":
+        node._node.type = "notch";
+        break;
+      case "AllPass":
+        node._node.type = "allpass";
+        break;
+    }
+    return node;
+  });
+
+
+
+  /* ChannelMergerNode */
+  values.createChannelMergerNode = F2(function(context, numberOfInputs) {
+    var node = extractContext(context).createChannelMerger(numberOfInputs);
+    return buildAudioNode(node);
+  });
+
+
+
+  /* ChannelSplitterNode */
+  values.createChannelSplitterNode = F2(function(context, numberOfOutputs) {
+    var node = extractContext(context).createChannelSplitter(numberOfOutputs);
+    return buildAudioNode(node);
+  });
+
+
+
+  /* DelayNode */
+  values.createDelayNode = F2(function(context, maxDelayTime) {
+    var node = extractContext(context).createDelay(maxDelayTime);
+    var ret = buildAudioNode(node);
+    buildAudioParam('delayTime', 'delayTime', ret);
+    return ret;
+  });
+
+
+
+  /* DynamicsCompressorNode */
+  values.createDynamicsCompressorNode = function(context) {
+    var node = extractContext(context).createDynamicsCompressor();
+    var ret = buildAudioNode(node);
+    buildAudioParam('threshold', 'treshold', ret);
+    buildAudioParam('knee', 'knee', ret);
+    buildAudioParam('ratio', 'ratio', ret);
+    buildAudioParam('reduction', 'reduction', ret);
+    buildAudioParam('attack', 'attack', ret);
+    buildAudioParam('release', 'release', ret);
+    return ret;
+  };
+
+
+
+  /* GainNode */
+  values.createGainNode = function(context) {
+    var node = extractContext(context).createGain();
+    var ret = buildAudioNode(node);
+    buildAudioParam('gain', 'gain', ret);
+    return ret;
+  };
+
+
+
+  /* MediaElementAudioSourceNode */
+  values.createHiddenMediaElementAudioSourceNode = function(context) {
+    var element = new Audio();
+    element.crossOrigin = "anonymous";
+    return A2(values.createMediaElementAudioSourceNode, context, element);
+  };
+
+  values.createMediaElementAudioSourceNode = F2(function(context, element) {
+    var node = extractContext(context).createMediaElementSource(element);
+    var ret = buildAudioNode(node);
+    ret._element = element;
+    return ret;
+  });
+
+  values.getMediaElementIsLooping = function(node) {
+    return node._element.loop;
+  };
+
+  values.setMediaElementIsLooping = F2(function(loop, node) {
+    node._element.loop = loop;
+    return node;
+  });
+
+  values.getMediaElementSource = function(node) {
+    return node._element.src;
+  };
+
+  values.setMediaElementSource = F2(function(source, node) {
+    node._element.src = source;
+    node._element.load();
+    return node;
+  });
+
+  values.playMediaElement = function(node) {
+    node._element.play();
+    return node;
+  };
+
+  values.pauseMediaElement = function(node) {
+    node._element.pause();
+    return node;
+  };
+
+
+
+  /* OscillatorNode */
+  function setOscillatorWaveType(type, node) {
+    switch (type.ctor) {
+      case "Sine":
+        node._node.type = "sine";
+        break;
+      case "Square":
+        node._node.type = "square";
+        break;
+      case "Sawtooth":
+        node._node.type = "sawtooth";
+        break;
+      case "Triangle":
+        node._node.type = "triangle";
+        break;
+    }
+    return node;
+  }
+
+  values.createOscillatorNode = F2(function(context, type) {
+    var node = extractContext(context).createOscillator();
+    var ret = buildAudioNode(node);
+    buildAudioParam('frequency', 'frequency', ret);
+    buildAudioParam('detune', 'detune', ret);
+    return setOscillatorWaveType(type, ret);
+  });
+
+  values.getOscillatorWaveType = function(node) {
+    switch (node._node.type) {
+      case "sine":
+        return elm.WebAudio.values.Sine;
+      case "square":
+        return elm.WebAudio.values.Square;
+      case "sawtooth":
+        return elm.WebAudio.values.Sawtooth;
+      case "triangle":
+        return elm.WebAudio.values.Triangle;
+    }
+  };
+
+  values.setOscillatorWaveType = F2(setOscillatorWaveType);
+
+  values.startOscillator = F2(function(startTime, node) {
+    node._node.start(startTime);
+    return node;
+  });
+
+  values.stopOscillator = F2(function(stopTime, node) {
+    node._node.stop(stopTime);
+    return {ctor: '_Tuple0'};
+  });
+
+
+
+  /* PannerNode */
+  values.createPannerNode = function(context) {
+    var node = extractContext(context).createPanner();
+    return buildAudioNode(node);
+  };
+
+  values.getPanningModel = function(node) {
+    switch (node._node.panningModel) {
+      case "equalpower":
+        return elm.WebAudio.values.EqualPower;
+      case "hrtf":
+        return elm.WebAudio.values.HRTF;
+    }
+  };
+
+  values.setPanningModel = F2(function(model, node) {
+    switch (model.ctor) {
+      case "EqualPower":
+        node._node.panningModel = "equalpower";
+        break;
+      case "HRTF":
+        node._node.panningModel = "hrtf";
+        break;
+    }
+    return node;
+  });
+
+  values.getDistanceModel = function(node) {
+    switch (node._node.distanceModel) {
+      case "linear":
+        return elm.WebAudio.values.Linear;
+      case "inverse":
+        return elm.WebAudio.values.Inverse;
+      case "exponential":
+        return elm.WebAudio.values.Exponential;
+    }
+  };
+
+  values.setDistanceModel = F2(function(model, node) {
+    switch (model.ctor) {
+      case "Linear":
+        node._node.distanceModel = "linear";
+        break;
+      case "Inverse":
+        node._node.distanceModel = "inverse";
+        break;
+      case "Exponential":
+        node._node.distanceModel = "exponential";
+        break;
+    }
+    return node;
+  });
+
+  buildProperty('ReferenceDistance', 'refDistance');
+  buildProperty('MaxDistance', 'maxDistance');
+  buildProperty('RolloffFactor', 'rolloffFactor');
+  buildProperty('ConeInnerAngle', 'coneInnerAngle');
+  buildProperty('ConeOuterAngle', 'coneOuterAngle');
+  buildProperty('ConeOuterGain', 'coneOuterGain');
+
+  values.setPosition = F4(function(x, y, z, node) {
+    node._node.setPosition(x, y, z);
+    return node;
+  });
+
+  values.setOrientation = F4(function(x, y, z, node) {
+    node._node.setOrientation(x, y, z);
+    return node;
+  });
+
+  values.setVelocity = F4(function(x, y, z, node) {
+    node._node.setVelocity(x, y, z);
+    return node;
+  });
+
+  return elm.Native.WebAudio.values = values;
+};
+
 Elm.OSC = Elm.OSC || {};
 Elm.OSC.make = function (_elm) {
    "use strict";
@@ -19090,6 +20378,291 @@ Elm.OSC.make = function (_elm) {
                      ,StopTokens: StopTokens
                      ,toOsc: toOsc};
    return _elm.OSC.values;
+};
+Elm.Random = Elm.Random || {};
+Elm.Random.make = function (_elm) {
+   "use strict";
+   _elm.Random = _elm.Random || {};
+   if (_elm.Random.values)
+   return _elm.Random.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "Random",
+   $Basics = Elm.Basics.make(_elm),
+   $List = Elm.List.make(_elm);
+   var magicNum8 = 2147483562;
+   var range = function (_v0) {
+      return function () {
+         return {ctor: "_Tuple2"
+                ,_0: 0
+                ,_1: magicNum8};
+      }();
+   };
+   var magicNum7 = 2137383399;
+   var magicNum6 = 2147483563;
+   var magicNum5 = 3791;
+   var magicNum4 = 40692;
+   var magicNum3 = 52774;
+   var magicNum2 = 12211;
+   var magicNum1 = 53668;
+   var magicNum0 = 40014;
+   var generate = F2(function (_v2,
+   seed) {
+      return function () {
+         switch (_v2.ctor)
+         {case "Generator":
+            return _v2._0(seed);}
+         _U.badCase($moduleName,
+         "on line 246, column 5 to 19");
+      }();
+   });
+   var Seed = F4(function (a,
+   b,
+   c,
+   d) {
+      return {_: {}
+             ,next: b
+             ,range: d
+             ,split: c
+             ,state: a};
+   });
+   var State = F2(function (a,b) {
+      return {ctor: "State"
+             ,_0: a
+             ,_1: b};
+   });
+   var initState = function (s$) {
+      return function () {
+         var s = A2($Basics.max,
+         s$,
+         0 - s$);
+         var q = s / (magicNum6 - 1) | 0;
+         var s2 = A2($Basics._op["%"],
+         q,
+         magicNum7 - 1);
+         var s1 = A2($Basics._op["%"],
+         s,
+         magicNum6 - 1);
+         return A2(State,s1 + 1,s2 + 1);
+      }();
+   };
+   var next = function (_v5) {
+      return function () {
+         switch (_v5.ctor)
+         {case "State":
+            return function () {
+                 var k$ = _v5._1 / magicNum3 | 0;
+                 var s2$ = magicNum4 * (_v5._1 - k$ * magicNum3) - k$ * magicNum5;
+                 var s2$$ = _U.cmp(s2$,
+                 0) < 0 ? s2$ + magicNum7 : s2$;
+                 var k = _v5._0 / magicNum1 | 0;
+                 var s1$ = magicNum0 * (_v5._0 - k * magicNum1) - k * magicNum2;
+                 var s1$$ = _U.cmp(s1$,
+                 0) < 0 ? s1$ + magicNum6 : s1$;
+                 var z = s1$$ - s2$$;
+                 var z$ = _U.cmp(z,
+                 1) < 0 ? z + magicNum8 : z;
+                 return {ctor: "_Tuple2"
+                        ,_0: z$
+                        ,_1: A2(State,s1$$,s2$$)};
+              }();}
+         _U.badCase($moduleName,
+         "between lines 290 and 299");
+      }();
+   };
+   var split = function (_v9) {
+      return function () {
+         switch (_v9.ctor)
+         {case "State":
+            return function () {
+                 var _raw = $Basics.snd(next(_v9)),
+                 $ = _raw.ctor === "State" ? _raw : _U.badCase($moduleName,
+                 "on line 306, column 25 to 38"),
+                 t1 = $._0,
+                 t2 = $._1;
+                 var new_s2 = _U.eq(_v9._1,
+                 1) ? magicNum7 - 1 : _v9._1 - 1;
+                 var new_s1 = _U.eq(_v9._0,
+                 magicNum6 - 1) ? 1 : _v9._0 + 1;
+                 return {ctor: "_Tuple2"
+                        ,_0: A2(State,new_s1,t2)
+                        ,_1: A2(State,t1,new_s2)};
+              }();}
+         _U.badCase($moduleName,
+         "between lines 304 and 308");
+      }();
+   };
+   var initialSeed = function (n) {
+      return A4(Seed,
+      initState(n),
+      next,
+      split,
+      range);
+   };
+   var Generator = function (a) {
+      return {ctor: "Generator"
+             ,_0: a};
+   };
+   var customGenerator = function (generate) {
+      return Generator(generate);
+   };
+   var listHelp = F4(function (list,
+   n,
+   generate,
+   seed) {
+      return _U.cmp(n,
+      1) < 0 ? {ctor: "_Tuple2"
+               ,_0: $List.reverse(list)
+               ,_1: seed} : function () {
+         var $ = generate(seed),
+         value = $._0,
+         seed$ = $._1;
+         return A4(listHelp,
+         A2($List._op["::"],value,list),
+         n - 1,
+         generate,
+         seed$);
+      }();
+   });
+   var list = F2(function (n,
+   _v13) {
+      return function () {
+         switch (_v13.ctor)
+         {case "Generator":
+            return Generator(function (seed) {
+                 return A4(listHelp,
+                 _L.fromArray([]),
+                 n,
+                 _v13._0,
+                 seed);
+              });}
+         _U.badCase($moduleName,
+         "between lines 182 and 183");
+      }();
+   });
+   var pair = F2(function (_v16,
+   _v17) {
+      return function () {
+         switch (_v17.ctor)
+         {case "Generator":
+            return function () {
+                 switch (_v16.ctor)
+                 {case "Generator":
+                    return Generator(function (seed) {
+                         return function () {
+                            var $ = _v16._0(seed),
+                            left = $._0,
+                            seed$ = $._1;
+                            var $ = _v17._0(seed$),
+                            right = $._0,
+                            seed$$ = $._1;
+                            return {ctor: "_Tuple2"
+                                   ,_0: {ctor: "_Tuple2"
+                                        ,_0: left
+                                        ,_1: right}
+                                   ,_1: seed$$};
+                         }();
+                      });}
+                 _U.badCase($moduleName,
+                 "between lines 159 and 163");
+              }();}
+         _U.badCase($moduleName,
+         "between lines 159 and 163");
+      }();
+   });
+   var minInt = -2147483648;
+   var maxInt = 2147483647;
+   var iLogBase = F2(function (b,
+   i) {
+      return _U.cmp(i,
+      b) < 0 ? 1 : 1 + A2(iLogBase,
+      b,
+      i / b | 0);
+   });
+   var $int = F2(function (a,b) {
+      return Generator(function (seed) {
+         return function () {
+            var base = 2147483561;
+            var f = F3(function (n,
+            acc,
+            state) {
+               return function () {
+                  switch (n)
+                  {case 0: return {ctor: "_Tuple2"
+                                  ,_0: acc
+                                  ,_1: state};}
+                  return function () {
+                     var $ = seed.next(state),
+                     x = $._0,
+                     state$ = $._1;
+                     return A3(f,
+                     n - 1,
+                     x + acc * base,
+                     state$);
+                  }();
+               }();
+            });
+            var $ = _U.cmp(a,
+            b) < 0 ? {ctor: "_Tuple2"
+                     ,_0: a
+                     ,_1: b} : {ctor: "_Tuple2"
+                               ,_0: b
+                               ,_1: a},
+            lo = $._0,
+            hi = $._1;
+            var k = hi - lo + 1;
+            var n = A2(iLogBase,base,k);
+            var $ = A3(f,n,1,seed.state),
+            v = $._0,
+            state$ = $._1;
+            return {ctor: "_Tuple2"
+                   ,_0: lo + A2($Basics._op["%"],
+                   v,
+                   k)
+                   ,_1: _U.replace([["state"
+                                    ,state$]],
+                   seed)};
+         }();
+      });
+   });
+   var $float = F2(function (a,b) {
+      return Generator(function (seed) {
+         return function () {
+            var $ = A2(generate,
+            A2($int,minInt,maxInt),
+            seed),
+            number = $._0,
+            seed$ = $._1;
+            var negativeOneToOne = $Basics.toFloat(number) / $Basics.toFloat(maxInt - minInt);
+            var $ = _U.cmp(a,
+            b) < 0 ? {ctor: "_Tuple2"
+                     ,_0: a
+                     ,_1: b} : {ctor: "_Tuple2"
+                               ,_0: b
+                               ,_1: a},
+            lo = $._0,
+            hi = $._1;
+            var scaled = (lo + hi) / 2 + (hi - lo) * negativeOneToOne;
+            return {ctor: "_Tuple2"
+                   ,_0: scaled
+                   ,_1: seed$};
+         }();
+      });
+   });
+   _elm.Random.values = {_op: _op
+                        ,$int: $int
+                        ,$float: $float
+                        ,list: list
+                        ,pair: pair
+                        ,minInt: minInt
+                        ,maxInt: maxInt
+                        ,generate: generate
+                        ,initialSeed: initialSeed
+                        ,customGenerator: customGenerator
+                        ,Seed: Seed};
+   return _elm.Random.values;
 };
 Elm.Result = Elm.Result || {};
 Elm.Result.make = function (_elm) {
@@ -19465,6 +21038,7 @@ Elm.Set.make = function (_elm) {
    var intersect = $Dict.intersect;
    var union = $Dict.union;
    var member = $Dict.member;
+   var isEmpty = $Dict.isEmpty;
    var remove = $Dict.remove;
    var insert = function (k) {
       return A2($Dict.insert,
@@ -19493,6 +21067,7 @@ Elm.Set.make = function (_elm) {
                      ,singleton: singleton
                      ,insert: insert
                      ,remove: remove
+                     ,isEmpty: isEmpty
                      ,member: member
                      ,foldl: foldl
                      ,foldr: foldr
@@ -22419,7 +23994,7 @@ Elm.TopicData.make = function (_elm) {
          $Result.Ok(data$));
       }();
    };
-   var prefix = "/demo/data/";
+   var prefix = "data/";
    var addVocab = F2(function (a,
    data) {
       return _U.replace([["vocab"
@@ -22473,7 +24048,7 @@ Elm.TopicData.make = function (_elm) {
                  decoded._0,
                  data));}
             _U.badCase($moduleName,
-            "between lines 185 and 187");
+            "between lines 194 and 196");
          }();
       }();
    });
@@ -22519,7 +24094,7 @@ Elm.TopicData.make = function (_elm) {
                  return A2($Maybe.map,f,vec);
               }();}
          _U.badCase($moduleName,
-         "between lines 152 and 154");
+         "between lines 161 and 163");
       }();
    });
    var getTokenVectors = F2(function (data,
@@ -22545,7 +24120,7 @@ Elm.TopicData.make = function (_elm) {
                   return _U.cmp(_v7._1,
                     1.0e-2) > 0;}
                _U.badCase($moduleName,
-               "on line 147, column 43 to 51");
+               "on line 156, column 43 to 51");
             }();
          },
          sorted);
@@ -22606,7 +24181,7 @@ Elm.TopicData.make = function (_elm) {
                   case "Nothing":
                   return $Maybe.Just(1);}
                _U.badCase($moduleName,
-               "between lines 84 and 87");
+               "between lines 93 and 96");
             }();
          };
          return A3($Dict.update,x,f,d);
@@ -22628,7 +24203,7 @@ Elm.TopicData.make = function (_elm) {
                          ,_0: _v13._0
                          ,_1: $Basics.toFloat(_v13._1) / $Basics.toFloat(n)};}
                _U.badCase($moduleName,
-               "on line 97, column 20 to 44");
+               "on line 106, column 20 to 44");
             }();
          };
          return _U.eq(n,
@@ -22665,7 +24240,7 @@ Elm.TopicData.make = function (_elm) {
                  _v17._1,
                  _v17._2);}
             _U.badCase($moduleName,
-            "on line 79, column 30 to 47");
+            "on line 88, column 30 to 47");
          }();
       },
       tokens);
@@ -22758,7 +24333,7 @@ Elm.TopicData.make = function (_elm) {
                  topicDict);
               }();}
          _U.badCase($moduleName,
-         "between lines 66 and 70");
+         "between lines 75 and 79");
       }();
    });
    var thresh = F4(function (topic,
@@ -22791,7 +24366,7 @@ Elm.TopicData.make = function (_elm) {
                                        ,topics: toXY(_v30._1)
                                        ,track: getInfo(_v30._0)};}
                _U.badCase($moduleName,
-               "on line 139, column 37 to 67");
+               "on line 148, column 37 to 67");
             }();
          },
          aboveThresh);
@@ -22815,7 +24390,7 @@ Elm.TopicData.make = function (_elm) {
          switch (_v34.ctor)
          {case "Ok": return _v34._0;}
          _U.badCase($moduleName,
-         "between lines 50 and 51");
+         "between lines 59 and 60");
       }();
    };
    var toIntDict = function ($) {
@@ -22827,7 +24402,7 @@ Elm.TopicData.make = function (_elm) {
                       ,_0: unsafeToInt(_v36._0)
                       ,_1: _v36._1};}
             _U.badCase($moduleName,
-            "on line 55, column 38 to 54");
+            "on line 64, column 38 to 54");
          }();
       })($Dict.toList($)));
    };
@@ -22849,6 +24424,7 @@ Elm.TopicData.make = function (_elm) {
    "permalink_url",
    $Json$Decode.string));
    var loadData = A2($Task.andMap,
+   A2($Task.andMap,
    A2($Task.andMap,
    A2($Task.andMap,
    A2($Task.andMap,
@@ -22886,9 +24462,15 @@ Elm.TopicData.make = function (_elm) {
    A2($Basics._op["++"],
    prefix,
    "vocab.json"))),
-   $Task.succeed($Dict.empty));
-   var emptyData = A7($Model.Data,
+   $Task.succeed($Dict.empty)),
+   A2($Http.get,
+   $Json$Decode.dict($Json$Decode.list($Json$Decode.$float)),
+   A2($Basics._op["++"],
+   prefix,
+   "samples.json")));
+   var emptyData = A8($Model.Data,
    $Array.empty,
+   $Dict.empty,
    $Dict.empty,
    $Dict.empty,
    $Dict.empty,
@@ -23067,53 +24649,91 @@ Elm.Updates.make = function (_elm) {
    _U = _N.Utils.make(_elm),
    _L = _N.List.make(_elm),
    $moduleName = "Updates",
+   $Audio$Probabilities = Elm.Audio.Probabilities.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Dict = Elm.Dict.make(_elm),
    $History = Elm.History.make(_elm),
+   $List = Elm.List.make(_elm),
    $Maybe = Elm.Maybe.make(_elm),
+   $Model = Elm.Model.make(_elm),
    $OSC = Elm.OSC.make(_elm),
-   $Set = Elm.Set.make(_elm),
    $Signal = Elm.Signal.make(_elm),
    $Task = Elm.Task.make(_elm);
+   var offsetFor = F2(function (data,
+   _v0) {
+      return function () {
+         switch (_v0.ctor)
+         {case "_Tuple2":
+            return $Maybe.map(function (_v4) {
+                 return function () {
+                    switch (_v4.ctor)
+                    {case "::": switch (_v4._1.ctor)
+                         {case "::":
+                            switch (_v4._1._1.ctor)
+                              {case "[]": return {_: {}
+                                                 ,offset: _v4._0
+                                                 ,prob: _v0._1};}
+                              break;}
+                         break;}
+                    _U.badCase($moduleName,
+                    "on line 34, column 58 to 77");
+                 }();
+              })(A2($Dict.get,
+              _v0._0,
+              data.tokenOffsets));}
+         _U.badCase($moduleName,
+         "between lines 33 and 34");
+      }();
+   });
+   var getOffsetsFrom = F2(function (data,
+   msg) {
+      return function () {
+         switch (msg.ctor)
+         {case "PlayTokens":
+            return A2($List.filterMap,
+              offsetFor(data),
+              msg._0);}
+         return _L.fromArray([]);
+      }();
+   });
+   var getOffsetCDF = F2(function (data,
+   msgs) {
+      return function () {
+         var allOffsets = A2($List.concatMap,
+         getOffsetsFrom(data),
+         $Dict.values(msgs));
+         return function () {
+            switch (allOffsets.ctor)
+            {case "[]":
+               return $Maybe.Nothing;}
+            return $Maybe.Just($Audio$Probabilities.toCDF(allOffsets));
+         }();
+      }();
+   });
    var doSoundUpdate = F2(function (up,
-   set) {
+   dict) {
       return function () {
          switch (up.ctor)
-         {case "Noop": return set;
+         {case "Noop": return dict;
             case "Play":
-            return A2($Set.insert,
+            return A3($Dict.insert,
               up._0,
-              set);
+              up._1,
+              dict);
             case "Stop":
-            return A2($Set.remove,
+            return A2($Dict.remove,
               up._0,
-              set);}
+              dict);}
          _U.badCase($moduleName,
-         "between lines 21 and 24");
+         "between lines 26 and 29");
       }();
    });
    var Noop = {ctor: "Noop"};
    var soundUpdates = $Signal.mailbox(Noop);
    var nowPlaying = A3($Signal.foldp,
    doSoundUpdate,
-   $Set.empty,
+   $Dict.empty,
    soundUpdates.signal);
-   var oscMessages = function () {
-      var f = function (x) {
-         return function () {
-            switch (x.ctor)
-            {case "Noop":
-               return $Maybe.Nothing;
-               case "Play":
-               return $Maybe.Just($OSC.toOsc(x._1));
-               case "Stop":
-               return $Maybe.Just($OSC.toOsc(x._1));}
-            _U.badCase($moduleName,
-            "between lines 31 and 35");
-         }();
-      };
-      return A2($Signal.map,
-      f,
-      soundUpdates.signal);
-   }();
    var Stop = F2(function (a,b) {
       return {ctor: "Stop"
              ,_0: a
@@ -23145,8 +24765,10 @@ Elm.Updates.make = function (_elm) {
                          ,Noop: Noop
                          ,soundUpdates: soundUpdates
                          ,doSoundUpdate: doSoundUpdate
+                         ,offsetFor: offsetFor
+                         ,getOffsetsFrom: getOffsetsFrom
+                         ,getOffsetCDF: getOffsetCDF
                          ,nowPlaying: nowPlaying
-                         ,oscMessages: oscMessages
                          ,soundUpdate: soundUpdate};
    return _elm.Updates.values;
 };
@@ -23173,9 +24795,9 @@ Elm.View.make = function (_elm) {
    $List = Elm.List.make(_elm),
    $Maybe = Elm.Maybe.make(_elm),
    $Model = Elm.Model.make(_elm),
-   $OSC = Elm.OSC.make(_elm),
    $Result = Elm.Result.make(_elm),
    $Set = Elm.Set.make(_elm),
+   $Task = Elm.Task.make(_elm),
    $TopicData = Elm.TopicData.make(_elm),
    $Updates = Elm.Updates.make(_elm),
    $Viz$Bars = Elm.Viz.Bars.make(_elm),
@@ -23183,32 +24805,94 @@ Elm.View.make = function (_elm) {
    $Viz$Graph = Elm.Viz.Graph.make(_elm),
    $Viz$Ordinal = Elm.Viz.Ordinal.make(_elm),
    $Viz$Stars = Elm.Viz.Stars.make(_elm);
-   var viewGraph = _L.fromArray([$Viz$Graph.graphView]);
+   var valign = {ctor: "_Tuple2"
+                ,_0: "vertical-align"
+                ,_1: "middle"};
+   var swatch = F2(function (pxs,
+   hex) {
+      return A2($Html.div,
+      _L.fromArray([$Html$Attributes.style(_L.fromArray([{ctor: "_Tuple2"
+                                                         ,_0: "display"
+                                                         ,_1: "inline-block"}
+                                                        ,{ctor: "_Tuple2"
+                                                         ,_0: "margin"
+                                                         ,_1: "0 4px"}
+                                                        ,valign
+                                                        ,{ctor: "_Tuple2"
+                                                         ,_0: "background"
+                                                         ,_1: hex}
+                                                        ,{ctor: "_Tuple2"
+                                                         ,_0: "width"
+                                                         ,_1: pxs}
+                                                        ,{ctor: "_Tuple2"
+                                                         ,_0: "height"
+                                                         ,_1: pxs}]))]),
+      _L.fromArray([]));
+   });
+   var pxStr = function (px) {
+      return A2($Basics._op["++"],
+      $Basics.toString(px),
+      "px");
+   };
+   var legendLine = F3(function (size,
+   hex,
+   label) {
+      return function () {
+         var pxs = pxStr(size);
+         return A2($Html.div,
+         _L.fromArray([$Html$Attributes.style(_L.fromArray([{ctor: "_Tuple2"
+                                                            ,_0: "line-height"
+                                                            ,_1: pxs}
+                                                           ,{ctor: "_Tuple2"
+                                                            ,_0: "height"
+                                                            ,_1: pxs}
+                                                           ,valign
+                                                           ,{ctor: "_Tuple2"
+                                                            ,_0: "margin-bottom"
+                                                            ,_1: "4px"}]))]),
+         _L.fromArray([A2(swatch,pxs,hex)
+                      ,A2($Html.span,
+                      _L.fromArray([$Html$Attributes.style(_L.fromArray([valign]))]),
+                      _L.fromArray([$Html.text(label)]))]));
+      }();
+   });
+   var graphKey = A2($Html.div,
+   _L.fromArray([]),
+   _L.fromArray([A3(legendLine,
+                24,
+                "#009EE8",
+                "User")
+                ,A3(legendLine,
+                24,
+                "#FF6117",
+                "Track")]));
+   var viewGraph = F2(function (model,
+   state) {
+      return _L.fromArray([graphKey
+                          ,$Viz$Graph.graphView
+                          ,A2($Html.div,
+                          _L.fromArray([]),
+                          _L.fromArray([$Html.text($Basics.toString(state.neighborhood))]))]);
+   });
    var playIcon = F4(function (soundId,
-   playMsg,
-   stopMsg,
+   playAct,
+   stopAct,
    state) {
       return function () {
-         var stopAct = A3($Updates.soundUpdate,
-         soundId,
-         false,
-         stopMsg);
-         var playAct = A3($Updates.soundUpdate,
-         soundId,
-         true,
-         playMsg);
          var isPlaying = A2($Set.member,
          soundId,
          state.playing);
          var icon = isPlaying ? $Bootstrap$Html.glyphiconPause_ : $Bootstrap$Html.glyphiconPlay_;
          var action = isPlaying ? A2($Html$Events.onClick,
-         $Updates.soundUpdates.address,
-         playAct) : A2($Html$Events.onClick,
-         $Updates.soundUpdates.address,
-         stopAct);
-         return A2($Html.div,
-         _L.fromArray([action]),
-         _L.fromArray([icon]));
+         $Updates.actions.address,
+         stopAct) : A2($Html$Events.onClick,
+         $Updates.actions.address,
+         playAct);
+         return {ctor: "_Tuple2"
+                ,_0: action
+                ,_1: A2($Html.div,
+                _L.fromArray([]),
+                _L.fromArray([icon]))};
       }();
    });
    var mkPlayIcon = F4(function (dtype,
@@ -23216,20 +24900,22 @@ Elm.View.make = function (_elm) {
    byDtypes,
    state) {
       return function () {
-         var stopMsg = $OSC.StopTokens;
          var tokenProbs = A2($TopicData.tokensToProbDist,
          dtype,
          byDtypes);
-         var playMsg = $OSC.PlayTokens(tokenProbs);
          var soundId = A2($Basics._op["++"],
          info.trackID,
          A2($Basics._op["++"],
          "/",
          dtype));
+         var playAct = A2($Audio.playTokens,
+         soundId,
+         tokenProbs);
+         var stopAct = $Audio.stopTokens(soundId);
          return A4(playIcon,
          soundId,
-         playMsg,
-         stopMsg,
+         playAct,
+         stopAct,
          state);
       }();
    });
@@ -23239,11 +24925,13 @@ Elm.View.make = function (_elm) {
    byDtypes,
    topicDict) {
       return function () {
-         var playIcon$ = A4(mkPlayIcon,
+         var $ = A4(mkPlayIcon,
          dtype,
          info,
          byDtypes,
-         state);
+         state),
+         action = $._0,
+         playIcon$ = $._1;
          var mkTopics = function (xs) {
             return A2($Array.map,
             function (x) {
@@ -23251,18 +24939,17 @@ Elm.View.make = function (_elm) {
             },
             xs);
          };
-         var topics = A2($Array.slice,
-         0,
-         50)($Array.filter(function (x) {
+         var topics = $Array.filter(function (x) {
             return !_U.eq(x,-1);
          })($Maybe.withDefault($Array.empty)(A2($Dict.get,
          dtype,
-         topicDict))));
+         topicDict)));
          var trackTopics = {_: {}
                            ,topics: mkTopics(topics)
                            ,track: info};
-         return A2($Html.div,
-         _L.fromArray([]),
+         var isEmpty = $Array.isEmpty(topics);
+         return $Basics.not(isEmpty) ? A2($Html.div,
+         _L.fromArray([action]),
          _L.fromArray([A2($Bootstrap$Html.colXs_,
                       2,
                       _L.fromArray([$Html.text(dtype)]))
@@ -23275,8 +24962,10 @@ Elm.View.make = function (_elm) {
                       _L.fromArray([]),
                       $Viz$Common.noMargin,
                       500,
-                      36,
-                      trackTopics)]))]));
+                      20,
+                      trackTopics)]))])) : A2($Html.div,
+         _L.fromArray([]),
+         _L.fromArray([]));
       }();
    });
    var alertBase = F2(function (b,
@@ -23399,13 +25088,7 @@ Elm.View.make = function (_elm) {
             switch (maybeTrack._0.ctor)
               {case "_Tuple2":
                  return !_U.eq(maybeTrack._0._0,
-                   doc) ? _L.fromArray([alert(_L.fromArray([$Html.text(A2($Basics._op["++"],
-                   "Fetched ",
-                   A2($Basics._op["++"],
-                   maybeTrack._0._0,
-                   A2($Basics._op["++"],
-                   "; doesn\'t match ",
-                   "doc"))))]))]) : A4(viewDocData,
+                   doc) ? _L.fromArray([$Html.text("Loading...")]) : A4(viewDocData,
                    state,
                    data,
                    A2($TopicData.trackInfo,
@@ -23416,7 +25099,7 @@ Elm.View.make = function (_elm) {
             case "Nothing":
             return _L.fromArray([$Html.text("Loading...")]);}
          _U.badCase($moduleName,
-         "between lines 203 and 209");
+         "between lines 213 and 218");
       }();
    });
    var colorFor = function (i) {
@@ -23427,7 +25110,7 @@ Elm.View.make = function (_elm) {
                                                   ,_0: "color"
                                                   ,_1: colorFor(i)}]));
    };
-   var viewTopicDocOverview = F3(function (data,
+   var viewTopicOnly = F3(function (data,
    state,
    topic) {
       return function () {
@@ -23441,48 +25124,55 @@ Elm.View.make = function (_elm) {
          A2($TopicData.topicTokens,
          topic,
          data));
-         return _L.fromArray([$Bootstrap$Html.row_(_L.fromArray([A2($Html.div,
-                                                                _L.fromArray([A2($Html$Events.onClick,
-                                                                             $Updates.actions.address,
-                                                                             $Updates.toPath(A2($Basics._op["++"],
-                                                                             "/topic/",
-                                                                             $Basics.toString(topic))))
-                                                                             ,A2($Html$Events.onMouseEnter,
-                                                                             $Updates.actions.address,
-                                                                             A2($Audio.playTopic,
-                                                                             topic,
-                                                                             data))
-                                                                             ,A2($Html$Events.onMouseLeave,
-                                                                             $Updates.actions.address,
-                                                                             $Audio.stopTopic(topic))
-                                                                             ,$Html$Attributes.$class("col-xs-3 topic-overview")]),
-                                                                _L.fromArray([A2($Html.h2,
-                                                                             _L.fromArray([colorAttrFor(topic)]),
-                                                                             _L.fromArray([$Html.text(A2($Basics._op["++"],
-                                                                                          "Topic ",
-                                                                                          A2($Basics._op["++"],
-                                                                                          $Basics.toString(topic),
-                                                                                          " ")))
-                                                                                          ,A2($Html.br,
-                                                                                          _L.fromArray([]),
-                                                                                          _L.fromArray([]))
-                                                                                          ,A2($Html.small,
-                                                                                          _L.fromArray([]),
-                                                                                          _L.fromArray([$Html.text(A2($TopicData.topicPct,
-                                                                                          topic,
-                                                                                          data))]))]))
-                                                                             ,starPlot]))
-                                                                ,A2($Bootstrap$Html.colXs_,
-                                                                9,
-                                                                A2($List.map,
-                                                                showBar,
-                                                                A2($TopicData.topDocsForTopic,
-                                                                topic,
-                                                                data)))]))
-                             ,$Bootstrap$Html.row_(_L.fromArray([A2($Html.hr,
-                             _L.fromArray([]),
-                             _L.fromArray([]))]))]);
+         return _L.fromArray([A2($Html.div,
+         _L.fromArray([A2($Html$Events.onClick,
+                      $Updates.actions.address,
+                      $Updates.toPath(A2($Basics._op["++"],
+                      "/topic/",
+                      $Basics.toString(topic))))
+                      ,A2($Html$Events.onMouseEnter,
+                      $Updates.actions.address,
+                      A2($Audio.playTopic,topic,data))
+                      ,A2($Html$Events.onMouseLeave,
+                      $Updates.actions.address,
+                      $Audio.stopTopic(topic))
+                      ,$Html$Attributes.$class("col-xs-3 topic-overview")]),
+         _L.fromArray([A2($Html.h2,
+                      _L.fromArray([colorAttrFor(topic)]),
+                      _L.fromArray([$Html.text(A2($Basics._op["++"],
+                                   "Topic ",
+                                   A2($Basics._op["++"],
+                                   $Basics.toString(topic),
+                                   " ")))
+                                   ,A2($Html.br,
+                                   _L.fromArray([]),
+                                   _L.fromArray([]))
+                                   ,A2($Html.small,
+                                   _L.fromArray([]),
+                                   _L.fromArray([$Html.text(A2($TopicData.topicPct,
+                                   topic,
+                                   data))]))]))
+                      ,starPlot]))]);
       }();
+   });
+   var viewTopicDocOverview = F3(function (data,
+   state,
+   topic) {
+      return _L.fromArray([$Bootstrap$Html.row_(A2($Basics._op["++"],
+                          A3(viewTopicOnly,
+                          data,
+                          state,
+                          topic),
+                          _L.fromArray([A2($Bootstrap$Html.colXs_,
+                          9,
+                          A2($List.map,
+                          showBar,
+                          A2($TopicData.topDocsForTopic,
+                          topic,
+                          data)))])))
+                          ,$Bootstrap$Html.row_(_L.fromArray([A2($Html.hr,
+                          _L.fromArray([]),
+                          _L.fromArray([]))]))]);
    });
    var viewTopicTokens = F2(function (data,
    topic) {
@@ -23490,7 +25180,7 @@ Elm.View.make = function (_elm) {
          var playPause = function (x) {
             return _L.fromArray([A2($Html$Events.onMouseEnter,
                                 $Updates.actions.address,
-                                A2($Audio.playToken,x,data))
+                                $Audio.playToken(x))
                                 ,A2($Html$Events.onMouseLeave,
                                 $Updates.actions.address,
                                 $Audio.stopToken(x))]);
@@ -23503,8 +25193,8 @@ Elm.View.make = function (_elm) {
             return A2($Html.div,
             A2($Basics._op["++"],
             _L.fromArray([$Html$Attributes.style(_L.fromArray([{ctor: "_Tuple2"
-                                                               ,_0: "float"
-                                                               ,_1: "left"}
+                                                               ,_0: "display"
+                                                               ,_1: "inline-block"}
                                                               ,{ctor: "_Tuple2"
                                                                ,_0: "margin"
                                                                ,_1: "4px"}]))]),
@@ -23542,14 +25232,13 @@ Elm.View.make = function (_elm) {
                    _L.fromArray([]))
                    ,alert(_L.fromArray([]))])));
    });
-   var viewOverview = F2(function (model,
+   var viewAllTopicsWith = F3(function (topicFunc,
+   model,
    state) {
       return function () {
          var f = function (data) {
             return A2($List.concatMap,
-            A2(viewTopicDocOverview,
-            data,
-            state),
+            A2(topicFunc,data,state),
             $TopicData.topicOrder(data));
          };
          var output = A2($Result.map,
@@ -23561,13 +25250,15 @@ Elm.View.make = function (_elm) {
                return _L.fromArray([$Html.text(output._0)]);
                case "Ok": return output._0;}
             _U.badCase($moduleName,
-            "between lines 111 and 113");
+            "between lines 117 and 119");
          }();
       }();
    });
+   var viewAllTopics = viewAllTopicsWith(viewTopicOnly);
+   var viewOverview = viewAllTopicsWith(viewTopicDocOverview);
    var navbrand = A2($Html.a,
    _L.fromArray([$Html$Attributes.$class("navbar-brand")
-                ,$Html$Attributes.href("/demo/index.html")]),
+                ,$Html$Attributes.href("/index.html")]),
    _L.fromArray([$Html.text("Susurrant")]));
    var navheader = A2($Html.div,
    _L.fromArray([$Html$Attributes.$class("navbar-header")]),
@@ -23616,7 +25307,11 @@ Elm.View.make = function (_elm) {
    var navLinks = _L.fromArray([A3(HeaderLink,
                                "Overview",
                                "Topics and Top Tracks",
-                               "/demo/index.html")
+                               "/index.html")
+                               ,A3(HeaderLink,
+                               "Topics",
+                               "All topics at once",
+                               "/topics")
                                ,A3(HeaderLink,
                                "Social Graph",
                                "Tracks in social context",
@@ -23640,7 +25335,7 @@ Elm.View.make = function (_elm) {
    var wrap = F2(function (state,
    xs) {
       return function () {
-         var alerts = state.oscConnected ? _L.fromArray([]) : _L.fromArray([warning(_L.fromArray([$Html.text("OSC not connected")]))]);
+         var alerts = _L.fromArray([]);
          return $Bootstrap$Html.container_(A2($Basics._op["++"],
          _L.fromArray([navbar(state.currentPath)]),
          A2($Basics._op["++"],
@@ -23657,9 +25352,12 @@ Elm.View.make = function (_elm) {
                       ,navbar: navbar
                       ,wrap: wrap
                       ,viewOverview: viewOverview
+                      ,viewAllTopics: viewAllTopics
+                      ,viewAllTopicsWith: viewAllTopicsWith
                       ,colorFor: colorFor
                       ,colorAttrFor: colorAttrFor
                       ,viewTopicDocOverview: viewTopicDocOverview
+                      ,viewTopicOnly: viewTopicOnly
                       ,trackInfoFmt: trackInfoFmt
                       ,showBar: showBar
                       ,showTrack: showTrack
@@ -23673,7 +25371,12 @@ Elm.View.make = function (_elm) {
                       ,viewDocTopicBar: viewDocTopicBar
                       ,mkPlayIcon: mkPlayIcon
                       ,playIcon: playIcon
-                      ,viewGraph: viewGraph};
+                      ,viewGraph: viewGraph
+                      ,pxStr: pxStr
+                      ,valign: valign
+                      ,swatch: swatch
+                      ,legendLine: legendLine
+                      ,graphKey: graphKey};
    return _elm.View.values;
 };
 Elm.VirtualDom = Elm.VirtualDom || {};
@@ -24405,8 +26108,20 @@ Elm.Viz.Stars.make = function (_elm) {
                                                        ,4
                                                        ,2])
                                          ,_L.fromArray([2,3,5,0,1,2])]));
+   var getDasharrayFor = function (tokenID) {
+      return function () {
+         var ttype = $Model.tokenTypeOf(tokenID);
+         return function () {
+            switch (ttype.ctor)
+            {case "BeatCoef": return "1,5";
+               case "Chroma": return "5,2";
+               case "Gfcc": return "none";}
+            return "none";
+         }();
+      }();
+   };
    var defaultOpacity = _U.replace([["domain"
-                                    ,_L.fromArray([1.0e-2,1.0])]
+                                    ,_L.fromArray([5.0e-2,1.0])]
                                    ,["range"
                                     ,_L.fromArray([0.0,0.8])]],
    $Viz$Scale.logScale);
@@ -24440,15 +26155,15 @@ Elm.Viz.Stars.make = function (_elm) {
    var halfPi = $Basics.pi * 0.5;
    var lineRadial0 = function (xs) {
       return function () {
-         var point = function (_v0) {
+         var point = function (_v1) {
             return function () {
-               switch (_v0.ctor)
+               switch (_v1.ctor)
                {case "_Tuple2":
                   return function () {
-                       var a$ = _v0._1 - halfPi;
+                       var a$ = _v1._1 - halfPi;
                        return {ctor: "_Tuple2"
-                              ,_0: _v0._0 * $Basics.cos(a$)
-                              ,_1: _v0._0 * $Basics.sin(a$)};
+                              ,_0: _v1._0 * $Basics.cos(a$)
+                              ,_1: _v1._0 * $Basics.sin(a$)};
                     }();}
                _U.badCase($moduleName,
                "between lines 26 and 27");
@@ -24461,15 +26176,15 @@ Elm.Viz.Stars.make = function (_elm) {
       return function () {
          var points = lineRadial0(xs);
          var pointsL = $String.join("L")(A2($List.map,
-         function (_v4) {
+         function (_v5) {
             return function () {
-               switch (_v4.ctor)
+               switch (_v5.ctor)
                {case "_Tuple2":
                   return A2($Basics._op["++"],
-                    floatToStr(_v4._0),
+                    floatToStr(_v5._0),
                     A2($Basics._op["++"],
                     ",",
-                    floatToStr(_v4._1)));}
+                    floatToStr(_v5._1)));}
                _U.badCase($moduleName,
                "on line 36, column 40 to 75");
             }();
@@ -24482,19 +26197,20 @@ Elm.Viz.Stars.make = function (_elm) {
          "Z"));
       }();
    };
-   var star = F2(function (_v8,
-   _v9) {
+   var star = F2(function (_v9,
+   _v10) {
       return function () {
          return function () {
             return function () {
-               var pathStr = lineRadial(addAngles($List.map($Viz$Scale.convert(_v8.rS))(_v9.values)));
+               var pathStr = lineRadial(addAngles($List.map($Viz$Scale.convert(_v9.rS))(_v10.values)));
                return A2($Svg.path,
                _L.fromArray([$Svg$Attributes.d(pathStr)
                             ,$Svg$Attributes.fill("none")
-                            ,$Svg$Attributes.stroke(_v8.color)
+                            ,$Svg$Attributes.stroke(_v9.color)
                             ,$Svg$Attributes.strokeOpacity($Basics.toString(A2($Viz$Scale.convert,
-                            _v8.opacity,
-                            _v9.prob)))]),
+                            _v9.opacity,
+                            _v10.prob)))
+                            ,$Svg$Attributes.strokeDasharray(getDasharrayFor(_v10.id))]),
                _L.fromArray([]));
             }();
          }();
@@ -24596,6 +26312,7 @@ Elm.Viz.Stars.make = function (_elm) {
                            ,getDomain: getDomain
                            ,getTokenDomains: getTokenDomains
                            ,defaultOpacity: defaultOpacity
+                           ,getDasharrayFor: getDasharrayFor
                            ,starDisplay: starDisplay
                            ,smallStar: smallStar
                            ,mediumStar: mediumStar
@@ -24603,4 +26320,295 @@ Elm.Viz.Stars.make = function (_elm) {
                            ,exampleData: exampleData
                            ,main: main};
    return _elm.Viz.Stars.values;
+};
+Elm.WebAudio = Elm.WebAudio || {};
+Elm.WebAudio.make = function (_elm) {
+   "use strict";
+   _elm.WebAudio = _elm.WebAudio || {};
+   if (_elm.WebAudio.values)
+   return _elm.WebAudio.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "WebAudio",
+   $Basics = Elm.Basics.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Native$WebAudio = Elm.Native.WebAudio.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $Task = Elm.Task.make(_elm);
+   var connect = $Task.andThen;
+   _op[">>="] = connect;
+   var setVelocity = $Native$WebAudio.setVelocity;
+   var setOrientation = $Native$WebAudio.setOrientation;
+   var setPosition = $Native$WebAudio.setPosition;
+   var setConeOuterGain = $Native$WebAudio.setConeOuterGain;
+   var getConeOuterGain = $Native$WebAudio.getConeOuterGain;
+   var setConeOuterAngle = $Native$WebAudio.setConeOuterAngle;
+   var getConeOuterAngle = $Native$WebAudio.getConeOuterAngle;
+   var setConeInnerAngle = $Native$WebAudio.setConeInnerAngle;
+   var getConeInnerAngle = $Native$WebAudio.getConeInnerAngle;
+   var setRolloffFactor = $Native$WebAudio.setRolloffFactor;
+   var getRolloffFactor = $Native$WebAudio.getRolloffFactor;
+   var setMaxDistance = $Native$WebAudio.setMaxDistance;
+   var getMaxDistance = $Native$WebAudio.getMaxDistance;
+   var setReferenceDistance = $Native$WebAudio.setReferenceDistance;
+   var getReferenceDistance = $Native$WebAudio.getReferenceDistance;
+   var setDistanceModel = $Native$WebAudio.setDistanceModel;
+   var getDistanceModel = $Native$WebAudio.getDistanceModel;
+   var setPanningModel = $Native$WebAudio.setPanningModel;
+   var getPanningModel = $Native$WebAudio.getPanningModel;
+   var createPannerNode = $Native$WebAudio.createPannerNode;
+   var Exponential = {ctor: "Exponential"};
+   var Inverse = {ctor: "Inverse"};
+   var Linear = {ctor: "Linear"};
+   var HRTF = {ctor: "HRTF"};
+   var EqualPower = {ctor: "EqualPower"};
+   var stopOscillator = $Native$WebAudio.stopOscillator;
+   var startOscillator = $Native$WebAudio.startOscillator;
+   var setOscillatorWaveType = $Native$WebAudio.setOscillatorWaveType;
+   var getOscillatorWaveType = $Native$WebAudio.getOscillatorWaveType;
+   var createOscillatorNode = $Native$WebAudio.createOscillatorNode;
+   var Triangle = {ctor: "Triangle"};
+   var Sawtooth = {ctor: "Sawtooth"};
+   var Square = {ctor: "Square"};
+   var Sine = {ctor: "Sine"};
+   var pauseMediaElement = $Native$WebAudio.pauseMediaElement;
+   var playMediaElement = $Native$WebAudio.playMediaElement;
+   var setMediaElementSource = $Native$WebAudio.setMediaElementSource;
+   var getMediaElementSource = $Native$WebAudio.getMediaElementSource;
+   var setMediaElementIsLooping = $Native$WebAudio.setMediaElementIsLooping;
+   var getMediaElementIsLooping = $Native$WebAudio.getMediaElementIsLooping;
+   var createHiddenMediaElementAudioSourceNode = $Native$WebAudio.createHiddenMediaElementAudioSourceNode;
+   var createGainNode = $Native$WebAudio.createGainNode;
+   var createDynamicsCompressorNode = $Native$WebAudio.createDynamicsCompressorNode;
+   var createDelayNode = $Native$WebAudio.createDelayNode;
+   var createChannelSplitterNode = $Native$WebAudio.createChannelSplitterNode;
+   var createChannelMergerNode = $Native$WebAudio.createChannelMergerNode;
+   var setFilterType = $Native$WebAudio.setFilterType;
+   var getFilterType = $Native$WebAudio.getFilterType;
+   var createBiquadFilterNode = $Native$WebAudio.createBiquadFilterNode;
+   var AllPass = {ctor: "AllPass"};
+   var Notch = {ctor: "Notch"};
+   var Peaking = {ctor: "Peaking"};
+   var HighShelf = {ctor: "HighShelf"};
+   var LowShelf = {ctor: "LowShelf"};
+   var BandPass = {ctor: "BandPass"};
+   var HighPass = {ctor: "HighPass"};
+   var LowPass = {ctor: "LowPass"};
+   var getMaxChannelCount = $Native$WebAudio.getMaxChannelCount;
+   var getDestinationNode = $Native$WebAudio.getDestinationNode;
+   var stopAudioBufferNode = $Native$WebAudio.stopAudioBufferNode;
+   var startAudioBufferNode = $Native$WebAudio.startAudioBufferNode;
+   var setAudioBufferLoopEnd = $Native$WebAudio.setAudioBufferLoopEnd;
+   var getAudioBufferLoopEnd = $Native$WebAudio.getAudioBufferLoopEnd;
+   var setAudioBufferLoopStart = $Native$WebAudio.setAudioBufferLoopStart;
+   var getAudioBufferLoopStart = $Native$WebAudio.getAudioBufferLoopStart;
+   var setAudioBufferIsLooping = $Native$WebAudio.setAudioBufferIsLooping;
+   var getAudioBufferIsLooping = $Native$WebAudio.getAudioBufferIsLooping;
+   var setAudioBufferForNode = $Native$WebAudio.setAudioBufferForNode;
+   var getAudioBufferFromNode = $Native$WebAudio.getAudioBufferFromNode;
+   var createAudioBufferSourceNode = $Native$WebAudio.createAudioBufferSourceNode;
+   var getFloatTimeDomainData = $Native$WebAudio.getFloatTimeDomainData;
+   var getFloatFrequencyData = $Native$WebAudio.getFloatFrequencyData;
+   var getByteTimeDomainData = $Native$WebAudio.getByteTimeDomainData;
+   var getByteFrequencyData = $Native$WebAudio.getByteFrequencyData;
+   var setSmoothingConstant = $Native$WebAudio.setSmoothingConstant;
+   var getSmoothingConstant = $Native$WebAudio.getSmoothingConstant;
+   var setMinDecibels = $Native$WebAudio.setMinDecibels;
+   var getMinDecibels = $Native$WebAudio.getMinDecibels;
+   var setMaxDecibels = $Native$WebAudio.setMaxDecibels;
+   var getMaxDecibels = $Native$WebAudio.getMaxDecibels;
+   var setFFTSize = $Native$WebAudio.setFFTSize;
+   var getFFTSize = $Native$WebAudio.getFFTSize;
+   var createAnalyserNode = $Native$WebAudio.createAnalyserNode;
+   var tapNode = F3(function (f,
+   t,
+   n) {
+      return function () {
+         var _ = t(f(n));
+         return n;
+      }();
+   });
+   var setChannelInterpretation = $Native$WebAudio.setChannelInterpretation;
+   var getChannelInterpretation = $Native$WebAudio.getChannelInterpretation;
+   var setChannelCountMode = $Native$WebAudio.setChannelCountMode;
+   var getChannelCountMode = $Native$WebAudio.getChannelCountMode;
+   var setChannelCount = $Native$WebAudio.setChannelCount;
+   var getChannelCount = $Native$WebAudio.getChannelCount;
+   var connectToParam = $Native$WebAudio.connectToParam;
+   var connectNodes = $Native$WebAudio.connectNodes;
+   var Discrete = {ctor: "Discrete"};
+   var Speakers = {ctor: "Speakers"};
+   var Explicit = {ctor: "Explicit"};
+   var ClampedMax = {ctor: "ClampedMax"};
+   var Max = {ctor: "Max"};
+   var AudioNode = F3(function (a,
+   b,
+   c) {
+      return _U.insert("outputs",
+      b,
+      _U.insert("inputs",a,c));
+   });
+   var setChannelDataSlice = $Native$WebAudio.setChannelDataSlice;
+   var getChannelDataSlice = $Native$WebAudio.getChannelDataSlice;
+   var getChannelData = $Native$WebAudio.getChannelData;
+   var getBufferNumberOfChannels = $Native$WebAudio.getBufferNumberOfChannels;
+   var getBufferDuration = $Native$WebAudio.getBufferDuration;
+   var getBufferLength = $Native$WebAudio.getBufferLength;
+   var getBufferSampleRate = $Native$WebAudio.getBufferSampleRate;
+   var loadAudioBufferFromUrl = $Native$WebAudio.loadAudioBufferFromUrl;
+   var AudioBuffer = {ctor: "AudioBuffer"};
+   var cancelScheduledValues = $Native$WebAudio.cancelScheduledValues;
+   var setValueCurveAtTime = $Native$WebAudio.setValueCurveAtTime;
+   var setTargetAtTime = $Native$WebAudio.setTargetAtTime;
+   var exponentialRampToValue = $Native$WebAudio.exponentialRampToValue;
+   var linearRampToValue = $Native$WebAudio.linearRampToValue;
+   var setValueAtTime = $Native$WebAudio.setValueAtTime;
+   var getValue = $Native$WebAudio.getValue;
+   var setValue = $Native$WebAudio.setValue;
+   var AudioParam = function (a) {
+      return {ctor: "AudioParam"
+             ,_0: a};
+   };
+   var startOfflineRendering = $Native$WebAudio.startOfflineRendering;
+   var createOfflineContext = $Native$WebAudio.createOfflineContext;
+   var OfflineAudioContext = F2(function (a,
+   b) {
+      return {_: {}
+             ,context: a
+             ,signal: b};
+   });
+   var getCurrentTime = $Native$WebAudio.getCurrentTime;
+   var getSampleRate = $Native$WebAudio.getSampleRate;
+   var createContext = $Native$WebAudio.createContext;
+   var DefaultContext = {ctor: "DefaultContext"};
+   var AudioContext = {ctor: "AudioContext"};
+   _elm.WebAudio.values = {_op: _op
+                          ,AudioContext: AudioContext
+                          ,DefaultContext: DefaultContext
+                          ,createContext: createContext
+                          ,getSampleRate: getSampleRate
+                          ,getCurrentTime: getCurrentTime
+                          ,OfflineAudioContext: OfflineAudioContext
+                          ,createOfflineContext: createOfflineContext
+                          ,startOfflineRendering: startOfflineRendering
+                          ,AudioParam: AudioParam
+                          ,setValue: setValue
+                          ,getValue: getValue
+                          ,setValueAtTime: setValueAtTime
+                          ,linearRampToValue: linearRampToValue
+                          ,exponentialRampToValue: exponentialRampToValue
+                          ,setTargetAtTime: setTargetAtTime
+                          ,setValueCurveAtTime: setValueCurveAtTime
+                          ,cancelScheduledValues: cancelScheduledValues
+                          ,AudioBuffer: AudioBuffer
+                          ,loadAudioBufferFromUrl: loadAudioBufferFromUrl
+                          ,getBufferSampleRate: getBufferSampleRate
+                          ,getBufferLength: getBufferLength
+                          ,getBufferDuration: getBufferDuration
+                          ,getBufferNumberOfChannels: getBufferNumberOfChannels
+                          ,getChannelData: getChannelData
+                          ,getChannelDataSlice: getChannelDataSlice
+                          ,setChannelDataSlice: setChannelDataSlice
+                          ,AudioNode: AudioNode
+                          ,Max: Max
+                          ,ClampedMax: ClampedMax
+                          ,Explicit: Explicit
+                          ,Speakers: Speakers
+                          ,Discrete: Discrete
+                          ,connectNodes: connectNodes
+                          ,connectToParam: connectToParam
+                          ,getChannelCount: getChannelCount
+                          ,setChannelCount: setChannelCount
+                          ,getChannelCountMode: getChannelCountMode
+                          ,setChannelCountMode: setChannelCountMode
+                          ,getChannelInterpretation: getChannelInterpretation
+                          ,setChannelInterpretation: setChannelInterpretation
+                          ,tapNode: tapNode
+                          ,createAnalyserNode: createAnalyserNode
+                          ,getFFTSize: getFFTSize
+                          ,setFFTSize: setFFTSize
+                          ,getMaxDecibels: getMaxDecibels
+                          ,setMaxDecibels: setMaxDecibels
+                          ,getMinDecibels: getMinDecibels
+                          ,setMinDecibels: setMinDecibels
+                          ,getSmoothingConstant: getSmoothingConstant
+                          ,setSmoothingConstant: setSmoothingConstant
+                          ,getByteFrequencyData: getByteFrequencyData
+                          ,getByteTimeDomainData: getByteTimeDomainData
+                          ,getFloatFrequencyData: getFloatFrequencyData
+                          ,getFloatTimeDomainData: getFloatTimeDomainData
+                          ,createAudioBufferSourceNode: createAudioBufferSourceNode
+                          ,getAudioBufferFromNode: getAudioBufferFromNode
+                          ,setAudioBufferForNode: setAudioBufferForNode
+                          ,getAudioBufferIsLooping: getAudioBufferIsLooping
+                          ,setAudioBufferIsLooping: setAudioBufferIsLooping
+                          ,getAudioBufferLoopStart: getAudioBufferLoopStart
+                          ,setAudioBufferLoopStart: setAudioBufferLoopStart
+                          ,getAudioBufferLoopEnd: getAudioBufferLoopEnd
+                          ,setAudioBufferLoopEnd: setAudioBufferLoopEnd
+                          ,startAudioBufferNode: startAudioBufferNode
+                          ,stopAudioBufferNode: stopAudioBufferNode
+                          ,getDestinationNode: getDestinationNode
+                          ,getMaxChannelCount: getMaxChannelCount
+                          ,LowPass: LowPass
+                          ,HighPass: HighPass
+                          ,BandPass: BandPass
+                          ,LowShelf: LowShelf
+                          ,HighShelf: HighShelf
+                          ,Peaking: Peaking
+                          ,Notch: Notch
+                          ,AllPass: AllPass
+                          ,createBiquadFilterNode: createBiquadFilterNode
+                          ,getFilterType: getFilterType
+                          ,setFilterType: setFilterType
+                          ,createChannelMergerNode: createChannelMergerNode
+                          ,createChannelSplitterNode: createChannelSplitterNode
+                          ,createDelayNode: createDelayNode
+                          ,createDynamicsCompressorNode: createDynamicsCompressorNode
+                          ,createGainNode: createGainNode
+                          ,createHiddenMediaElementAudioSourceNode: createHiddenMediaElementAudioSourceNode
+                          ,getMediaElementIsLooping: getMediaElementIsLooping
+                          ,setMediaElementIsLooping: setMediaElementIsLooping
+                          ,getMediaElementSource: getMediaElementSource
+                          ,setMediaElementSource: setMediaElementSource
+                          ,playMediaElement: playMediaElement
+                          ,pauseMediaElement: pauseMediaElement
+                          ,Sine: Sine
+                          ,Square: Square
+                          ,Sawtooth: Sawtooth
+                          ,Triangle: Triangle
+                          ,createOscillatorNode: createOscillatorNode
+                          ,getOscillatorWaveType: getOscillatorWaveType
+                          ,setOscillatorWaveType: setOscillatorWaveType
+                          ,startOscillator: startOscillator
+                          ,stopOscillator: stopOscillator
+                          ,EqualPower: EqualPower
+                          ,HRTF: HRTF
+                          ,Linear: Linear
+                          ,Inverse: Inverse
+                          ,Exponential: Exponential
+                          ,createPannerNode: createPannerNode
+                          ,getPanningModel: getPanningModel
+                          ,setPanningModel: setPanningModel
+                          ,getDistanceModel: getDistanceModel
+                          ,setDistanceModel: setDistanceModel
+                          ,getReferenceDistance: getReferenceDistance
+                          ,setReferenceDistance: setReferenceDistance
+                          ,getMaxDistance: getMaxDistance
+                          ,setMaxDistance: setMaxDistance
+                          ,getRolloffFactor: getRolloffFactor
+                          ,setRolloffFactor: setRolloffFactor
+                          ,getConeInnerAngle: getConeInnerAngle
+                          ,setConeInnerAngle: setConeInnerAngle
+                          ,getConeOuterAngle: getConeOuterAngle
+                          ,setConeOuterAngle: setConeOuterAngle
+                          ,getConeOuterGain: getConeOuterGain
+                          ,setConeOuterGain: setConeOuterGain
+                          ,setPosition: setPosition
+                          ,setOrientation: setOrientation
+                          ,setVelocity: setVelocity
+                          ,connect: connect};
+   return _elm.WebAudio.values;
 };
